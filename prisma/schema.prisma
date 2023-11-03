@@ -1,0 +1,112 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model System {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    code      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    indicators Indicator[]
+
+    @@index([name])
+    @@map("systems")
+}
+
+model Category {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    indicators Indicator[]
+
+    @@index([name])
+    @@map("categories")
+}
+
+model Impact {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    indicators Indicator[]
+
+    @@index([name])
+    @@map("impacts")
+}
+
+model Unit {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    code      String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    indicators Indicator[]
+
+    @@index([name])
+    @@map("units")
+}
+
+model Variable {
+    id        String   @id @default(cuid())
+    name      String
+    code      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    formulas Formula[]
+
+    @@index([name])
+    @@map("variables")
+}
+
+model Formula {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    equation  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    variables Variable[]
+
+    indicator   Indicator @relation(fields: [indicatorId], references: [id])
+    indicatorId String    @unique
+
+    @@index([name])
+    @@map("formulas")
+}
+
+model Indicator {
+    id          String   @id @default(cuid())
+    code        String
+    name        String
+    polarity    String
+    cumulative  Boolean
+    source      String
+    periodicity String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    impacts  Impact[]
+    equation Formula?
+
+    system     System   @relation(fields: [systemId], references: [id])
+    systemId   String
+    category   Category @relation(fields: [categoryId], references: [id])
+    categoryId String
+    unit       Unit     @relation(fields: [unitId], references: [id])
+    unitId     String
+
+    @@index([name])
+    @@map("indicators")
+}
