@@ -58,19 +58,19 @@ export default function LoginButton() {
         })
       } else if (resposeData.error) {
         loginForm.setError('root', {
-          message: 'Erro ao fazer login',
+          message: 'Erro ao fazer login, tente novamente mais tarde',
         })
       } else {
         setOpen(false)
         toast({
-          title: 'Login realizado com sucesso',
+          title: 'Login com sucesso',
           status: 'success',
         })
         router.refresh()
       }
     } catch (error) {
       loginForm.setError('root', {
-        message: 'Erro ao fazer login',
+        message: 'Erro ao fazer login, tente novamente mais tarde',
       })
     }
   }

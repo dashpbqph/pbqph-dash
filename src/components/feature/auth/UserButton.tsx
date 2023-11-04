@@ -1,11 +1,11 @@
 'use client'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { LogOut, Settings } from 'lucide-react'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 
+import { UserAvatar } from '@/components/feature/auth'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,16 +17,17 @@ import {
 import { toast } from '@/components/ui/use-toast'
 
 interface UserButtonProps {
-  user: Session['user']
+  session: Session
 }
 
-export default function UserButton({ user }: UserButtonProps) {
+export default function UserButton({ session }: UserButtonProps) {
   const router = useRouter()
+  const { image: avatar, name, username } = session.user
 
-  async function onLogout() {
+  async function handleLogout() {
     await signOut({ redirect: false })
     toast({
-      title: 'Logout realizado com sucesso',
+      title: 'Logout com sucesso',
       status: 'success',
     })
     router.refresh()
@@ -35,20 +36,7 @@ export default function UserButton({ user }: UserButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-center ring-[1.5px] ring-white">
-        {user.image ? (
-          <Image
-            src={user.image}
-            alt="imagem do usuário"
-            style={{ objectFit: 'contain' }}
-            fill
-            priority
-          />
-        ) : (
-          user.name
-            ?.split(' ')
-            .map((n) => n[0])
-            .join('')
-        )}
+        <UserAvatar avatar={avatar} name={name} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -57,24 +45,11 @@ export default function UserButton({ user }: UserButtonProps) {
       >
         <DropdownMenuLabel className="flex space-x-4 px-0">
           <div className="relative h-11 w-11 justify-center overflow-hidden rounded-full">
-            {user.image ? (
-              <Image
-                src={user.image}
-                alt="imagem do usuário"
-                style={{ objectFit: 'contain' }}
-                fill
-                priority
-              />
-            ) : (
-              user.name
-                ?.split(' ')
-                .map((n) => n[0])
-                .join('')
-            )}
+            <UserAvatar avatar={avatar} name={name} />
           </div>
           <div className="flex flex-col justify-center text-left">
-            <div className="font-semibold">{user.name}</div>
-            <div className="text-sm font-normal">{user.username}</div>
+            <div className="font-semibold">{name}</div>
+            <div className="text-sm font-normal">{username}</div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -83,7 +58,7 @@ export default function UserButton({ user }: UserButtonProps) {
           <span>Gerenciar Conta</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => onLogout()}
+          onClick={() => handleLogout()}
           className="flex space-x-4 py-4 transition-all hover:pl-3"
         >
           <LogOut className="h-5 w-5" />
