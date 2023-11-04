@@ -8,7 +8,7 @@ export default function UserAvatar({
   name?: string | null
 }) {
   return (
-    <div className="relative h-11 w-11 justify-center overflow-hidden rounded-full">
+    <div className="relative flex h-11 w-11 overflow-hidden rounded-full">
       {avatar ? (
         <Image
           src={avatar}
@@ -18,7 +18,7 @@ export default function UserAvatar({
           priority
         />
       ) : (
-        <span>
+        <span className="flex w-full items-center justify-center">
           {name
             ?.split(' ')
             .map((n) => n[0])
