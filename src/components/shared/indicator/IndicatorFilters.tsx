@@ -52,7 +52,9 @@ export default function IndicatorFilters() {
         contentList={systemContentList}
         placeholderValue="Todos os Sistemas"
         placeholderSearch="Buscar sistema..."
-        placeholderEmpty="Nenhum sistema encontrado"
+        placeholderEmpty={
+          <span className="font-semibold">Nenhum sistema encontrado.</span>
+        }
         onChange={(value) => setSystem(value)}
       />
       <Combobox
