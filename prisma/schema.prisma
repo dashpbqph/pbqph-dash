@@ -9,11 +9,12 @@ datasource db {
 
 model System {
     id        String   @id @default(cuid())
-    name      String   @unique
-    code      String
+    name      String
+    code      String   @unique
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    categories Category[]
     indicators Indicator[]
 
     @@index([name])
@@ -26,6 +27,7 @@ model Category {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    systems    System[]
     indicators Indicator[]
 
     @@index([name])

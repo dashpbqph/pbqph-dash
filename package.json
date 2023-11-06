@@ -80,5 +80,8 @@
       "path": "./node_modules/cz-emoji-conventional"
     }
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "packageManager": "pnpm@8.6.9"
 }
