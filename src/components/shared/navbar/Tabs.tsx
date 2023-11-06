@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 export default function Tabs() {
   const pathname = usePathname()
+
   return (
     <div className="flex flex-col items-end space-x-4 sm:flex-row">
       <Link

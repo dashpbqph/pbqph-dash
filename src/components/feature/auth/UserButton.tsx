@@ -1,7 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, Settings } from 'lucide-react'
+import { UserRole } from '@prisma/client'
+import { LogOut, Settings, UserCog } from 'lucide-react'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 
@@ -22,7 +24,7 @@ interface UserButtonProps {
 
 export default function UserButton({ session }: UserButtonProps) {
   const router = useRouter()
-  const { image: avatar, name, username } = session.user
+  const { image: avatar, name, username, role } = session.user
 
   async function handleLogout() {
     await signOut({ redirect: false })
@@ -54,9 +56,20 @@ export default function UserButton({ session }: UserButtonProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="flex space-x-4 py-4 transition-all hover:pl-3">
-          <Settings className="h-5 w-5" />
-          <span>Gerenciar Conta</span>
+          <UserCog className="h-5 w-5" />
+          <span>Editar Conta</span>
         </DropdownMenuItem>
+        {(role === UserRole.OWNER || role === UserRole.ADMIN) && (
+          <DropdownMenuItem
+            className="flex space-x-4 py-4 transition-all hover:pl-3"
+            asChild
+          >
+            <Link href="/admin/usuarios">
+              <Settings className="h-5 w-5" />
+              <span>Administração</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onClick={() => handleLogout()}
           className="flex space-x-4 py-4 transition-all hover:pl-3"
