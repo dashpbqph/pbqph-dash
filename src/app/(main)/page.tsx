@@ -1,10 +1,10 @@
-import { StatCard } from '@/components/feature/cards'
-import { ChartLayout } from '@/components/feature/chart'
+import { StatCard } from '@/components/dashboard/cards'
+import { ChartLayout } from '@/components/dashboard/charts'
 
 export default function Home() {
   return (
-    <div className="flex w-full flex-1 flex-col space-y-3">
-      <div className="flex h-44 w-full space-x-3">
+    <div className="flex w-full flex-1 flex-col sm:space-y-3">
+      <div className="hidden h-44 w-full space-x-3 sm:flex">
         <StatCard
           className="w-1/2 rounded-md bg-white sm:w-1/4"
           title="Estatística 1"

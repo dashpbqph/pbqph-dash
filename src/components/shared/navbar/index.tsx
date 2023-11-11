@@ -1,7 +1,7 @@
-import AuthButton from './AuthButton'
-import Logo from './Logo'
-import Navbar from './Navbar'
-import Tabs from './Tabs'
-import ThemeButton from './ThemeButton'
-
-export { Navbar, AuthButton, Tabs, ThemeButton, Logo }
+export { default as AuthButton } from './AuthButton'
+export { default as Logo } from './Logo'
+export { default as Navbar } from './Navbar'
+export { default as Tabs } from './Tabs'
+export { default as ThemeSwitchButton } from './ThemeSwitchButton'
+export { UserButton } from './UserButton'
+export { LoginButton } from './LoginButton'

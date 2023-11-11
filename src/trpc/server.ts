@@ -3,7 +3,6 @@ import { type AppRouter } from '@/server/api/root'
 import {
   createTRPCProxyClient,
   loggerLink,
-  // eslint-disable-next-line camelcase
   unstable_httpBatchStreamLink,
 } from '@trpc/client'
 

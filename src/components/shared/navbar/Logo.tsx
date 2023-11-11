@@ -9,19 +9,23 @@ export default function Logo() {
     >
       <Image
         src="/logo.svg"
+        placeholder="blur"
+        blurDataURL="/logo.svg"
         alt="Logo"
         fill
         style={{ objectFit: 'contain' }}
+        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
         className="hidden sm:block"
-        priority
       />
       <Image
         src="/logo-icon-only.svg"
+        placeholder="blur"
+        blurDataURL="/logo.svg"
         alt="Logo"
         fill
         style={{ objectFit: 'contain' }}
+        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
         className="sm:hidden"
-        priority
       />
     </Link>
   )

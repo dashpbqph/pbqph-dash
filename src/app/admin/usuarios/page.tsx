@@ -1,6 +1,6 @@
 import { Users } from 'lucide-react'
 
-import { AdminUsersTable } from '@/components/feature/tables/admin'
+import { UsersTable } from '@/components/admin/users'
 
 export default function AdminUsers() {
   return (
@@ -11,7 +11,7 @@ export default function AdminUsers() {
           Administração de Usuários
         </span>
       </div>
-      <AdminUsersTable />
+      <UsersTable />
     </>
   )
 }

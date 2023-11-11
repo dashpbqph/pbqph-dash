@@ -4,8 +4,8 @@ export default function UserAvatar({
   avatar,
   name,
 }: {
-  avatar?: string | null
-  name?: string | null
+  avatar: string | null
+  name: string
 }) {
   return (
     <div className="relative flex h-11 w-11 overflow-hidden rounded-full">
@@ -13,9 +13,11 @@ export default function UserAvatar({
         <Image
           src={avatar}
           alt="imagem do usuário"
-          style={{ objectFit: 'contain' }}
+          placeholder="blur"
+          blurDataURL={avatar}
           fill
-          priority
+          style={{ objectFit: 'contain' }}
+          sizes="(max-width: 768px) 20vw, 10vw"
         />
       ) : (
         <span className="flex w-full items-center justify-center">

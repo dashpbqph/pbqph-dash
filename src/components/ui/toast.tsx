@@ -93,13 +93,13 @@ const ToastTitle = React.forwardRef<
     status: 'error' | 'success' | 'info'
   }
 >(({ className, status, ...props }, ref) => (
-  <div className="flex space-x-1 whitespace-nowrap">
+  <div className="flex items-center space-x-1.5 whitespace-nowrap">
     {status === 'error' ? (
-      <XCircle className="mr-2 inline h-5 w-5 text-red-700" />
+      <XCircle className="inline h-4 w-4 text-red-700" />
     ) : status === 'success' ? (
-      <CheckCircle className="mr-2 inline h-5 w-5 text-green-700" />
+      <CheckCircle className="inline h-4 w-4 text-green-700" />
     ) : status === 'info' ? (
-      <Info className="mr-2 inline h-5 w-5 text-blue-700" />
+      <Info className="inline h-4 w-4 text-blue-700" />
     ) : null}
     <ToastPrimitives.Title
       ref={ref}

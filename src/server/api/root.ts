@@ -1,6 +1,7 @@
 import { categoryRouter } from '@/server/api/routers/category'
 import { indicatorRouter } from '@/server/api/routers/indicator'
 import { systemRouter } from '@/server/api/routers/system'
+import { userRouter } from '@/server/api/routers/user'
 import { createTRPCRouter } from '@/server/api/trpc'
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   indicator: indicatorRouter,
   system: systemRouter,
+  user: userRouter,
 })
 
 // export type definition of API

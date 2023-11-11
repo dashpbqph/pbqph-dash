@@ -68,12 +68,10 @@ export function Combobox({
                 value={content.value}
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? '' : currentValue)
-                  onChange(
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    contentList.find(
-                      (c) => c.value.toLowerCase() === currentValue,
-                    )!.value,
+                  const selected = contentList.find(
+                    (c) => c.value.toLowerCase() === currentValue,
                   )
+                  if (selected) onChange(selected.value)
                   setOpen(false)
                 }}
               >

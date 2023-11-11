@@ -80,8 +80,6 @@ const CommandEmpty = React.forwardRef<
     <div
       ref={ref}
       className="py-6 text-center text-sm"
-      // eslint-disable-next-line react/no-unknown-property
-      cmdk-empty=""
       role="presentation"
       {...props}
     />

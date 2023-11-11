@@ -1,4 +1,9 @@
-import { AuthButton, Logo, Tabs, ThemeButton } from '@/components/shared/navbar'
+import {
+  AuthButton,
+  Logo,
+  Tabs,
+  ThemeSwitchButton,
+} from '@/components/shared/navbar'
 
 export default function Navbar() {
   return (
@@ -6,7 +11,7 @@ export default function Navbar() {
       <Logo />
       <div className="flex flex-col items-end space-y-2">
         <div className="flex items-center space-x-4">
-          <ThemeButton />
+          <ThemeSwitchButton />
           <AuthButton />
         </div>
         <Tabs />

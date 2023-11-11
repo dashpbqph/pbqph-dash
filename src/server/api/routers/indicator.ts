@@ -23,7 +23,8 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  getSecretMessage: protectedProcedure.query(() => {
+  getSecretMessage: protectedProcedure.query(({ ctx }) => {
+    console.log(ctx.session)
     return 'you can now see this secret message!'
   }),
 })

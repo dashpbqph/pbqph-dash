@@ -6,12 +6,10 @@ import { api } from '@/trpc/react'
 import { Combobox } from '@/components/ui/combobox'
 
 export default function IndicatorFilters() {
-  // states
   const [system, setSystem] = useState<string | null>(null)
   const [category, setCategory] = useState<string | null>(null)
   const [indicator, setIndicator] = useState<string | null>(null)
 
-  // queries
   const { data: systems } = api.system.getAll.useQuery()
   const { data: categories } = api.category.getAllBySystem.useQuery(
     {
@@ -31,7 +29,6 @@ export default function IndicatorFilters() {
     },
   )
 
-  // content lists
   const systemContentList = (systems ?? []).map((system) => ({
     value: system.code,
     label: system.name,

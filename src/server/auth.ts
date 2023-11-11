@@ -40,7 +40,7 @@ declare module 'next-auth' {
  */
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
-  session: { strategy: 'jwt' },
+  session: { strategy: 'jwt', maxAge: 24 * 60 * 60 }, // session expires in 1 day
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -80,13 +80,11 @@ export const authOptions: NextAuthOptions = {
         })
         if (!user) throw new Error('Invalid Credentials')
 
-        // const isValidPassword = await bcrypt.compare(
-        //   cred.password,
-        //   user.password,
-        // )
-        // TODO: implement bcrypt in create user
-        const isValidPassword = cred.password === user.password
-        if (!isValidPassword) throw new Error('Invalid Password')
+        const isValidPassword = await bcrypt.compare(
+          cred.password,
+          user.password,
+        )
+        if (!isValidPassword) throw new Error('Invalid Credentials')
 
         return {
           id: user.id,

@@ -1,4 +1,4 @@
-import { IndicatorFilters } from '@/components/shared/indicator'
+import { IndicatorFilters } from '@/components/dashboard/filters'
 
 export default function MainLayout({
   children,

@@ -1,8 +1,14 @@
 import { getServerAuthSession } from '@/server/auth'
+import { api } from '@/trpc/server'
 
-import { LoginButton, UserButton } from '@/components/feature/auth'
+import { LoginButton, UserButton } from '@/components/shared/navbar'
 
 export default async function AuthButton() {
   const session = await getServerAuthSession()
-  return session ? <UserButton session={session} /> : <LoginButton />
+  const user = session
+    ? await api.user.getUserByUsername.query({
+        username: session.user.username,
+      })
+    : null
+  return user ? <UserButton user={user} /> : <LoginButton />
 }

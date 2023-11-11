@@ -7,25 +7,18 @@ await import('./src/env.mjs')
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.pravatar.cc',
+        hostname: '**', // Match all domains
         port: '',
-        pathname: '/**',
+        pathname: '/**', // Match all paths
       },
       {
         protocol: 'https',
-        hostname: 'github.com',
+        hostname: 'utfs.io',
         port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'api.dicebear.com',
-        port: '',
-        pathname: '/**',
+        pathname: '/f/**', // Match all paths
       },
     ],
   },
