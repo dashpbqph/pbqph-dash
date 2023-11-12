@@ -47,7 +47,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('justify-between', className)}
+          className={cn('justify-between px-6', className)}
         >
           {value
             ? contentList.find(

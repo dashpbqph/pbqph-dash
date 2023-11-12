@@ -4,27 +4,27 @@ import { ChartLayout } from '@/components/dashboard/charts'
 export default function Home() {
   return (
     <div className="flex w-full flex-1 flex-col sm:space-y-3">
-      <div className="hidden h-44 w-full space-x-3 sm:flex">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
-          className="w-1/2 rounded-md bg-white sm:w-1/4"
           title="Estatística 1"
+          information="+20,1% desde o último mês"
           value={1.2}
           important
         />
         <StatCard
-          className="w-1/2 rounded-md bg-white sm:w-1/4"
           title="Estatística 2"
+          information="+20,1% desde o último mês"
           value={3.4}
           important
         />
         <StatCard
-          className="w-1/2 rounded-md bg-white sm:w-1/4"
           title="Estatística 3"
+          information="+20,1% desde o último mês"
           value={5.6}
         />
         <StatCard
-          className="w-1/2 rounded-md bg-white sm:w-1/4"
           title="Estatística 4"
+          information="+20,1% desde o último mês"
           value={7.8}
         />
       </div>
