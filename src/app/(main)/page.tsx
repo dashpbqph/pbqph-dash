@@ -1,5 +1,4 @@
-import { StatCard } from '@/components/dashboard/cards'
-import { ChartLayout } from '@/components/dashboard/charts'
+import { ChartCard, StatCard } from '@/components/dashboard/cards'
 
 export default function Home() {
   return (
@@ -7,28 +6,34 @@ export default function Home() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
           title="Estatística 1"
-          information="+20,1% desde o último mês"
           value={1.2}
+          information="+20,1% desde o último mês"
           important
         />
         <StatCard
           title="Estatística 2"
-          information="+20,1% desde o último mês"
           value={3.4}
+          information="+20,1% desde o último mês"
           important
         />
         <StatCard
           title="Estatística 3"
-          information="+20,1% desde o último mês"
           value={5.6}
+          information="+20,1% desde o último mês"
         />
         <StatCard
           title="Estatística 4"
-          information="+20,1% desde o último mês"
           value={7.8}
+          information="+20,1% desde o último mês"
         />
       </div>
-      <ChartLayout />
+      <ChartCard
+        title="Título do gráfico"
+        subtitle="Subtítulo do gráfico"
+        description="Descrição do Gráfico"
+      >
+        Gráfico
+      </ChartCard>
     </div>
   )
 }

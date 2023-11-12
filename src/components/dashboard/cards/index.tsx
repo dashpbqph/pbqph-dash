@@ -1,3 +1,4 @@
+import ChartCard from './ChartCard'
 import StatCard from './StatCard'
 
-export { StatCard }
+export { ChartCard, StatCard }
