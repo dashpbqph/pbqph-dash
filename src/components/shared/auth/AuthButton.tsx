@@ -1,7 +1,7 @@
 import { getServerAuthSession } from '@/server/auth'
 import { api } from '@/trpc/server'
 
-import { LoginButton, UserButton } from '@/components/shared/navbar'
+import { LoginButton, UserButton } from '@/components/shared/auth'
 
 export default async function AuthButton() {
   const session = await getServerAuthSession()

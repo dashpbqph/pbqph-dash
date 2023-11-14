@@ -1,23 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image'
 import { Camera } from 'lucide-react'
-import { UseFormReturn } from 'react-hook-form'
 
 import { toast } from '@/components/ui/use-toast'
 
 type EditableAvatarProps = {
-  form: UseFormReturn<
-    {
-      firstName: string
-      email: string
-      image: File
-      lastName?: string | undefined
-      password: string
-      confirmPassword: string
-    },
-    any,
-    undefined
-  >
+  form: any
   userAvatar: string | null
 }
 

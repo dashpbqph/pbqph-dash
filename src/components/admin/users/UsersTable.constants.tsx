@@ -3,7 +3,7 @@ import { api as server } from '@/trpc/server'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, User } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {

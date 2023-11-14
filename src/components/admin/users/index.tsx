@@ -1,2 +1,2 @@
-export { default as UserCreateForm } from './UserCreateForm'
+export { UserCreateButton } from './UserCreateButton'
 export { default as UsersTable } from './UsersTable'

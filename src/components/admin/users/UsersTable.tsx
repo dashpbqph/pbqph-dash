@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table'
 
 import { cn } from '@/lib/utils'
+import { UserCreateButton } from '@/components/admin/users'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -24,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import UserCreateForm from './UserCreateForm'
 import { getColumns } from './UsersTable.constants'
 
 export default function UsersTable() {
@@ -59,7 +59,7 @@ export default function UsersTable() {
           }
           className="max-w-sm"
         />
-        <UserCreateForm refetchUsers={refetch} />
+        <UserCreateButton refetchUsers={refetch} />
       </div>
       <div className="flex-1 overflow-hidden rounded-md border bg-secondary">
         <Table className="bg-white">

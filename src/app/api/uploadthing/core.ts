@@ -8,7 +8,11 @@ const f = createUploadthing()
 
 export const fileRouter = {
   imageUploader: f(['image'])
-    .input(z.object({ username: z.string() }))
+    .input(
+      z.object({
+        username: z.string(),
+      }),
+    )
     .middleware(async ({ input }) => {
       const session = await getServerAuthSession()
       if (!session) throw new Error('Unauthorized')
