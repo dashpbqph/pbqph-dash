@@ -20,7 +20,10 @@ export const ChartTooltipRow = ({
 }: ChartTooltipRowProps) => (
   <div className="flex items-center justify-between space-x-8">
     <div className="flex items-center space-x-2">
-      <span className={cn('h-2 w-2 shrink-0 rounded-full', `bg-[${color}]`)} />
+      <span
+        className="h-2 w-2 shrink-0 rounded-full"
+        style={{ backgroundColor: color }}
+      />
       <p className="whitespace-nowrap text-right text-[#687182]">{name}</p>
     </div>
     <p className="whitespace-nowrap text-right font-medium tabular-nums">
