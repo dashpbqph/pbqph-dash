@@ -114,7 +114,6 @@ export default function UserCreateForm({ onClose }: { onClose: () => void }) {
     }
 
     if (userCreateForm.getValues('image').size === 0) setImagePlaceholder()
-    console.log(userCreateForm.getValues('image'))
   }, [userCreateForm])
 
   async function addImage() {

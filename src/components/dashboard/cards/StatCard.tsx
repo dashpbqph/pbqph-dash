@@ -6,7 +6,6 @@ type StatCardProps = {
   information?: string
   value: number
   className?: string
-  important?: boolean
 }
 
 export default function StatCard({
@@ -14,16 +13,9 @@ export default function StatCard({
   title,
   information,
   value,
-  important = false,
 }: StatCardProps) {
   return (
-    <Card
-      data-important={important}
-      className={cn(
-        'hidden data-[important=false]:hidden sm:block data-[important=false]:md:block',
-        className,
-      )}
-    >
+    <Card className={cn('hidden md:block', className)}>
       <CardHeader className="space-y-0 pb-2">
         <CardTitle className="text-md font-medium">{title}</CardTitle>
       </CardHeader>
