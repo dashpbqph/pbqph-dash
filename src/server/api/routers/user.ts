@@ -66,7 +66,7 @@ export const userRouter = createTRPCRouter({
         },
       })
 
-      if (!user) throw new Error('User not found')
+      if (!user) return null
 
       return {
         avatar: user.image,

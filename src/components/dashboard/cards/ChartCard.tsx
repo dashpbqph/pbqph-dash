@@ -35,7 +35,7 @@ export default function ChartCard({
         <div className="order-last mt-3 hidden h-20 w-full shrink-0 items-center justify-center bg-red-300 text-primary md:order-none md:mt-0 md:h-auto md:w-1/3 lg:w-1/4">
           {description}
         </div>
-        <div className="flex w-full flex-1 flex-col items-center justify-center text-primary">
+        <div className="flex min-h-[400px] w-full flex-1 flex-col items-center justify-center text-primary">
           {children}
         </div>
       </CardContent>

@@ -29,8 +29,8 @@ export default function Home() {
       <ChartCard
         title="NPNC(R,A)- Inclusão anual de novas empresas construtoras certificadas pelo SiAC - Execução de
         Obras por região do País"
-        subtitle="Objetiva acompanhar, a cada ano, a tendência de variação da quantidade de novas empresas
-        construtoras certificadas no SiAC – Execução de Obras, por região do País."
+        subtitle="Objetiva acompanhar, a cada ano (A), a tendência de variação da quantidade de novas empresas
+        construtoras certificadas no SiAC – Execução de Obras, por região (R) do País."
         description="Descrição do Gráfico"
       >
         <LineChart />

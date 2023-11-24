@@ -24,7 +24,7 @@ type LoginFormProps = {
 }
 
 export default function LoginForm({ onClose }: LoginFormProps) {
-  const { isLoading, login, errorMessage } = useLogin()
+  const { isLoading, login } = useLogin()
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -36,12 +36,11 @@ export default function LoginForm({ onClose }: LoginFormProps) {
 
   async function onSubmitLoginForm(values: z.infer<typeof loginSchema>) {
     const response = await login(values)
-
-    if (response) {
-      toast({ title: 'Login com sucesso', status: 'success' })
+    if (response.ok) {
       onClose()
+      toast({ title: 'Login com sucesso', status: 'success' })
     } else {
-      toast({ title: errorMessage, status: 'error' })
+      toast({ title: response.error, status: 'error' })
     }
   }
 

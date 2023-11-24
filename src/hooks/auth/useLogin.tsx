@@ -3,7 +3,6 @@ import { signIn } from 'next-auth/react'
 
 export default function useLogin() {
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
 
   const login = async (credentials: { username: string; password: string }) => {
     try {
@@ -12,25 +11,31 @@ export default function useLogin() {
       const response = await signIn('credentials', {
         ...credentials,
         redirect: false,
-      }).finally(() => setIsLoading(false))
+      })
 
       if (response?.error === 'Invalid Credentials') {
-        setErrorMessage('Usuário ou senha incorretos')
-        return false
+        setIsLoading(false)
+        return { ok: false, error: 'Usuário ou senha incorretos' }
       }
 
       if (response?.error) {
-        setErrorMessage('Erro ao fazer login. Tente novamente mais tarde.')
-        return false
+        setIsLoading(false)
+        return {
+          ok: false,
+          error: 'Erro ao fazer login. Tente novamente mais tarde.',
+        }
       }
     } catch (error) {
       setIsLoading(false)
-      setErrorMessage('Erro ao fazer login. Tente novamente mais tarde.')
-      return false
+      return {
+        ok: false,
+        error: 'Erro ao fazer login. Tente novamente mais tarde.',
+      }
     }
 
-    return true
+    setIsLoading(false)
+    return { ok: true }
   }
 
-  return { isLoading, login, errorMessage }
+  return { isLoading, login }
 }

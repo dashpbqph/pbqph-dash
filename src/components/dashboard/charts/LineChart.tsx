@@ -25,7 +25,7 @@ const pageData = [
   {
     date: '2019',
     'NPNC-Norte': 200,
-    'NPNC-Nordeste': 78,
+    'NPNC-Nordeste': -78,
     'NPNC-Centro-Oeste': 140,
     'NPNC-Sul': -83,
     'NPNC-Sudeste': 70,
@@ -36,15 +36,15 @@ const pageData = [
     'NPNC-Nordeste': 108,
     'NPNC-Centro-Oeste': 120,
     'NPNC-Sul': -63,
-    'NPNC-Sudeste': 50,
+    'NPNC-Sudeste': -40,
   },
   {
     date: '2021',
     'NPNC-Norte': 120,
-    'NPNC-Nordeste': 138,
+    'NPNC-Nordeste': 118,
     'NPNC-Centro-Oeste': 160,
     'NPNC-Sul': -43,
-    'NPNC-Sudeste': 30,
+    'NPNC-Sudeste': -100,
   },
   {
     date: '2022',
@@ -76,7 +76,7 @@ export const LineChart = () => {
   return (
     <ResponsiveContainer width="100%" height="100%" className="flex-1">
       <BaseLineChart width={500} height={300} data={pageData}>
-        <CartesianGrid strokeDasharray="4 4" />
+        <CartesianGrid strokeDasharray="5 5" />
         <XAxis
           dataKey="date"
           padding={{ left: 20, right: 20 }}
@@ -89,14 +89,14 @@ export const LineChart = () => {
             style: {
               textAnchor: 'middle',
               fontSize: '17px',
-              color: '#687182',
-              fontWeight: 400,
+              fill: '#4f5663',
+              fontWeight: 500,
             },
             angle: -90,
             position: 'left',
             offset: -5,
           }}
-          tick={{ stroke: '#687182', strokeWidth: 0.7, fontSize: 14 }}
+          tick={{ stroke: '#687182', strokeWidth: 0.4, fontSize: 14 }}
           axisLine={false}
         />
         <Tooltip
@@ -114,7 +114,7 @@ export const LineChart = () => {
           content={(props) => {
             const { payload } = props
             return (
-              <ul className="flex flex-col gap-4 text-xs md:flex-row md:justify-between">
+              <ul className="mt-1.5 flex flex-col gap-4 text-xs font-medium text-[#687182] md:flex-row md:justify-between">
                 <div className="flex gap-3 md:w-1/2">
                   <span>Legenda:</span>
                   <div className="flex flex-1 flex-wrap gap-3">
@@ -150,12 +150,12 @@ export const LineChart = () => {
         {Object.entries(mapColors).map(([key, value]) => (
           <Line
             key={key}
-            type="monotone"
+            // type="monotone"
             dataKey={key}
             stroke={value.color}
             strokeWidth={3}
             dot={{ fill: value.color, r: 5 }}
-            activeDot={{ fill: value.color, stroke: value.color, r: 6 }}
+            activeDot={{ fill: value.color, stroke: value.color, r: 6.5 }}
           />
         ))}
       </BaseLineChart>

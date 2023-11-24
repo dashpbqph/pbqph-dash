@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from 'react'
 
-import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 
 export const ChartTooltipFrame = ({ children }: { children: ReactNode }) => (
