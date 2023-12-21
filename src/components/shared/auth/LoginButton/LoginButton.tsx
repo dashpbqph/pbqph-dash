@@ -19,7 +19,7 @@ export default function LoginButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-md w-full ring-1 ring-white">
+        <Button variant="ghost" className="text-md w-fit ring-1 ring-white">
           Entrar
         </Button>
       </DialogTrigger>

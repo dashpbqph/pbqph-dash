@@ -46,6 +46,11 @@ export default function UsersTable() {
       sorting,
       columnFilters,
     },
+    initialState: {
+      pagination: {
+        pageSize: 9,
+      },
+    },
   })
 
   return (
@@ -61,7 +66,10 @@ export default function UsersTable() {
         />
         <UserCreateButton refetchUsers={refetch} />
       </div>
-      <div className="flex-1 overflow-hidden rounded-md border bg-secondary">
+      <div
+        className="overflow-hidden rounded-md border bg-secondary data-[empty=true]:flex-1"
+        data-empty={!data?.length}
+      >
         <Table className="bg-white">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
