@@ -1,5 +1,7 @@
 import { Building } from 'lucide-react'
 
+import { CompaniesTable } from '@/components/admin/companies'
+
 export default function AdminIndicator() {
   return (
     <>
@@ -9,6 +11,7 @@ export default function AdminIndicator() {
           Administração de Construtoras
         </span>
       </div>
+      <CompaniesTable />
     </>
   )
 }

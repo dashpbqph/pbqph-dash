@@ -95,6 +95,9 @@ dependencies:
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0
+  jotai:
+    specifier: ^2.6.1
+    version: 2.6.1(@types/react@18.2.20)(react@18.2.0)
   lucide-react:
     specifier: ^0.299.0
     version: 0.299.0(react@18.2.0)
@@ -4544,6 +4547,22 @@ packages:
 
   /jose@4.15.4:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
+    dev: false
+
+  /jotai@2.6.1(@types/react@18.2.20)(react@18.2.0):
+    resolution: {integrity: sha512-GLQtAnA9iEKRMXnyCjf1azIxfQi5JausX2EI5qSlb59j4i73ZEyV/EXPDEAQj4uQNZYEefi3degv/Pw3+L/Dtg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.20
+      react: 18.2.0
     dev: false
 
   /js-tokens@4.0.0:

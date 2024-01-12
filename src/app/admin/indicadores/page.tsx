@@ -1,5 +1,7 @@
 import { PieChart } from 'lucide-react'
 
+import { IndicatorsTable } from '@/components/admin/indicators'
+
 export default function AdminIndicator() {
   return (
     <>
@@ -9,6 +11,7 @@ export default function AdminIndicator() {
           Administração de Indicadores
         </span>
       </div>
+      <IndicatorsTable />
     </>
   )
 }

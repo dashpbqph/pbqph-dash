@@ -9,6 +9,15 @@ export const indicatorRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.indicator.findMany()
   }),
+  getIndicatorById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.indicator.findUnique({
+        where: {
+          id: input.id,
+        },
+      })
+    }),
   getAllBySystemAndCategory: publicProcedure
     .input(z.object({ systemCode: z.string(), categoryName: z.string() }))
     .query(({ ctx, input }) => {

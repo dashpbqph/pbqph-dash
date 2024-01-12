@@ -1,31 +1,30 @@
 'use client'
 
-import { useState } from 'react'
 import { api } from '@/trpc/react'
+import { useAtom } from 'jotai'
 
+import { filtersAtom } from '@/atoms/filters'
 import { Combobox } from '@/components/ui/combobox'
 
 export default function IndicatorFilters() {
-  const [system, setSystem] = useState<string | null>(null)
-  const [category, setCategory] = useState<string | null>(null)
-  const [indicator, setIndicator] = useState<string | null>(null)
+  const [filters, setFilters] = useAtom(filtersAtom)
 
   const { data: systems } = api.system.getAll.useQuery()
   const { data: categories } = api.category.getAllBySystem.useQuery(
     {
-      systemCode: system ?? '',
+      systemCode: filters.system ?? '',
     },
     {
-      enabled: !!system,
+      enabled: !!filters.system,
     },
   )
   const { data: indicators } = api.indicator.getAllBySystemAndCategory.useQuery(
     {
-      systemCode: system ?? '',
-      categoryName: category ?? '',
+      systemCode: filters.system ?? '',
+      categoryName: filters.category ?? '',
     },
     {
-      enabled: !!system && !!category,
+      enabled: !!filters.system && !!filters.category,
     },
   )
 
@@ -52,7 +51,7 @@ export default function IndicatorFilters() {
         placeholderEmpty={
           <span className="font-semibold">Nenhum sistema encontrado.</span>
         }
-        onChange={(value) => setSystem(value)}
+        onChange={(value) => setFilters({ ...filters, system: value })}
       />
       <Combobox
         className="h-8 w-full"
@@ -65,7 +64,7 @@ export default function IndicatorFilters() {
             <span>Certifique-se de ter selecionado um sistema.</span>
           </div>
         }
-        onChange={(value) => setCategory(value)}
+        onChange={(value) => setFilters({ ...filters, category: value })}
       />
       <Combobox
         className="h-8 w-full"
@@ -80,7 +79,7 @@ export default function IndicatorFilters() {
             </span>
           </div>
         }
-        onChange={(value) => setIndicator(value)}
+        onChange={(value) => setFilters({ ...filters, indicator: value })}
       />
     </div>
   )
