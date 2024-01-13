@@ -23,12 +23,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTablePagination } from './data-table-pagination'
 
 interface DataTableProps<TData, TValue> {
   data: TData[]
   columns: ColumnDef<TData, TValue>[]
   toolbar: ElementType
-  pagination: ElementType
+  subject: string
   refetchFn: () => void
 }
 
@@ -36,7 +37,7 @@ export default function DataTable<TData, TValue>({
   data,
   columns,
   toolbar: Toolbar,
-  pagination: Pagination,
+  subject,
   refetchFn,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({})
@@ -127,7 +128,7 @@ export default function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination table={table} />
+      <DataTablePagination table={table} subject={subject} />
     </div>
   )
 }

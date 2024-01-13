@@ -4,7 +4,6 @@ import { api } from '@/trpc/react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import DataTable from '@/components/admin/DataTable'
-import { DataTablePagination } from './UsersPagination'
 import { getColumns } from './UsersTable.constants'
 import { DataTableToolbar } from './UsersToolbar'
 
@@ -18,7 +17,7 @@ export default function UsersTable() {
         data={data}
         columns={columns as ColumnDef<(typeof data)[number], typeof columns>[]}
         toolbar={DataTableToolbar}
-        pagination={DataTablePagination}
+        subject="usuário"
         refetchFn={refetch}
       />
     )

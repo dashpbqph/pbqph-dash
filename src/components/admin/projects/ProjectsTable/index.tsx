@@ -4,7 +4,6 @@ import { api } from '@/trpc/react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import DataTable from '@/components/admin/DataTable'
-import { DataTablePagination } from './ProjectsPagination'
 import { getColumns } from './ProjectsTable.constants'
 import { DataTableToolbar } from './ProjectsToolbar'
 
@@ -18,7 +17,7 @@ export default function IndicatorsTable() {
         data={data}
         columns={columns as ColumnDef<(typeof data)[number], typeof columns>[]}
         toolbar={DataTableToolbar}
-        pagination={DataTablePagination}
+        subject="obra"
         refetchFn={refetch}
       />
     )
