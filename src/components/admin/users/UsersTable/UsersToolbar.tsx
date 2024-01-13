@@ -15,14 +15,14 @@ export function DataTableToolbar<TData>({
   refetchFn,
 }: DataTableToolbarProps<TData>) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-3">
       <Input
         placeholder="Buscar por nome..."
         value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
         onChange={(event) =>
           table.getColumn('name')?.setFilterValue(event.target.value)
         }
-        className="h-8 w-[150px] lg:w-[250px]"
+        className="h-9 flex-1 sm:h-8 sm:w-[150px] lg:w-[250px]"
       />
       <UserCreateButton refetchUsers={refetchFn} />
     </div>

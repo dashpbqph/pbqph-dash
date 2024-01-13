@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { UserPlus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -28,7 +29,10 @@ export default function UserCreateButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Criar usuário</Button>
+        <Button variant="outline">
+          <UserPlus className="h-5 w-5 sm:hidden" />
+          <span className="hidden sm:block">Criar usuário</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
         <DialogHeader className="text-left">

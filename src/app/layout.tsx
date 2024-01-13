@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider headers={headers()}>
-          <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-[#005192] to-[#007577] p-6 text-white dark:bg-black dark:from-black dark:to-black">
+          <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-[#005192] to-[#007577] p-3 text-white dark:bg-black dark:from-black dark:to-black sm:p-6">
             <div className="flex w-full flex-1 flex-col space-y-3">
               <Navbar />
               {children}
