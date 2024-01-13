@@ -24,7 +24,7 @@ export function DataTablePagination<TData>({
         {table.getFilteredRowModel().rows.length} {subject}s.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="flex w-[100px] items-center justify-center text-sm">
           Página {table.getState().pagination.pageIndex + 1} de{' '}
           {table.getPageCount() !== 0 ? table.getPageCount() : 1}
         </div>
