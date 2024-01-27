@@ -1,17 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { api as server } from '@/trpc/server'
+import { RouterOutputs } from '@/trpc/shared'
 import { UserCog } from 'lucide-react'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import UserSelfEditForm from './UserSelfEditForm'
 
-type User = Awaited<ReturnType<typeof server.user.getUserByUsername.query>>
-
 type UserSelfEditProps = {
-  user: User
+  user: Awaited<RouterOutputs['user']['getUserByUsername']>
 }
 
 export default function UserSelfEditButton({ user }: UserSelfEditProps) {

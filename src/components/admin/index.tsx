@@ -1,3 +1,2 @@
-import AdminSidebar from './AdminSidebar'
-
-export { AdminSidebar }
+export { default as AdminPageHeader } from './AdminPageHeader'
+export { default as AdminSidebar } from './AdminSidebar'

@@ -42,13 +42,13 @@ const mapUserRoleToLabel = (role: UserRole) => {
       return 'Equipe'
     case UserRole.ADMIN:
       return 'Administrador'
-    case UserRole.OWNER:
-      return 'Proprietário'
+    case UserRole.SUPER_ADMIN:
+      return 'Super Administrador'
   }
 }
 
-function isAdminOrOwner(role: UserRole) {
-  return role === UserRole.OWNER || role === UserRole.ADMIN
+function isAdmin(role: UserRole) {
+  return role === UserRole.SUPER_ADMIN || role === UserRole.ADMIN
 }
 
-export { isAdminOrOwner, generatePassword, mapUserRoleToLabel }
+export { isAdmin, generatePassword, mapUserRoleToLabel }

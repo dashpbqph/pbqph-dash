@@ -1,1 +1,1 @@
-export { default as CompaniesTable } from './CompaniesTable'
+export { CompaniesAdminTable } from './CompaniesAdminTable'

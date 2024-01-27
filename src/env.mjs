@@ -14,6 +14,12 @@ export const env = createEnv({
         (str) => !str.includes('YOUR_MYSQL_URL_HERE'),
         'You forgot to change the default database URL',
       ),
+    OPENAI_API_KEY: z
+      .string()
+      .refine(
+        (str) => !str.includes('YOUR_OPENAI_API_KEY_HERE'),
+        'You forgot to change the default openai api key',
+      ),
     UPLOADTHING_SECRET: z
       .string()
       .refine(
@@ -50,6 +56,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

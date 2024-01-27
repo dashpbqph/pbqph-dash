@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { api as server } from '@/trpc/server'
+import { RouterOutputs } from '@/trpc/shared'
 import { Settings } from 'lucide-react'
 
 import { UserSelfEditButton } from '@/components/shared/auth'
@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { isAdminOrOwner } from '@/utils/auth'
+import { isAdmin } from '@/utils/auth'
 import UserLogoutButton from './UserLogoutButton'
 
 export function UserAvatar({
@@ -46,10 +46,8 @@ export function UserAvatar({
   )
 }
 
-type User = Awaited<ReturnType<typeof server.user.getUserByUsername.query>>
-
 type UserButtonProps = {
-  user: User
+  user: Awaited<RouterOutputs['user']['getUserByUsername']>
 }
 
 export default function UserButton({ user }: UserButtonProps) {
@@ -76,7 +74,7 @@ export default function UserButton({ user }: UserButtonProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <UserSelfEditButton user={user} />
-        {isAdminOrOwner(role) && (
+        {isAdmin(role) && (
           <DropdownMenuItem
             className="flex space-x-4 py-4 transition-all hover:pl-3"
             asChild

@@ -1,17 +1,17 @@
+import { Suspense } from 'react'
 import { Building } from 'lucide-react'
 
-import { CompaniesTable } from '@/components/admin/companies'
+import { AdminPageHeader } from '@/components/admin'
+import { CompaniesAdminTable } from '@/components/admin/companies'
+import SkeletonTable from '@/components/shared/DataTable/skeleton'
 
 export default function AdminIndicator() {
   return (
     <>
-      <div className="item flex items-start gap-4">
-        <Building className="h-6 w-6" />
-        <span className="text-2xl font-semibold leading-none">
-          Administração de Construtoras
-        </span>
-      </div>
-      <CompaniesTable />
+      <AdminPageHeader title="Administração de Construtoras" icon={Building} />
+      <Suspense fallback={<SkeletonTable hasCreateButton />}>
+        <CompaniesAdminTable />
+      </Suspense>
     </>
   )
 }

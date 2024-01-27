@@ -1,5 +1,6 @@
 'use client'
 
+import { RouterOutputs } from '@/trpc/shared'
 import {
   LineChart as BaseLineChart,
   CartesianGrid,
@@ -72,7 +73,13 @@ const mapColors = {
   'NPNC-Sudeste': { color: '#259F46' },
 }
 
-export const LineChart = () => {
+type Indicator = RouterOutputs['indicator']['getIndicatorById']
+
+type LineChartProps = {
+  indicator: Indicator
+}
+
+export const LineChart = ({ indicator }: LineChartProps) => {
   return (
     <ResponsiveContainer width="100%" height="100%" className="flex-1">
       <BaseLineChart width={500} height={300} data={pageData}>
@@ -84,18 +91,7 @@ export const LineChart = () => {
         />
         <YAxis
           padding={{ top: 20, bottom: 20 }}
-          label={{
-            value: 'NPNC(R,A)',
-            style: {
-              textAnchor: 'middle',
-              fontSize: '17px',
-              fill: '#4f5663',
-              fontWeight: 500,
-            },
-            angle: -90,
-            position: 'left',
-            offset: -5,
-          }}
+          width={36}
           tick={{ stroke: '#687182', strokeWidth: 0.4, fontSize: 14 }}
           axisLine={false}
         />
@@ -138,10 +134,7 @@ export const LineChart = () => {
                 </div>
                 <div className="flex gap-1 md:w-[300px] lg:w-[400px]">
                   <span>Fonte:</span>
-                  <span>
-                    Organismos de Avaliação da Conformidade (OAC) acreditados no
-                    INMETRO e autorizados a atuar no SiAC – Execução de Obras
-                  </span>
+                  <span>{indicator?.source}</span>
                 </div>
               </ul>
             )

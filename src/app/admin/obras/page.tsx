@@ -1,17 +1,17 @@
+import { Suspense } from 'react'
 import { BrickWall } from 'lucide-react'
 
-import { ProjectsTable } from '@/components/admin/projects'
+import { AdminPageHeader } from '@/components/admin'
+import { ProjectsAdminTable } from '@/components/admin/projects'
+import SkeletonTable from '@/components/shared/DataTable/skeleton'
 
 export default function AdminIndicator() {
   return (
     <>
-      <div className="item flex items-start gap-4">
-        <BrickWall className="h-6 w-6" />
-        <span className="text-2xl font-semibold leading-none">
-          Administração de Obras
-        </span>
-      </div>
-      <ProjectsTable />
+      <AdminPageHeader title="Administração de Obras" icon={BrickWall} />
+      <Suspense fallback={<SkeletonTable hasCreateButton />}>
+        <ProjectsAdminTable />
+      </Suspense>
     </>
   )
 }

@@ -1,1 +1,1 @@
-export { default as ProjectsTable } from './ProjectsTable'
+export { ProjectsAdminTable } from './ProjectsAdminTable'

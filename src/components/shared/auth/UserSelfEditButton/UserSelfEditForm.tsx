@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { optionalPasswordSchema } from '@/server/validation/auth'
 import { api } from '@/trpc/react'
-import { api as server } from '@/trpc/server'
+import { RouterOutputs } from '@/trpc/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -83,10 +83,9 @@ async function uploadImage({
     throw new Error('Erro ao enviar imagem')
   }
 }
-type User = Awaited<ReturnType<typeof server.user.getUserByUsername.query>>
 
 type UserSelfEditProps = {
-  user: User
+  user: Awaited<RouterOutputs['user']['getUserByUsername']>
   onSubmit: () => void
 }
 
@@ -110,7 +109,7 @@ export default function UserSelfEditForm({
     },
   })
 
-  const { mutate: updateUserSelf } = api.user.updateSelf.useMutation({
+  const { mutateAsync: updateUserSelf } = api.user.updateSelf.useMutation({
     onSuccess: async () => {
       await uploadImage({
         username: user.username,

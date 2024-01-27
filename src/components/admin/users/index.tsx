@@ -1,2 +1,1 @@
-export { UserCreateButton } from './UserCreateButton'
-export { default as UsersTable } from './UsersTable'
+export { UsersAdminTable } from './UsersAdminTable'

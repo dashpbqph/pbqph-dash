@@ -1,1 +1,1 @@
-export { default as IndicatorsTable } from './IndicatorsTable'
+export { IndicatorsAdminTable } from './IndicatorsAdminTable'

@@ -46,78 +46,70 @@ model Impact {
     @@map("impacts")
 }
 
-model Unit {
+model ImpactedAgent {
     id        String   @id @default(cuid())
     name      String   @unique
-    code      String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     indicators Indicator[]
 
     @@index([name])
-    @@map("units")
+    @@map("impacted_agents")
 }
 
-model Variable {
+model IndicatorValue {
     id        String   @id @default(cuid())
-    name      String
-    code      String
+    value     Float
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    formulas Formula[]
+    indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+    indicatorId String
 
-    @@index([name])
-    @@map("variables")
-}
-
-model Formula {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    equation  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    variables Variable[]
-
-    indicator   Indicator @relation(fields: [indicatorId], references: [id])
-    indicatorId String    @unique
-
-    @@index([name])
-    @@map("formulas")
+    @@map("indicator_values")
 }
 
 model Indicator {
     id          String   @id @default(cuid())
     code        String
     name        String
+    description String   @default("")
     polarity    String
     cumulative  Boolean
     source      String
     periodicity String
+    unit        String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    impacts  Impact[]
-    equation Formula?
+    impacts        Impact[]
+    impactedAgents ImpactedAgent[]
+    values         IndicatorValue[]
 
-    system     System   @relation(fields: [systemId], references: [id])
+    equation            String
+    equationDescription String
+
+    stratifiedByOAC     Boolean @default(false)
+    stratifiedByRegion  Boolean @default(false)
+    stratifiedByCompany Boolean @default(false)
+    stratifiedByProject Boolean @default(false)
+
+    system     System   @relation(fields: [systemId], references: [id], onDelete: Cascade)
     systemId   String
-    category   Category @relation(fields: [categoryId], references: [id])
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
     categoryId String
-    unit       Unit     @relation(fields: [unitId], references: [id])
-    unitId     String
 
     @@index([name])
     @@map("indicators")
 }
 
 model Company {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          String   @id @default(cuid())
+    name        String   @unique
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     employees User[]
     projects  Project[]
@@ -127,12 +119,13 @@ model Company {
 }
 
 model Project {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          String   @id @default(cuid())
+    name        String   @unique
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
-    company   Company @relation(fields: [companyId], references: [id])
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
     companyId String
 
     @@index([name])
@@ -140,7 +133,7 @@ model Project {
 }
 
 enum UserRole {
-    OWNER
+    SUPER_ADMIN
     ADMIN
     STAFF
     MEMBER
@@ -169,7 +162,7 @@ model User {
 
     role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
     roleId    String
-    Company   Company? @relation(fields: [companyId], references: [id])
+    company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
     companyId String?
 
     @@map("users")

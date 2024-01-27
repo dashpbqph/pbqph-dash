@@ -47,7 +47,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
   return (
     <Form {...loginForm}>
       <form
-        className="space-y-5 rounded-xl"
+        className="space-y-7 rounded-xl"
         onSubmit={loginForm.handleSubmit(onSubmitLoginForm)}
       >
         <DialogHeader>
@@ -97,16 +97,16 @@ export default function LoginForm({ onClose }: LoginFormProps) {
               </FormItem>
             )}
           />
-          <Button
-            type={isLoading ? 'button' : 'submit'}
-            className="flex w-full flex-row gap-2 data-[loading=true]:cursor-not-allowed"
-            data-loading={isLoading}
-            disabled={isLoading}
-          >
-            {isLoading && <Spinner />}
-            {isLoading ? 'Processando...' : 'Entrar'}
-          </Button>
         </div>
+        <Button
+          type={isLoading ? 'button' : 'submit'}
+          className="flex w-full flex-row gap-2 bg-[#005192] data-[loading=true]:cursor-not-allowed"
+          data-loading={isLoading}
+          disabled={isLoading}
+        >
+          {isLoading && <Spinner />}
+          {isLoading ? 'Processando...' : 'Entrar'}
+        </Button>
       </form>
     </Form>
   )

@@ -1,4 +1,8 @@
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '@/server/api/trpc'
 import { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { UTApi } from 'uploadthing/server'
@@ -7,6 +11,7 @@ import { z } from 'zod'
 export const utapi = new UTApi()
 
 export type UserEnriched = {
+  id: string
   avatar: string
   username: string
   name: string
@@ -15,6 +20,10 @@ export type UserEnriched = {
   email: string
   createdAt: Date
   role: UserRole
+  company: {
+    id: string
+    name: string
+  }
 }
 
 export const userRouter = createTRPCRouter({
@@ -29,9 +38,16 @@ export const userRouter = createTRPCRouter({
             role: true,
           },
         },
+        company: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     })
     const usersFlat = users.map((user) => ({
+      id: user.id,
       avatar: user.image,
       username: user.username,
       name: user.lastName
@@ -42,6 +58,10 @@ export const userRouter = createTRPCRouter({
       email: user.email,
       createdAt: user.createdAt,
       role: user.role?.role,
+      company: {
+        id: user.company?.id,
+        name: user.company?.name,
+      },
     }))
 
     return usersFlat as UserEnriched[]
@@ -89,6 +109,7 @@ export const userRouter = createTRPCRouter({
         email: z.string(),
         password: z.string(),
         image: z.string(),
+        companyId: z.string(),
         role: z.string(),
       }),
     )
@@ -96,20 +117,82 @@ export const userRouter = createTRPCRouter({
       const salt = bcrypt.genSaltSync(10)
       const hashedPassword = bcrypt.hashSync(input.password, salt)
 
-      return ctx.db.user.create({
-        data: {
-          username: input.username,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          email: input.email,
-          password: hashedPassword,
-          salt,
-          image: input.image,
-          role: {
-            connect: {
-              role: input.role as UserRole,
+      const userData = {
+        username: input.username,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        email: input.email,
+        password: hashedPassword,
+        salt,
+        image: input.image,
+        role: {
+          connect: {
+            role: input.role as UserRole,
+          },
+        },
+      }
+
+      if (input.companyId) {
+        return ctx.db.user.create({
+          data: {
+            ...userData,
+            company: {
+              connect: {
+                id: input.companyId,
+              },
             },
           },
+        })
+      }
+
+      return ctx.db.user.create({
+        data: userData,
+      })
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        username: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+        image: z.string(),
+        companyId: z.string(),
+        role: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const updateData: Record<string, unknown> = {
+        firstName: input.firstName,
+        email: input.email,
+      }
+
+      if (input.lastName) updateData.lastName = input.lastName
+      if (input.image) updateData.image = input.image
+
+      if (input.companyId) {
+        return ctx.db.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            ...updateData,
+            company: {
+              connect: {
+                id: input.companyId,
+              },
+            },
+          },
+        })
+      }
+
+      return ctx.db.user.update({
+        where: {
+          username: input.username,
+        },
+        data: {
+          ...updateData,
         },
       })
     }),

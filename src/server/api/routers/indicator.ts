@@ -9,6 +9,17 @@ export const indicatorRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.indicator.findMany()
   }),
+  getAllWithRelations: publicProcedure.query(({ ctx }) => {
+    return ctx.db.indicator.findMany({
+      include: {
+        system: true,
+        category: true,
+        impacts: true,
+        impactedAgents: true,
+        values: true,
+      },
+    })
+  }),
   getIndicatorById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
@@ -32,8 +43,139 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  getSecretMessage: protectedProcedure.query(({ ctx }) => {
-    console.log(ctx.session)
-    return 'you can now see this secret message!'
-  }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        code: z.string(),
+        system: z.string(),
+        category: z.string(),
+        name: z.string(),
+        unit: z.string(),
+        polarity: z.string(),
+        cumulative: z.boolean(),
+        source: z.string(),
+        periodicity: z.string(),
+        impacts: z.array(z.record(z.string())),
+        impactedAgents: z.array(z.record(z.string())),
+        equation: z.string(),
+        equationDescription: z.string(),
+        stratifiedByOAC: z.boolean(),
+        stratifiedByRegion: z.boolean(),
+        stratifiedByCompany: z.boolean(),
+        stratifiedByProject: z.boolean(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.indicator.create({
+        data: {
+          code: input.code,
+          system: {
+            connect: {
+              id: input.system,
+            },
+          },
+          category: {
+            connect: {
+              id: input.category,
+            },
+          },
+          name: input.name,
+          unit: input.unit,
+          equation: input.equation,
+          equationDescription: input.equationDescription,
+          polarity: input.polarity,
+          cumulative: input.cumulative,
+          source: input.source,
+          periodicity: input.periodicity,
+          impacts: {
+            connect: input.impacts.map((impact) => ({
+              id: impact.value,
+            })),
+          },
+          impactedAgents: {
+            connect: input.impactedAgents.map((impactedAgent) => ({
+              id: impactedAgent.value,
+            })),
+          },
+          stratifiedByOAC: input.stratifiedByOAC,
+          stratifiedByRegion: input.stratifiedByRegion,
+          stratifiedByCompany: input.stratifiedByCompany,
+          stratifiedByProject: input.stratifiedByProject,
+        },
+      })
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        code: z.string(),
+        system: z.string(),
+        category: z.string(),
+        name: z.string(),
+        unit: z.string(),
+        polarity: z.string(),
+        cumulative: z.boolean(),
+        source: z.string(),
+        periodicity: z.string(),
+        impacts: z.array(z.record(z.string())),
+        impactedAgents: z.array(z.record(z.string())),
+        equation: z.string(),
+        equationDescription: z.string(),
+        stratifiedByOAC: z.boolean(),
+        stratifiedByRegion: z.boolean(),
+        stratifiedByCompany: z.boolean(),
+        stratifiedByProject: z.boolean(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.indicator.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          code: input.code,
+          system: {
+            connect: {
+              id: input.system,
+            },
+          },
+          category: {
+            connect: {
+              id: input.category,
+            },
+          },
+          name: input.name,
+          unit: input.unit,
+          equation: input.equation,
+          equationDescription: input.equationDescription,
+          polarity: input.polarity,
+          cumulative: input.cumulative,
+          source: input.source,
+          periodicity: input.periodicity,
+          impacts: {
+            connect: input.impacts.map((impact) => ({
+              id: impact.value,
+            })),
+          },
+          impactedAgents: {
+            connect: input.impactedAgents.map((impactedAgent) => ({
+              id: impactedAgent.value,
+            })),
+          },
+          stratifiedByOAC: input.stratifiedByOAC,
+          stratifiedByRegion: input.stratifiedByRegion,
+          stratifiedByCompany: input.stratifiedByCompany,
+          stratifiedByProject: input.stratifiedByProject,
+        },
+      })
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.db.indicator.delete({
+        where: {
+          id: input.id,
+        },
+      })
+    }),
 })
