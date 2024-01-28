@@ -1,3 +1,6 @@
+'use client'
+
+import { useCallback, useEffect, useState } from 'react'
 import { api } from '@/trpc/react'
 import type { UseFormReturn } from 'react-hook-form'
 
@@ -39,7 +42,7 @@ export function useImageUpload({
   avatarSeed,
   userCreateUpdateForm,
 }: ImageUploadProps) {
-  async function setImagePlaceholder() {
+  const setImagePlaceholder = useCallback(async () => {
     const url = `https://api.dicebear.com/7.x/thumbs/png?seed=${avatarSeed}&backgroundColor=69d2e7&eyes=variant2W10,variant2W12,variant2W14,variant2W16,variant3W10,variant3W12,variant3W14,variant3W16,variant4W10,variant4W12,variant4W14,variant4W16,variant5W10,variant5W12,variant5W14,variant5W16,variant6W10,variant6W12,variant6W14,variant6W16,variant7W10,variant7W12,variant7W14,variant7W16,variant8W10,variant8W12,variant8W14,variant8W16,variant9W10,variant9W12,variant9W14,variant9W16&face=variant4,variant5,variant1,variant2,variant3&mouth=variant2,variant4,variant3`
 
     const response = await fetch(url)
@@ -49,7 +52,7 @@ export function useImageUpload({
       'image',
       new File([blob], `${avatarSeed}.png`, { type: 'image/png' }),
     )
-  }
+  }, [avatarSeed, userCreateUpdateForm])
 
   async function addImage() {
     const fileInput = document.createElement('input')
@@ -75,9 +78,14 @@ export function useImageUpload({
     fileInput.click()
   }
 
+  useEffect(() => {
+    if (userCreateUpdateForm.getValues('image').name === '') {
+      setImagePlaceholder()
+    }
+  }, [avatarSeed, setImagePlaceholder, userCreateUpdateForm])
+
   return {
     addImage,
-    setImagePlaceholder,
   }
 }
 
@@ -118,7 +126,7 @@ export function usePasswordManagement({
 
 // user form submit hook
 
-type FormSubmitProps = {
+type UserFormSubmitProps = {
   user?: User
   userCreateUpdateForm: UseFormReturn<UserCreateUpdateFormSchemaUnion>
   avatarSeed: string
@@ -126,13 +134,14 @@ type FormSubmitProps = {
   onClose: () => void
 }
 
-export function useFormSubmit({
+export function useUserFormSubmit({
   user,
   userCreateUpdateForm,
   avatarSeed,
   isEditing,
   onClose,
-}: FormSubmitProps) {
+}: UserFormSubmitProps) {
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createUser } = api.user.create.useMutation({
     onSuccess: async ({ id, username }) => {
       const imageFile = userCreateUpdateForm.getValues('image')
@@ -163,6 +172,7 @@ export function useFormSubmit({
   })
 
   async function handleSubmit(values: UserCreateUpdateFormSchemaUnion) {
+    setIsSubmiting(true)
     try {
       // create or update user
       if (isEditing && user) {
@@ -210,9 +220,11 @@ export function useFormSubmit({
         status: 'error',
       })
     }
+    setIsSubmiting(false)
   }
 
   return {
     handleSubmit,
+    isSubmiting,
   }
 }

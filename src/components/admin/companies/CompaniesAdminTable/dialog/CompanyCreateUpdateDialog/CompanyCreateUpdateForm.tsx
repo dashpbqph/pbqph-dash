@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { companyCreateFormSchema } from '@/schemas/company'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -18,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import type { Company } from '@/types/company'
-import { useCompanySubmit } from './CompanyCreateUpdateForm.hooks'
+import { useCompanyFormSubmit } from './CompanyCreateUpdateForm.hooks'
 
 type CompanyCreateUpdateDialogProps = {
   company?: Company
@@ -30,7 +29,6 @@ export default function CompanyCreateUpdateForm({
   onClose,
 }: CompanyCreateUpdateDialogProps) {
   const isEditing = !!company
-  const [isLoading, setIsLoading] = useState(false)
 
   const companyCreateForm = useForm<z.infer<typeof companyCreateFormSchema>>({
     resolver: zodResolver(companyCreateFormSchema),
@@ -40,25 +38,17 @@ export default function CompanyCreateUpdateForm({
     },
   })
 
-  const { handleSubmit } = useCompanySubmit({
+  const { handleSubmit, isSubmiting } = useCompanyFormSubmit({
     company,
     isEditing,
     onClose,
   })
 
-  async function onSubmitCompanyCreateForm(
-    values: z.infer<typeof companyCreateFormSchema>,
-  ) {
-    setIsLoading(true)
-    await handleSubmit(values)
-    setIsLoading(false)
-  }
-
   return (
     <Form {...companyCreateForm}>
       <form
         className="flex flex-col gap-3"
-        onSubmit={companyCreateForm.handleSubmit(onSubmitCompanyCreateForm)}
+        onSubmit={companyCreateForm.handleSubmit(handleSubmit)}
       >
         <FormField
           control={companyCreateForm.control}
@@ -89,7 +79,7 @@ export default function CompanyCreateUpdateForm({
           )}
         />
         <DialogFooter>
-          <DialogButtonSubmit isLoading={isLoading} subject="construtora" />
+          <DialogButtonSubmit isLoading={isSubmiting} subject="construtora" />
         </DialogFooter>
       </form>
     </Form>

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { projectCreateFormSchema } from '@/schemas/project'
 import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -38,7 +37,6 @@ export default function ProjectCreateUpdateForm({
   onClose,
 }: ProjectCreateUpdateFormProps) {
   const isEditing = !!project
-  const [isLoading, setIsLoading] = useState(false)
   const { data: companies } = api.company.getAll.useQuery()
 
   const projectCreateForm = useForm<z.infer<typeof projectCreateFormSchema>>({
@@ -50,25 +48,17 @@ export default function ProjectCreateUpdateForm({
     },
   })
 
-  const { handleSubmit } = useProjectFormSubmit({
+  const { handleSubmit, isSubmiting } = useProjectFormSubmit({
     isEditing,
     onClose,
     project,
   })
 
-  async function onSubmitProjectCreateForm(
-    values: z.infer<typeof projectCreateFormSchema>,
-  ) {
-    setIsLoading(true)
-    await handleSubmit(values)
-    setIsLoading(false)
-  }
-
   return (
     <Form {...projectCreateForm}>
       <form
         className="flex flex-col gap-3"
-        onSubmit={projectCreateForm.handleSubmit(onSubmitProjectCreateForm)}
+        onSubmit={projectCreateForm.handleSubmit(handleSubmit)}
       >
         <FormField
           control={projectCreateForm.control}
@@ -122,7 +112,7 @@ export default function ProjectCreateUpdateForm({
           )}
         />
         <DialogFooter>
-          <DialogButtonSubmit isLoading={isLoading} subject="obra" />
+          <DialogButtonSubmit isLoading={isSubmiting} subject="obra" />
         </DialogFooter>
       </form>
     </Form>

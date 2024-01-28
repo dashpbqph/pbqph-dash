@@ -1,7 +1,6 @@
 'use client'
 
 import { api } from '@/trpc/react'
-import { ColumnDef } from '@tanstack/react-table'
 
 import DataTable from '@/components/shared/DataTable'
 import { getColumns } from './IndicatorsAdminTable.constants'
@@ -16,9 +15,7 @@ export default function IndicatorsAdminTable() {
   return (
     <DataTable
       data={indicators}
-      columns={
-        columns as ColumnDef<(typeof indicators)[number], typeof columns>[]
-      }
+      columns={columns}
       toolbar={DataTableToolbar}
       pageSize={7}
       subject="indicadores"

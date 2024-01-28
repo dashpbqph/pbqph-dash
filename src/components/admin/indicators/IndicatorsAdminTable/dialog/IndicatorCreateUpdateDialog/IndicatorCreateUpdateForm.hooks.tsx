@@ -1,14 +1,18 @@
+'use client'
+
+import { useState } from 'react'
 import { indicatorCreateUpdateFormSchema } from '@/schemas/indicator'
 import { api } from '@/trpc/react'
 import type { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 import { toast } from '@/components/ui/use-toast'
-import type { IndicatorWithRelations } from '@/types/indicator'
+import type { IndicatorWithRelations, Tab } from '@/types/indicator'
+import { steps } from './IndicatorCreateUpdateForm.constants'
 
 // ai hook
 
-type UseIndicatorAiProps = {
+type IndicatorAiProps = {
   indicatorCreateUpdateForm: UseFormReturn<
     z.infer<typeof indicatorCreateUpdateFormSchema>
   >
@@ -16,36 +20,79 @@ type UseIndicatorAiProps = {
 
 export function useIndicatorAi({
   indicatorCreateUpdateForm,
-}: UseIndicatorAiProps) {
+}: IndicatorAiProps) {
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: textToEquationMutation } =
     api.openai.textToEquation.useMutation()
   const { mutateAsync: textToUnitMutation } =
     api.openai.textToUnit.useMutation()
 
   async function textToEquation(column: 'code' | 'equation') {
+    setIsSubmiting(true)
     const equation = indicatorCreateUpdateForm.getValues(column)
     const output = await textToEquationMutation({ text: equation })
     if (column === 'code') {
       indicatorCreateUpdateForm.setValue('equation', `${output}=`)
     }
     indicatorCreateUpdateForm.setValue(column, output)
+    setIsSubmiting(false)
   }
 
   async function textToUnit() {
+    setIsSubmiting(true)
     const unit = indicatorCreateUpdateForm.getValues('unit')
     const output = await textToUnitMutation({ text: unit })
     indicatorCreateUpdateForm.setValue('unit', output)
+    setIsSubmiting(false)
   }
 
   return {
     textToEquation,
     textToUnit,
+    isSubmiting,
+  }
+}
+
+// tabs hook
+type FieldName = keyof z.infer<typeof indicatorCreateUpdateFormSchema>
+type IndicatorFormTabsProps = {
+  indicatorCreateUpdateForm: UseFormReturn<
+    z.infer<typeof indicatorCreateUpdateFormSchema>
+  >
+}
+
+export function useIndicatorFormTabs({
+  indicatorCreateUpdateForm,
+}: IndicatorFormTabsProps) {
+  const [currentTab, setCurrentTab] = useState<Tab>('basic')
+  async function handleTab(tab: Tab) {
+    const fields = steps.find((step) => step.id === tab)?.fields
+    const output = await indicatorCreateUpdateForm.trigger(
+      fields as FieldName[],
+      {
+        shouldFocus: true,
+      },
+    )
+
+    if (!output) return
+
+    if (tab === 'basic') {
+      setCurrentTab('formula')
+    } else if (tab === 'formula') {
+      setCurrentTab('stratification')
+    }
+  }
+
+  return {
+    handleTab,
+    currentTab,
+    setCurrentTab,
   }
 }
 
 // form submit hook
 
-type UseIndicatorSubmitProps = {
+type IndicatorFormSubmitProps = {
   indicator?: IndicatorWithRelations
   indicatorCreateUpdateForm: UseFormReturn<
     z.infer<typeof indicatorCreateUpdateFormSchema>
@@ -54,11 +101,12 @@ type UseIndicatorSubmitProps = {
   onClose: () => void
 }
 
-export function useIndicatorSubmit({
+export function useIndicatorFormSubmit({
   indicator,
   isEditing,
   onClose,
-}: UseIndicatorSubmitProps) {
+}: IndicatorFormSubmitProps) {
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createIndicator } = api.indicator.create.useMutation({
     onSuccess: onClose,
   })
@@ -69,6 +117,7 @@ export function useIndicatorSubmit({
   async function handleSubmit(
     values: z.infer<typeof indicatorCreateUpdateFormSchema>,
   ) {
+    setIsSubmiting(true)
     try {
       if (isEditing && indicator) {
         updateIndicator({ id: indicator.id, ...values })
@@ -94,9 +143,11 @@ export function useIndicatorSubmit({
         status: 'error',
       })
     }
+    setIsSubmiting(false)
   }
 
   return {
     handleSubmit,
+    isSubmiting,
   }
 }

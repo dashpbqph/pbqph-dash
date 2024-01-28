@@ -1,7 +1,6 @@
 'use client'
 
 import { api } from '@/trpc/react'
-import { ColumnDef } from '@tanstack/react-table'
 
 import DataTable from '@/components/shared/DataTable'
 import { getColumns } from './UsersAdminTable.constants'
@@ -15,7 +14,7 @@ export default function UsersAdminTable() {
   return (
     <DataTable
       data={users}
-      columns={columns as ColumnDef<(typeof users)[number], typeof columns>[]}
+      columns={columns}
       toolbar={DataTableToolbar}
       subject="usuários"
       refetchFn={refetch}

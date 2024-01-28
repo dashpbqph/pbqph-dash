@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { projectCreateFormSchema } from '@/schemas/project'
 import { api } from '@/trpc/react'
 import { z } from 'zod'
@@ -16,6 +19,7 @@ export function useProjectFormSubmit({
   onClose,
   project,
 }: ProjectFormSubmitProps) {
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createProject } = api.project.create.useMutation({
     onSuccess: onClose,
   })
@@ -23,6 +27,7 @@ export function useProjectFormSubmit({
     onSuccess: onClose,
   })
   async function handleSubmit(values: z.infer<typeof projectCreateFormSchema>) {
+    setIsSubmiting(true)
     try {
       if (isEditing && project) {
         updateProject({ id: project.id, ...values })
@@ -56,6 +61,7 @@ export function useProjectFormSubmit({
         status: 'error',
       })
     }
+    setIsSubmiting(false)
   }
-  return { handleSubmit }
+  return { handleSubmit, isSubmiting }
 }

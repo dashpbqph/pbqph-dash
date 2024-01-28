@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import {
   userCreateUpdateFormSchema,
@@ -36,9 +35,9 @@ import {
 import { mapUserRoleToLabel } from '@/utils/auth'
 import type { User } from '@/types/user'
 import {
-  useFormSubmit,
   useImageUpload,
   usePasswordManagement,
+  useUserFormSubmit,
 } from './UserCreateUpdateForm.hooks'
 
 type UserCreateUpdateFormProps = {
@@ -52,10 +51,8 @@ export default function UserCreateUpdateForm({
 }: UserCreateUpdateFormProps) {
   const isEditing = !!user
   const avatarSeed = crypto.randomUUID()
-  const [isLoading, setIsLoading] = useState(false)
   const { data: companies } = api.company.getAll.useQuery()
 
-  // user form schema
   const formSchema = isEditing
     ? userCreateUpdateFormSchemaOptionalPassword
     : userCreateUpdateFormSchema
@@ -75,23 +72,16 @@ export default function UserCreateUpdateForm({
     },
   })
 
-  // image, password and submit hooks
-  const { addImage, setImagePlaceholder } = useImageUpload({
+  const { addImage } = useImageUpload({
     avatarSeed,
     userCreateUpdateForm,
   })
-
-  useEffect(() => {
-    if (userCreateUpdateForm.getValues('image').name === '') {
-      setImagePlaceholder()
-    }
-  }, [avatarSeed, setImagePlaceholder, userCreateUpdateForm])
 
   const { handleGeneratePassword, handleCopyPassword } = usePasswordManagement({
     userCreateUpdateForm,
   })
 
-  const { handleSubmit } = useFormSubmit({
+  const { handleSubmit, isSubmiting } = useUserFormSubmit({
     user,
     userCreateUpdateForm,
     avatarSeed,
@@ -99,21 +89,11 @@ export default function UserCreateUpdateForm({
     onClose,
   })
 
-  async function onSubmitUserCreateUpdateForm(
-    values: z.infer<typeof formSchema>,
-  ) {
-    setIsLoading(true)
-    await handleSubmit(values)
-    setIsLoading(false)
-  }
-
   return (
     <Form {...userCreateUpdateForm}>
       <form
         className="flex flex-col gap-3"
-        onSubmit={userCreateUpdateForm.handleSubmit(
-          onSubmitUserCreateUpdateForm,
-        )}
+        onSubmit={userCreateUpdateForm.handleSubmit(handleSubmit)}
       >
         <div className="flex gap-3">
           <button
@@ -302,7 +282,7 @@ export default function UserCreateUpdateForm({
           )}
         </div>
         <DialogFooter>
-          <DialogButtonSubmit isLoading={isLoading} subject={'usuário'} />
+          <DialogButtonSubmit isLoading={isSubmiting} subject={'usuário'} />
         </DialogFooter>
       </form>
     </Form>

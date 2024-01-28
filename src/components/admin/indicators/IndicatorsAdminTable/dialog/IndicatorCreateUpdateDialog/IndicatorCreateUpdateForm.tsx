@@ -32,17 +32,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import type { IndicatorWithRelations, Tab } from '@/types/indicator'
-import {
-  periodicity,
-  polarity,
-  steps,
-} from './IndicatorCreateUpdateForm.constants'
+import { periodicity, polarity } from './IndicatorCreateUpdateForm.constants'
 import {
   useIndicatorAi,
-  useIndicatorSubmit,
+  useIndicatorFormSubmit,
+  useIndicatorFormTabs,
 } from './IndicatorCreateUpdateForm.hooks'
-
-type FieldName = keyof z.infer<typeof indicatorCreateUpdateFormSchema>
 
 type IndicatorCreateUpdateFormProps = {
   indicator?: IndicatorWithRelations
@@ -54,8 +49,6 @@ export default function IndicatorCreateUpdateForm({
   indicator,
 }: IndicatorCreateUpdateFormProps) {
   const isEditing = !!indicator?.id
-  const [isLoading, setIsLoading] = useState(false)
-  const [currentTab, setCurrentTab] = useState<Tab>('basic')
   const [fixedEquation, setFixedEquation] = useState(false)
   const [fixedUnit, setFixedUnit] = useState(false)
   const { data: systems } = api.system.getAll.useQuery()
@@ -96,64 +89,40 @@ export default function IndicatorCreateUpdateForm({
     },
   })
 
-  const { handleSubmit } = useIndicatorSubmit({
+  const {
+    textToEquation,
+    textToUnit,
+    isSubmiting: isLintingText,
+  } = useIndicatorAi({
+    indicatorCreateUpdateForm,
+  })
+
+  async function handleTextToEquation(column: 'code' | 'equation') {
+    await textToEquation(column)
+    setFixedEquation(true)
+  }
+
+  async function handleTextToUnit() {
+    await textToUnit()
+    setFixedUnit(true)
+  }
+
+  const { handleTab, currentTab, setCurrentTab } = useIndicatorFormTabs({
+    indicatorCreateUpdateForm,
+  })
+
+  const { handleSubmit, isSubmiting } = useIndicatorFormSubmit({
     indicator,
     isEditing,
     onClose,
     indicatorCreateUpdateForm,
   })
 
-  async function onSubmitIndicatorCreateUpdateForm(
-    values: z.infer<typeof indicatorCreateUpdateFormSchema>,
-  ) {
-    setIsLoading(true)
-    await handleSubmit(values)
-    setIsLoading(false)
-  }
-
-  async function handleTab(tab: Tab) {
-    const fields = steps.find((step) => step.id === tab)?.fields
-    const output = await indicatorCreateUpdateForm.trigger(
-      fields as FieldName[],
-      {
-        shouldFocus: true,
-      },
-    )
-
-    if (!output) return
-
-    if (tab === 'basic') {
-      setCurrentTab('formula')
-    } else if (tab === 'formula') {
-      setCurrentTab('stratification')
-    }
-  }
-
-  const { textToEquation, textToUnit } = useIndicatorAi({
-    indicatorCreateUpdateForm,
-  })
-
-  async function handleTextToEquation(column: 'code' | 'equation') {
-    setIsLoading(true)
-    await textToEquation(column)
-    setFixedEquation(true)
-    setIsLoading(false)
-  }
-
-  async function handleTextToUnit() {
-    setIsLoading(true)
-    await textToUnit()
-    setFixedUnit(true)
-    setIsLoading(false)
-  }
-
   return (
     <Form {...indicatorCreateUpdateForm}>
       <form
         className="flex flex-col"
-        onSubmit={indicatorCreateUpdateForm.handleSubmit(
-          onSubmitIndicatorCreateUpdateForm,
-        )}
+        onSubmit={indicatorCreateUpdateForm.handleSubmit(handleSubmit)}
       >
         <Tabs
           defaultValue="basic"
@@ -235,8 +204,8 @@ export default function IndicatorCreateUpdateForm({
                 type="button"
                 variant="outline"
                 className="data-[loading=true]:cursor-not-allowed"
-                data-loading={isLoading}
-                disabled={isLoading}
+                data-loading={isLintingText}
+                disabled={isLintingText}
                 onClick={() => handleTextToEquation('code')}
               >
                 <Wand2 className="h-4 w-4" />
@@ -387,8 +356,8 @@ export default function IndicatorCreateUpdateForm({
             <Button
               type="button"
               className="mt-1 flex w-full flex-row gap-2 data-[loading=true]:cursor-not-allowed"
-              data-loading={isLoading}
-              disabled={isLoading}
+              data-loading={isLintingText}
+              disabled={isLintingText}
               onClick={() => handleTab('basic')}
             >
               Avançar
@@ -413,8 +382,8 @@ export default function IndicatorCreateUpdateForm({
                 type="button"
                 variant="outline"
                 className="data-[loading=true]:cursor-not-allowed"
-                data-loading={isLoading}
-                disabled={isLoading}
+                data-loading={isLintingText}
+                disabled={isLintingText}
                 onClick={() => handleTextToEquation('equation')}
               >
                 <Wand2 className="h-4 w-4" />
@@ -460,8 +429,8 @@ export default function IndicatorCreateUpdateForm({
                 type="button"
                 variant="outline"
                 className="data-[loading=true]:cursor-not-allowed"
-                data-loading={isLoading}
-                disabled={isLoading}
+                data-loading={isLintingText}
+                disabled={isLintingText}
                 onClick={handleTextToUnit}
               >
                 <Wand2 className="h-4 w-4" />
@@ -478,8 +447,8 @@ export default function IndicatorCreateUpdateForm({
             <Button
               type="button"
               className="mt-1 flex w-full flex-row gap-2 data-[loading=true]:cursor-not-allowed"
-              data-loading={isLoading}
-              disabled={isLoading}
+              data-loading={isLintingText}
+              disabled={isLintingText}
               onClick={() => handleTab('formula')}
             >
               Avançar
@@ -590,7 +559,7 @@ export default function IndicatorCreateUpdateForm({
               )}
             />
             <DialogFooter>
-              <DialogButtonSubmit isLoading={isLoading} subject="indicador" />
+              <DialogButtonSubmit isLoading={isSubmiting} subject="indicador" />
             </DialogFooter>
           </TabsContent>
         </Tabs>

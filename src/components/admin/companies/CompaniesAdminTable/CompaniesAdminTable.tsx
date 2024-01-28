@@ -1,7 +1,6 @@
 'use client'
 
 import { api } from '@/trpc/react'
-import { ColumnDef } from '@tanstack/react-table'
 
 import DataTable from '@/components/shared/DataTable'
 import { getColumns } from './CompaniesAdminTable.constants'
@@ -15,9 +14,7 @@ export default function CompaniesAdminTable() {
   return (
     <DataTable
       data={companies}
-      columns={
-        columns as ColumnDef<(typeof companies)[number], typeof columns>[]
-      }
+      columns={columns}
       toolbar={DataTableToolbar}
       subject="construtoras"
       refetchFn={refetch}

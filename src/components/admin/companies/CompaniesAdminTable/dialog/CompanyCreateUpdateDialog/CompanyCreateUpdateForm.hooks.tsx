@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { companyCreateFormSchema } from '@/schemas/company'
 import { api } from '@/trpc/react'
 import { z } from 'zod'
@@ -5,17 +8,18 @@ import { z } from 'zod'
 import { toast } from '@/components/ui/use-toast'
 import type { Company } from '@/types/company'
 
-type UseCompanySubmitProps = {
+type CompanyFormSubmitProps = {
   company?: Company
   isEditing: boolean
   onClose: () => void
 }
 
-export function useCompanySubmit({
+export function useCompanyFormSubmit({
   company,
   isEditing,
   onClose,
-}: UseCompanySubmitProps) {
+}: CompanyFormSubmitProps) {
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createCompany } = api.company.create.useMutation({
     onSuccess: onClose,
   })
@@ -23,6 +27,7 @@ export function useCompanySubmit({
     onSuccess: onClose,
   })
   async function handleSubmit(values: z.infer<typeof companyCreateFormSchema>) {
+    setIsSubmiting(true)
     try {
       if (isEditing && company) {
         updateCompany({ id: company.id, ...values })
@@ -56,6 +61,7 @@ export function useCompanySubmit({
         status: 'error',
       })
     }
+    setIsSubmiting(false)
   }
-  return { handleSubmit }
+  return { handleSubmit, isSubmiting }
 }
