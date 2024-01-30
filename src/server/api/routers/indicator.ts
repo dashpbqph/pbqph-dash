@@ -178,4 +178,18 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
+
+  // values
+  getValuesByIndicatorId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.indicatorValue.findMany({
+        where: {
+          indicatorId: input.id,
+        },
+        include: {
+          indicator: true,
+        },
+      })
+    }),
 })

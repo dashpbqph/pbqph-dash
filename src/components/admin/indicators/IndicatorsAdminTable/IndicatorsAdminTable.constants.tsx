@@ -14,7 +14,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { IndicatorWithRelations } from '@/types/indicator'
-import { IndicatorCreateUpdateDialog, IndicatorDeleteDialog } from './dialog'
+import {
+  IndicatorCreateUpdateDialog,
+  IndicatorCRUDDataDialog,
+  IndicatorDeleteDialog,
+} from './dialog'
 
 type GetColumnsProps = {
   refetchIndicators: () => void
@@ -147,7 +151,12 @@ export const getColumns = ({
                   refetchIndicators={refetchIndicators}
                 />
               </DropdownMenuItem>
-              <DropdownMenuItem>Inserir dados</DropdownMenuItem>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <IndicatorCRUDDataDialog
+                  indicator={indicator}
+                  refetchIndicators={refetchIndicators}
+                />
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <IndicatorDeleteDialog
