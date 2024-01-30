@@ -13,7 +13,7 @@ import { IndicatorWithRelations } from '@/types/indicator'
 import { IndicatorDataTableGrid } from '../../IndicatorDataTableGrid'
 
 type IndicatorCRUDDataDialogProps = {
-  indicator?: IndicatorWithRelations
+  indicator: IndicatorWithRelations
   refetchIndicators: () => void
 }
 
