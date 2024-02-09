@@ -83,6 +83,11 @@ export const userRouter = createTRPCRouter({
               role: true,
             },
           },
+          company: {
+            select: {
+              name: true,
+            },
+          },
         },
       })
 
@@ -98,6 +103,7 @@ export const userRouter = createTRPCRouter({
         lastName: user.lastName,
         email: user.email,
         role: user.role?.role,
+        company: user.company?.name,
       }
     }),
   create: publicProcedure

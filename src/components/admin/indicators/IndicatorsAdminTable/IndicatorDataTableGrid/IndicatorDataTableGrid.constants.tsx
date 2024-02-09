@@ -4,13 +4,8 @@ import { format, getMonth, getQuarter } from 'date-fns'
 import { Check, Pencil, Trash } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import type { IndicatorValuesWithRelation } from '@/types/indicator'
-
-type GetColumnsProps = {
-  idEditValues: string[]
-  setIdEditValues: (ids: string[]) => void
-  refetchIndicators: () => void
-}
 
 const mapPeriod = {
   anual: 'ano',
@@ -28,9 +23,23 @@ const mapPeriodFn = {
   semestral: (date: Date) => Math.ceil(getMonth(date) / 6), // Divide por 6 e arredonda para cima
 }
 
+type GetColumnsProps = {
+  idEditValues: string[]
+  setIdEditValues: (ids: string[]) => void
+  indicatorValues: IndicatorValuesWithRelation[]
+  setIndicatorValues: (values: IndicatorValuesWithRelation[]) => void
+  idDeleteValues: string[]
+  setIdDeleteValues: (ids: string[]) => void
+  refetchIndicators: () => void
+}
+
 export const getColumns = ({
   idEditValues,
   setIdEditValues,
+  indicatorValues,
+  idDeleteValues,
+  setIdDeleteValues,
+  setIndicatorValues,
   refetchIndicators,
 }: GetColumnsProps): ColumnDef<IndicatorValuesWithRelation>[] => {
   return [
@@ -48,15 +57,33 @@ export const getColumns = ({
           mapPeriodFn[
             indicatorValue.indicator.periodicity as keyof typeof mapPeriodFn
           ]
-        const year = format(row.original.createdAt, 'yyyy')
+        const date = row.original.createdAt
         return (
           <div className="min-w-[240px] pl-4 text-left">
             {isEditing ? (
-              <input
+              <Input
                 type="date"
-                className="w-32"
+                className="w-36 items-center border-none shadow-none"
                 defaultValue={format(row.original.createdAt, 'yyyy-MM-dd')}
                 max={format(new Date(), 'yyyy-MM-dd')}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onChange={(e) => {
+                  e.preventDefault()
+                  const newValue = e.target.value
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return {
+                        ...value,
+                        createdAt: new Date(newValue + 'T00:00:00'),
+                      }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
               />
             ) : (
               <>
@@ -66,7 +93,7 @@ export const getColumns = ({
                     <span>{periodicity}</span> de{' '}
                   </>
                 )}
-                <span>{year}</span>
+                <span>{format(date, 'yyyy')}</span>
               </>
             )}
           </div>
@@ -81,13 +108,24 @@ export const getColumns = ({
         const isEditing = idEditValues.includes(indicatorValue.id)
         const unit = row.original.indicator.unit
         return (
-          <div className="min-w-[140px] gap-1 text-center">
+          <div className="flex min-w-[140px] justify-center gap-1 text-center">
             {isEditing ? (
-              <input
+              <Input
                 type="number"
-                className="w-20 text-center"
+                className="w-20 border-none text-center shadow-none"
                 defaultValue={row.getValue('value')}
                 step={0.1}
+                onChange={(e) => {
+                  e.preventDefault()
+                  const newValue = e.target.value
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return { ...value, value: parseFloat(newValue) }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
               />
             ) : (
               (row.getValue('value') as number).toLocaleString('pt-BR')
@@ -107,7 +145,7 @@ export const getColumns = ({
       },
     },
     {
-      id: 'delete',
+      id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
         const indicatorValue = row.original
@@ -133,7 +171,18 @@ export const getColumns = ({
                 data-editing={isEditing}
               />
             </Button>
-            <Button variant="outline" className="aspect-square p-1">
+            <Button
+              variant="outline"
+              className="aspect-square p-1"
+              onClick={() => {
+                setIdDeleteValues([...idDeleteValues, indicatorValue.id])
+                setIndicatorValues(
+                  indicatorValues.filter(
+                    (value) => value.id !== indicatorValue.id,
+                  ),
+                )
+              }}
+            >
               <Trash className="h-4 w-4 text-red-500" />
             </Button>
           </div>

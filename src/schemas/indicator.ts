@@ -39,3 +39,11 @@ export const indicatorCreateUpdateFormSchema = z.object({
   stratifiedByCompany: z.boolean(),
   stratifiedByProject: z.boolean(),
 })
+
+export const indicatorCRUDFormSchema = z.array(
+  z.object({
+    id: z.string(),
+    date: z.date(),
+    value: z.number(),
+  }),
+)

@@ -1,31 +1,49 @@
-import { useState } from 'react'
+'use client'
+
+import { Suspense, useState } from 'react'
 import { MathJax } from 'better-react-mathjax'
 
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { IndicatorWithRelations } from '@/types/indicator'
+import Spinner from '@/components/ui/spinner'
+import {
+  IndicatorValuesWithRelation,
+  IndicatorWithRelations,
+} from '@/types/indicator'
 import { IndicatorDataTableGrid } from '../../IndicatorDataTableGrid'
+import { useIndicatorCRUDFormSubmit } from '../../IndicatorDataTableGrid/IndicatorDataTableGrid.hooks'
 
 type IndicatorCRUDDataDialogProps = {
   indicator: IndicatorWithRelations
-  refetchIndicators: () => void
 }
 
 export default function IndicatorCRUDDataDialog({
   indicator,
-  refetchIndicators,
 }: IndicatorCRUDDataDialogProps) {
   const [open, setOpen] = useState(false)
+  const [indicatorValues, setIndicatorValues] = useState<
+    IndicatorValuesWithRelation[]
+  >([])
 
-  async function onSubmit() {
-    setOpen(false)
-    refetchIndicators()
+  const { handleSubmit: submit, isSubmiting } = useIndicatorCRUDFormSubmit({
+    indicator,
+    onClose: () => null,
+  })
+
+  async function handleSubmit() {
+    const valuesToSubmit = indicatorValues.map((value) => {
+      return { id: value.id, value: value.value, date: value.createdAt }
+    })
+    console.table(valuesToSubmit)
+    await submit(valuesToSubmit)
   }
 
   return (
@@ -47,8 +65,41 @@ export default function IndicatorCRUDDataDialog({
             .
           </DialogDescription>
         </DialogHeader>
-        <IndicatorDataTableGrid indicator={indicator} onSubmit={onSubmit} />
+        <Suspense fallback={<SkeletonTable />}>
+          <IndicatorDataTableGrid
+            indicator={indicator}
+            indicatorValues={indicatorValues}
+            setIndicatorValues={setIndicatorValues}
+          />
+        </Suspense>
+        <DialogFooter>
+          <Button
+            type="button"
+            className="flex w-full flex-row gap-2 data-[loading=true]:cursor-not-allowed"
+            onClick={handleSubmit}
+            data-loading={isSubmiting}
+            disabled={isSubmiting}
+          >
+            {isSubmiting && <Spinner />}
+            {isSubmiting ? 'Processando...' : `Editar dados do indicador`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function SkeletonTable() {
+  return (
+    <div className="flex h-[240px] w-full flex-col gap-4">
+      <div className="flex h-8 w-full justify-end">
+        <div className="w-[140px] animate-pulse rounded-md bg-gray-200" />
+      </div>
+      <div className="w-full flex-1 animate-pulse rounded-md bg-gray-200" />
+      <div className="flex h-8 w-full justify-between gap-2">
+        <div className="w-[140px] animate-pulse rounded-md bg-gray-200" />
+        <div className="w-[240px] animate-pulse rounded-md bg-gray-200" />
+      </div>
+    </div>
   )
 }

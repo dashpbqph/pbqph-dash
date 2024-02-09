@@ -51,7 +51,7 @@ type UserButtonProps = {
 }
 
 export default function UserButton({ user }: UserButtonProps) {
-  const { avatar, name, username, role } = user
+  const { avatar, name, username, role, company } = user
 
   return (
     <DropdownMenu>
@@ -68,7 +68,10 @@ export default function UserButton({ user }: UserButtonProps) {
             <UserAvatar avatar={avatar} name={name} />
           </div>
           <div className="flex flex-col justify-center text-left">
-            <span className="font-semibold">{name}</span>
+            <span className="font-semibold">
+              {name}{' '}
+              {company ? <span className="font-normal">({company})</span> : ''}
+            </span>
             <span className="text-sm font-normal">{username}</span>
           </div>
         </DropdownMenuLabel>

@@ -152,10 +152,7 @@ export const getColumns = ({
                 />
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <IndicatorCRUDDataDialog
-                  indicator={indicator}
-                  refetchIndicators={refetchIndicators}
-                />
+                <IndicatorCRUDDataDialog indicator={indicator} />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

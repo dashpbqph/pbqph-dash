@@ -1,27 +1,53 @@
-import { useState } from 'react'
+'use client'
+
+import { useEffect, useState } from 'react'
 import { api } from '@/trpc/react'
 
 import DataTable from '@/components/shared/DataTable'
-import { IndicatorWithRelations } from '@/types/indicator'
+import {
+  IndicatorValuesWithRelation,
+  IndicatorWithRelations,
+} from '@/types/indicator'
 import { getColumns } from './IndicatorDataTableGrid.constants'
-import { DataTableToolbar } from './IndicatorDataTableGridToolbar'
+import { useDataTableToolbar } from './IndicatorDataTableGridToolbar'
 
 type IndicatorDataTableGridProps = {
   indicator: IndicatorWithRelations
-  onSubmit: () => void
+  indicatorValues: IndicatorValuesWithRelation[]
+  setIndicatorValues: (values: IndicatorValuesWithRelation[]) => void
 }
 
 export default function IndicatorDataTableGrid({
   indicator,
-  onSubmit,
+  indicatorValues,
+  setIndicatorValues,
 }: IndicatorDataTableGridProps) {
-  const [indicatorValues, { refetch }] =
-    api.indicator.getValuesByIndicatorId.useSuspenseQuery({ id: indicator?.id })
+  const [defaultIndicatorValues, { refetch }] =
+    api.indicator.getValuesByIndicatorId.useSuspenseQuery({ id: indicator.id })
   const [idEditValues, setIdEditValues] = useState<string[]>([])
+  const [idDeleteValues, setIdDeleteValues] = useState<string[]>([])
+
+  useEffect(
+    () => setIndicatorValues(defaultIndicatorValues),
+    [defaultIndicatorValues, setIndicatorValues],
+  )
+
   const columns = getColumns({
     idEditValues,
     setIdEditValues,
+    indicatorValues,
+    setIndicatorValues,
+    idDeleteValues,
+    setIdDeleteValues,
     refetchIndicators: refetch,
+  })
+
+  const { DataTableToolbar } = useDataTableToolbar({
+    indicator,
+    indicatorValues,
+    setIndicatorValues,
+    idEditValues,
+    setIdEditValues,
   })
 
   return (
@@ -31,7 +57,6 @@ export default function IndicatorDataTableGrid({
       toolbar={DataTableToolbar}
       pageSize={7}
       subject="valores"
-      refetchFn={refetch}
     />
   )
 }
