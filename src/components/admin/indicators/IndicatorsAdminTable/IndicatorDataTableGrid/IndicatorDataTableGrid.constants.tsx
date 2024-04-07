@@ -1,3 +1,4 @@
+import type { Region } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
 import { MathJax } from 'better-react-mathjax'
 import { format, getMonth, getQuarter } from 'date-fns'
@@ -5,7 +6,22 @@ import { Check, Pencil, Trash } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { IndicatorValuesWithRelation } from '@/types/indicator'
+
+const mapRegion = {
+  NORTE: 'Norte',
+  NORDESTE: 'Nordeste',
+  CENTRO_OESTE: 'Centro-Oeste',
+  SUDESTE: 'Sudeste',
+  SUL: 'Sul',
+}
 
 const mapPeriod = {
   anual: 'ano',
@@ -28,6 +44,9 @@ type GetColumnsProps = {
   setIdEditValues: (ids: string[]) => void
   indicatorValues: IndicatorValuesWithRelation[]
   setIndicatorValues: (values: IndicatorValuesWithRelation[]) => void
+  companies: { id: string; name: string }[]
+  projects: { id: string; name: string; companyId: string }[]
+  oacs: { id: string; name: string }[]
   idDeleteValues: string[]
   setIdDeleteValues: (ids: string[]) => void
   refetchIndicators: () => void
@@ -37,10 +56,12 @@ export const getColumns = ({
   idEditValues,
   setIdEditValues,
   indicatorValues,
+  companies,
+  projects,
+  oacs,
   idDeleteValues,
   setIdDeleteValues,
   setIndicatorValues,
-  refetchIndicators,
 }: GetColumnsProps): ColumnDef<IndicatorValuesWithRelation>[] => {
   return [
     {
@@ -145,6 +166,219 @@ export const getColumns = ({
       },
     },
     {
+      id: 'region',
+      header: () => <div className="hidden lg:block">Região</div>,
+      cell: ({ row }) => {
+        const indicatorValue = row.original
+        const isEditing = idEditValues.includes(indicatorValue.id)
+        return (
+          <div className="min-w-[140px] text-center">
+            {isEditing ? (
+              <Select
+                value={
+                  (indicatorValues.find(
+                    (value) => value.id === indicatorValue.id,
+                  )?.region as Region) ?? undefined
+                }
+                onValueChange={(newValue) => {
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return { ...value, region: newValue as Region }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
+              >
+                <SelectTrigger className="w-36 border-none text-center shadow-none">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(mapRegion).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              mapRegion[row.original.region as Region]
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      id: 'company',
+      header: () => <div className="hidden lg:block">Construtora</div>,
+      cell: ({ row }) => {
+        const indicatorValue = row.original
+        const isEditing = idEditValues.includes(indicatorValue.id)
+        return (
+          <div className="min-w-[140px] text-center">
+            {isEditing ? (
+              <Select
+                value={
+                  companies.find(
+                    (value) => value.id === indicatorValue.companyId,
+                  )?.id ?? undefined
+                }
+                onValueChange={(newValue) => {
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return {
+                        ...value,
+                        companyId: newValue as string,
+                        company: {
+                          id: newValue as string,
+                          name: companies.find(
+                            (company) => company.id === newValue,
+                          )?.name as string,
+                          description: '',
+                          createdAt: new Date(),
+                          updatedAt: new Date(),
+                        },
+                      }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
+              >
+                <SelectTrigger className="w-36 border-none text-center shadow-none">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies.map((company) => (
+                    <SelectItem key={company.id} value={company.id}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              row.original.company?.name
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      id: 'project',
+      header: () => <div className="hidden lg:block">Obra</div>,
+      cell: ({ row }) => {
+        const indicatorValue = row.original
+        const isEditing = idEditValues.includes(indicatorValue.id)
+        return (
+          <div className="min-w-[140px] text-center">
+            {isEditing ? (
+              <Select
+                value={
+                  projects.find(
+                    (value) => value.id === indicatorValue.projectId,
+                  )?.id ?? undefined
+                }
+                onValueChange={(newValue) => {
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return {
+                        ...value,
+                        projectId: newValue as string,
+                        project: {
+                          id: newValue as string,
+                          name: projects.find(
+                            (project) => project.id === newValue,
+                          )?.name as string,
+                          companyId: '',
+                          description: '',
+                          createdAt: new Date(),
+                          updatedAt: new Date(),
+                        },
+                      }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
+              >
+                <SelectTrigger className="w-36 border-none text-center shadow-none">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projects
+                    .filter(
+                      (project) =>
+                        project.companyId === indicatorValue.companyId,
+                    )
+                    .map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              row.original.project?.name
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      id: 'oac',
+      header: () => <div className="hidden lg:block">OAC</div>,
+      cell: ({ row }) => {
+        const indicatorValue = row.original
+        const isEditing = idEditValues.includes(indicatorValue.id)
+        return (
+          <div className="min-w-[140px] text-center">
+            {isEditing ? (
+              <Select
+                value={
+                  oacs.find((value) => value.id === indicatorValue.oacId)?.id ??
+                  undefined
+                }
+                onValueChange={(newValue) => {
+                  const newValues = indicatorValues.map((value) => {
+                    if (value.id === indicatorValue.id) {
+                      return {
+                        ...value,
+                        oacId: newValue as string,
+                        oac: {
+                          id: newValue as string,
+                          name: projects.find(
+                            (project) => project.id === newValue,
+                          )?.name as string,
+                          description: '',
+                          createdAt: new Date(),
+                          updatedAt: new Date(),
+                        },
+                      }
+                    }
+                    return value
+                  })
+                  setIndicatorValues(newValues)
+                }}
+              >
+                <SelectTrigger className="w-36 border-none text-center shadow-none">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {oacs.map((oac) => (
+                    <SelectItem key={oac.id} value={oac.id}>
+                      {oac.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              row.original.oac?.name
+            )}
+          </div>
+        )
+      },
+    },
+    {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
@@ -152,7 +386,7 @@ export const getColumns = ({
         const isEditing = idEditValues.includes(indicatorValue.id)
         const Icon = isEditing ? Check : Pencil
         return (
-          <div className="flex items-center justify-center gap-1">
+          <div className="flex items-center justify-center gap-1 pr-2">
             <Button
               variant="outline"
               className="aspect-square p-1"

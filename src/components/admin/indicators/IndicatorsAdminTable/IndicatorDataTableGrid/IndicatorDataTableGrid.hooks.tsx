@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { indicatorCRUDFormSchema } from '@/schemas/indicator'
+import { getDynamicIndicatorCRUDFormSchema } from '@/schemas/indicator'
+import { api } from '@/trpc/react'
 import { z } from 'zod'
 
 import { toast } from '@/components/ui/use-toast'
@@ -7,7 +8,7 @@ import { IndicatorWithRelations } from '@/types/indicator'
 
 // form submit hook
 type IndicatorCRUDFormSubmitProps = {
-  indicator?: IndicatorWithRelations
+  indicator: IndicatorWithRelations
   onClose: () => void
 }
 
@@ -16,10 +17,14 @@ export function useIndicatorCRUDFormSubmit({
   onClose,
 }: IndicatorCRUDFormSubmitProps) {
   const [isSubmiting, setIsSubmiting] = useState(false)
-  // const { mutateAsync: updateIndicator } = api.indicator.update.useMutation({
-  //   onSuccess: onClose,
-  // })
+  const { mutateAsync: upsertValues } = api.indicator.upsertValues.useMutation({
+    onSuccess: () => {
+      setIsSubmiting(false)
+      onClose()
+    },
+  })
 
+  const indicatorCRUDFormSchema = getDynamicIndicatorCRUDFormSchema(indicator)
   async function handleSubmit(values: z.infer<typeof indicatorCRUDFormSchema>) {
     const isValuesValid = indicatorCRUDFormSchema.safeParse(values)
     if (!isValuesValid.success) {
@@ -31,6 +36,12 @@ export function useIndicatorCRUDFormSubmit({
 
       return null
     }
+
+    setIsSubmiting(true)
+    await upsertValues({
+      indicatorId: indicator.id,
+      values,
+    })
 
     toast({
       title: 'Salvo com sucesso',

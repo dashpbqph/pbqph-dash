@@ -5,12 +5,14 @@ import {
   Box,
   BrickWall,
   Building,
+  LucideIcon,
   PieChart,
   Settings,
   Users,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
 export default function AdminSidebar() {
@@ -20,51 +22,30 @@ export default function AdminSidebar() {
         <Settings className="h-7 w-7" />
       </div>
       <Separator className="hidden sm:block" />
-      <Button
-        className="flex h-auto w-full items-center justify-center rounded-md p-2 shadow-md hover:bg-primary/20"
-        variant="secondary"
-        asChild
-      >
-        <Link href="/admin/usuarios">
-          <Users className="h-6 w-6" />
-        </Link>
-      </Button>
-      <Button
-        className="flex h-auto w-full items-center justify-center rounded-md p-2 shadow-md hover:bg-primary/20"
-        variant="secondary"
-        asChild
-      >
-        <Link href="/admin/indicadores">
-          <PieChart className="h-6 w-6" />
-        </Link>
-      </Button>
-      <Button
-        className="flex h-auto w-full items-center justify-center rounded-md p-2 shadow-md hover:bg-primary/20"
-        variant="secondary"
-        asChild
-      >
-        <Link href="/admin/construtoras">
-          <Building className="h-6 w-6" />
-        </Link>
-      </Button>
-      <Button
-        className="flex h-auto w-full items-center justify-center rounded-md p-2 shadow-md hover:bg-primary/20"
-        variant="secondary"
-        asChild
-      >
-        <Link href="/admin/obras">
-          <BrickWall className="h-6 w-6" />
-        </Link>
-      </Button>
-      <Button
-        className="flex h-auto w-full items-center justify-center rounded-md p-2 shadow-md hover:bg-primary/20"
-        variant="secondary"
-        asChild
-      >
-        <Link href="/admin/oacs">
-          <Box className="h-6 w-6" />
-        </Link>
-      </Button>
+      <AdminSidebarItem href="/admin/usuarios" icon={Users} />
+      <AdminSidebarItem href="/admin/indicadores" icon={PieChart} />
+      <AdminSidebarItem href="/admin/construtoras" icon={Building} />
+      <AdminSidebarItem href="/admin/obras" icon={BrickWall} />
+      <AdminSidebarItem href="/admin/oacs" icon={Box} />
     </div>
+  )
+}
+
+type AdminSidebarItemProps = {
+  href: string
+  icon: LucideIcon
+}
+
+function AdminSidebarItem({ href, icon: Icon }: AdminSidebarItemProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        buttonVariants({ variant: 'outline' }),
+        'flex h-auto w-full items-center justify-center rounded-md p-2 hover:bg-primary/20',
+      )}
+    >
+      <Icon className="h-6 w-6" />
+    </Link>
   )
 }

@@ -14,6 +14,25 @@ import {
 } from '@/components/ui/tooltip'
 import { IndicatorWithRelations } from '@/types/indicator'
 
+function ema(values: number[], period: number = 3) {
+  if (values.length === 0) {
+    return null
+  } else if (values.length === 1) {
+    return values[0]
+  } else if (values.length < period) {
+    period = values.length
+  }
+
+  const multiplier = 2 / (period + 1)
+  let ema = values.slice(0, period).reduce((acc, val) => acc + val, 0) / period
+
+  for (let i = period; i < values.length; i++) {
+    ema = (values[i]! - ema) * multiplier + ema
+  }
+
+  return ema
+}
+
 export const columns: ColumnDef<IndicatorWithRelations>[] = [
   {
     accessorKey: 'code',
@@ -83,11 +102,11 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
       <div className="hidden text-center lg:block">Média móvel</div>
     ),
     cell: ({ row }) => {
-      const values = row.original.values
-      const ema = 8.5
+      const values = row.original.values.map((v) => v.value)
+      const emaValue = ema(values)
       return (
         <div className="hidden min-w-[140px] text-center lg:block">
-          {ema.toLocaleString('pt-BR')}
+          {emaValue?.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}
         </div>
       )
     },
@@ -99,7 +118,13 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
     ),
     cell: ({ row }) => {
       const values = row.original.values
-      const lastValue = values[values.length - 1]
+      const lastValue =
+        values.length > 0
+          ? values.reduce((acc, cur) => {
+              if (cur.createdAt > acc.createdAt) return cur
+              return acc
+            })
+          : null
       return (
         <div className="hidden min-w-[140px] text-center lg:block">
           {lastValue?.value.toLocaleString('pt-BR')}
@@ -136,7 +161,7 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
       const values = row.original.values
       return (
         <div className="hidden h-[100px] min-w-[180px] lg:block">
-          <TrendChart />
+          <TrendChart values={values} polarity={row.original.polarity} />
         </div>
       )
     },

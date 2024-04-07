@@ -18,6 +18,14 @@ const systems = [
     value: 'SiAC',
     label: 'SiAC',
   },
+  {
+    value: 'SiMaC',
+    label: 'SiMaC',
+  },
+  {
+    value: 'SiNAT',
+    label: 'SiNAT',
+  },
 ]
 
 const categories = [

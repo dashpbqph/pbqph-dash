@@ -2,47 +2,49 @@
 
 import {
   LineChart as BaseLineChart,
-  CartesianGrid,
   Line,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from 'recharts'
 
-const pageData = [
-  {
-    date: '2018',
-    NPNC: 200,
-  },
-  {
-    date: '2019',
-    NPNC: 200,
-  },
-  {
-    date: '2020',
-    NPNC: 155,
-  },
-  {
-    date: '2021',
-    NPNC: 120,
-  },
-  {
-    date: '2022',
-    NPNC: 90,
-  },
-  {
-    date: '2023',
-    NPNC: 120,
-  },
-]
+import type { IndicatorValue } from '@/types/indicator'
 
-export const TrendChart = () => {
+function getPageData(values: IndicatorValue[]) {
+  const valuesSorted = values.sort((a, b) =>
+    a.createdAt > b.createdAt ? 1 : -1,
+  )
+  return valuesSorted.map((value, index) => ({
+    label: index.toString(),
+    value: value.value,
+  }))
+}
+
+const error = console.error
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+console.error = (...args: any) => {
+  if (/defaultProps/.test(args[0])) return
+  error(...args)
+}
+
+type TrendChartProps = {
+  values: IndicatorValue[]
+  polarity: string
+}
+
+export function TrendChart({ values, polarity }: TrendChartProps) {
+  if (!values || values.length === 0) {
+    return null
+  }
+
+  const pageData = getPageData(values)
+
   const min = pageData.reduce((acc, cur) => {
-    if (cur.NPNC < acc.NPNC) return cur
+    if (cur.value < acc.value) return cur
     return acc
   })
   const max = pageData.reduce((acc, cur) => {
-    if (cur.NPNC > acc.NPNC) return cur
+    if (cur.value > acc.value) return cur
     return acc
   })
   return (
@@ -53,43 +55,43 @@ export const TrendChart = () => {
         data={pageData}
         style={{ cursor: 'pointer' }}
       >
-        <XAxis dataKey="date" padding={{ left: 0, right: 20 }} hide />
+        <XAxis dataKey="label" padding={{ left: 0, right: 20 }} hide />
         <YAxis padding={{ top: 20, bottom: 0 }} hide />
         <Line
           type="monotone"
-          dataKey="NPNC"
+          dataKey="value"
           stroke="#6b7280"
           strokeWidth={2.5}
-          dot={({ cx, cy, value }) => (
-            <CustomDot
-              key={cx}
-              min={min}
-              max={max}
-              cx={cx}
-              cy={cy}
-              value={value}
-            />
-          )}
+          dot={
+            pageData.length > 1
+              ? ({ cx, cy, value }) => (
+                  <CustomDot
+                    key={cx}
+                    min={polarity === 'positiva' ? min : max}
+                    max={polarity === 'positiva' ? max : min}
+                    cx={cx}
+                    cy={cy}
+                    value={value}
+                  />
+                )
+              : undefined
+          }
         />
       </BaseLineChart>
     </ResponsiveContainer>
   )
 }
 
-function CustomDot({
-  cx,
-  cy,
-  value,
-  min,
-  max,
-}: {
+type CustomDotProps = {
   cx: number
   cy: number
   value: number
-  min: (typeof pageData)[number]
-  max: (typeof pageData)[number]
-}) {
-  if (value === min.NPNC) {
+  min: { label: string; value: number }
+  max: { label: string; value: number }
+}
+
+function CustomDot({ cx, cy, value, min, max }: CustomDotProps) {
+  if (value === min.value) {
     return (
       <circle
         cy={cy}
@@ -103,7 +105,7 @@ function CustomDot({
     )
   }
 
-  if (value === max.NPNC) {
+  if (value === max.value) {
     return (
       <circle
         cy={cy}

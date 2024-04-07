@@ -3,6 +3,7 @@ import { companyRouter } from '@/server/api/routers/company'
 import { impactRouter } from '@/server/api/routers/impact'
 import { impactedAgentRouter } from '@/server/api/routers/impactedAgent'
 import { indicatorRouter } from '@/server/api/routers/indicator'
+import { oacRouter } from '@/server/api/routers/oac'
 import { openaiRouter } from '@/server/api/routers/openai'
 import { projectRouter } from '@/server/api/routers/project'
 import { systemRouter } from '@/server/api/routers/system'
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   impact: impactRouter,
   impactedAgent: impactedAgentRouter,
   indicator: indicatorRouter,
+  oac: oacRouter,
   openai: openaiRouter,
   project: projectRouter,
   system: systemRouter,

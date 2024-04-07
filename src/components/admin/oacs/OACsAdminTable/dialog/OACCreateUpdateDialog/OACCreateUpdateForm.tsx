@@ -1,6 +1,6 @@
 'use client'
 
-import { companyCreateFormSchema } from '@/schemas/company'
+import { oacCreateFormSchema } from '@/schemas/oac'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -16,42 +16,42 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import type { Company } from '@/types/company'
-import { useCompanyFormSubmit } from './CompanyCreateUpdateForm.hooks'
+import type { OAC } from '@/types/oac'
+import { useOACFormSubmit } from './OACCreateUpdateForm.hooks'
 
-type CompanyCreateUpdateDialogProps = {
-  company?: Company
+type OACCreateUpdateDialogProps = {
+  oac?: OAC
   onClose: () => void
 }
 
-export default function CompanyCreateUpdateForm({
-  company,
+export default function OACCreateUpdateForm({
+  oac,
   onClose,
-}: CompanyCreateUpdateDialogProps) {
-  const isEditing = !!company
+}: OACCreateUpdateDialogProps) {
+  const isEditing = !!oac
 
-  const companyCreateForm = useForm<z.infer<typeof companyCreateFormSchema>>({
-    resolver: zodResolver(companyCreateFormSchema),
+  const oacCreateForm = useForm<z.infer<typeof oacCreateFormSchema>>({
+    resolver: zodResolver(oacCreateFormSchema),
     defaultValues: {
-      name: company?.name || '',
-      description: company?.description || '',
+      name: oac?.name || '',
+      description: oac?.description || '',
     },
   })
 
-  const { handleSubmit, isSubmiting } = useCompanyFormSubmit({
-    company,
+  const { handleSubmit, isSubmiting } = useOACFormSubmit({
+    oac,
     isEditing,
     onClose,
   })
 
   return (
-    <Form {...companyCreateForm}>
+    <Form {...oacCreateForm}>
       <form
         className="flex flex-col gap-3"
-        onSubmit={companyCreateForm.handleSubmit(handleSubmit)}
+        onSubmit={oacCreateForm.handleSubmit(handleSubmit)}
       >
         <FormField
-          control={companyCreateForm.control}
+          control={oacCreateForm.control}
           name="name"
           render={({ field }) => (
             <FormItem className="w-full space-y-0.5">
@@ -63,7 +63,7 @@ export default function CompanyCreateUpdateForm({
           )}
         />
         <FormField
-          control={companyCreateForm.control}
+          control={oacCreateForm.control}
           name="description"
           render={({ field }) => (
             <FormItem className="w-full space-y-0.5">
@@ -82,7 +82,7 @@ export default function CompanyCreateUpdateForm({
           <DialogButtonSubmit
             isUpdating={isEditing}
             isLoading={isSubmiting}
-            subject="construtora"
+            subject="OAC"
           />
         </DialogFooter>
       </form>

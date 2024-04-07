@@ -5,16 +5,9 @@ import {
 } from '@/server/api/trpc'
 import { z } from 'zod'
 
-export const companyRouter = createTRPCRouter({
+export const oacRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.company.findMany()
-  }),
-  getAllWithProjects: publicProcedure.query(({ ctx }) => {
-    return ctx.db.company.findMany({
-      include: {
-        projects: true,
-      },
-    })
+    return ctx.db.oAC.findMany()
   }),
   create: protectedProcedure
     .input(
@@ -24,7 +17,7 @@ export const companyRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.company.create({
+      return ctx.db.oAC.create({
         data: {
           name: input.name,
           description: input.description,
@@ -40,7 +33,7 @@ export const companyRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.company.update({
+      return ctx.db.oAC.update({
         where: {
           id: input.id,
         },
@@ -53,7 +46,7 @@ export const companyRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.db.company.delete({
+      return ctx.db.oAC.delete({
         where: {
           id: input.id,
         },

@@ -24,6 +24,9 @@ export default function IndicatorDataTableGrid({
 }: IndicatorDataTableGridProps) {
   const [defaultIndicatorValues, { refetch }] =
     api.indicator.getValuesByIndicatorId.useSuspenseQuery({ id: indicator.id })
+  const [companies] = api.company.getAllWithProjects.useSuspenseQuery()
+  const [projects] = api.project.getAllWithRelations.useSuspenseQuery()
+  const [oacs] = api.oac.getAll.useSuspenseQuery()
   const [idEditValues, setIdEditValues] = useState<string[]>([])
   const [idDeleteValues, setIdDeleteValues] = useState<string[]>([])
 
@@ -37,6 +40,19 @@ export default function IndicatorDataTableGrid({
     setIdEditValues,
     indicatorValues,
     setIndicatorValues,
+    companies: companies.map((company) => ({
+      id: company.id,
+      name: company.name,
+    })),
+    projects: projects.map((project) => ({
+      id: project.id,
+      name: project.name,
+      companyId: project.companyId,
+    })),
+    oacs: oacs.map((oac) => ({
+      id: oac.id,
+      name: oac.name,
+    })),
     idDeleteValues,
     setIdDeleteValues,
     refetchIndicators: refetch,
@@ -57,6 +73,12 @@ export default function IndicatorDataTableGrid({
       toolbar={DataTableToolbar}
       pageSize={7}
       subject="valores"
+      columnVisibilityDefault={{
+        region: indicator.stratifiedByRegion,
+        company: indicator.stratifiedByCompany,
+        project: indicator.stratifiedByProject,
+        oac: indicator.stratifiedByOAC,
+      }}
     />
   )
 }

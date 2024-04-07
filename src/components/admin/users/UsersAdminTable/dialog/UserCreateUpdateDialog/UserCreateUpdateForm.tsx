@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import {
   userCreateUpdateFormSchema,
@@ -89,6 +90,8 @@ export default function UserCreateUpdateForm({
     onClose,
   })
 
+  const [avatarVisible, setAvatarVisible] = useState(false)
+
   return (
     <Form {...userCreateUpdateForm}>
       <form
@@ -98,8 +101,9 @@ export default function UserCreateUpdateForm({
         <div className="flex gap-3">
           <button
             type="button"
-            className="group relative flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gray-400"
+            className="group relative flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gray-400 data-[avatarvisible=false]:animate-pulse"
             onClick={addImage}
+            data-avatarvisible={isEditing || avatarVisible}
           >
             <Image
               src={
@@ -113,6 +117,8 @@ export default function UserCreateUpdateForm({
               fill
               style={{ objectFit: 'contain' }}
               sizes="25w"
+              className="group-data-[avatarvisible=false]:hidden"
+              onLoadingComplete={() => setAvatarVisible(true)}
             />
             <Camera className="relative z-10 hidden h-7 w-7 text-white transition-all group-hover:block" />
             <div className="absolute inset-0 bg-black bg-opacity-0 transition-all group-hover:bg-opacity-50" />
@@ -282,7 +288,11 @@ export default function UserCreateUpdateForm({
           )}
         </div>
         <DialogFooter>
-          <DialogButtonSubmit isLoading={isSubmiting} subject={'usuário'} />
+          <DialogButtonSubmit
+            isUpdating={isEditing}
+            isLoading={isSubmiting}
+            subject={'usuário'}
+          />
         </DialogFooter>
       </form>
     </Form>

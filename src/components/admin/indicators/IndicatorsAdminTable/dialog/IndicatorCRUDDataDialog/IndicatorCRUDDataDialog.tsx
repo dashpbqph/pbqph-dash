@@ -40,16 +40,23 @@ export default function IndicatorCRUDDataDialog({
 
   async function handleSubmit() {
     const valuesToSubmit = indicatorValues.map((value) => {
-      return { id: value.id, value: value.value, date: value.createdAt }
+      return {
+        id: value.id,
+        value: value.value,
+        date: value.createdAt,
+        region: value.region,
+        company: value.companyId,
+        project: value.projectId,
+        oac: value.oacId,
+      }
     })
-    console.table(valuesToSubmit)
     await submit(valuesToSubmit)
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>Editar dados</DialogTrigger>
-      <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
+      <DialogContent className="flex w-fit max-w-fit flex-col p-7">
         <DialogHeader className="text-left">
           <DialogTitle>Editar dados do indicador</DialogTitle>
           <DialogDescription>

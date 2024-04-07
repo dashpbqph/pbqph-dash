@@ -9,6 +9,7 @@ type DetailsStatListProps = {
   indicator: Indicator
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function DetailsStatList({ indicator }: DetailsStatListProps) {
   return (
     <div className="hidden w-full flex-col gap-4 xxs:grid xxs:grid-cols-2 sm:w-44 sm:grid-cols-1 sm:grid-rows-4 md:w-[260px]">

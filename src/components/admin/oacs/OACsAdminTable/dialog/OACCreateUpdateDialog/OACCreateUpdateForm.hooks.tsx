@@ -1,52 +1,52 @@
 'use client'
 
 import { useState } from 'react'
-import { companyCreateFormSchema } from '@/schemas/company'
+import { oacCreateFormSchema } from '@/schemas/oac'
 import { api } from '@/trpc/react'
 import { z } from 'zod'
 
 import { toast } from '@/components/ui/use-toast'
-import type { Company } from '@/types/company'
+import type { OAC } from '@/types/oac'
 
-type CompanyFormSubmitProps = {
-  company?: Company
+type OACFormSubmitProps = {
+  oac?: OAC
   isEditing: boolean
   onClose: () => void
 }
 
-export function useCompanyFormSubmit({
-  company,
+export function useOACFormSubmit({
+  oac,
   isEditing,
   onClose,
-}: CompanyFormSubmitProps) {
+}: OACFormSubmitProps) {
   const [isSubmiting, setIsSubmiting] = useState(false)
-  const { mutateAsync: createCompany } = api.company.create.useMutation({
+  const { mutateAsync: createOAC } = api.oac.create.useMutation({
     onSuccess: () => {
       onClose()
       setIsSubmiting(false)
     },
   })
-  const { mutateAsync: updateCompany } = api.company.update.useMutation({
+  const { mutateAsync: updateOAC } = api.oac.update.useMutation({
     onSuccess: () => {
       onClose()
       setIsSubmiting(false)
     },
   })
-  async function handleSubmit(values: z.infer<typeof companyCreateFormSchema>) {
+  async function handleSubmit(values: z.infer<typeof oacCreateFormSchema>) {
     setIsSubmiting(true)
     try {
-      if (isEditing && company) {
-        updateCompany({ id: company.id, ...values })
+      if (isEditing && oac) {
+        updateOAC({ id: oac.id, ...values })
       } else {
-        createCompany(values)
+        createOAC(values)
       }
 
       toast({
-        title: `Construtora ${isEditing ? 'atualizada' : 'criada'} com sucesso`,
+        title: `OAC ${isEditing ? 'atualizada' : 'criada'} com sucesso`,
         description: (
           <div className="mt-1 rounded-md">
             <span>
-              A construtora <strong>{values.name}</strong> foi{' '}
+              O OAC <strong>{values.name}</strong> foi{' '}
               {isEditing ? 'atualizada' : 'cadastrada'} com sucesso.
             </span>
           </div>
@@ -55,12 +55,12 @@ export function useCompanyFormSubmit({
       })
     } catch (error) {
       toast({
-        title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} construtora`,
+        title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} OAC`,
         description: (
           <div className="mt-1 rounded-md">
             <span>
-              Ocorreu um erro ao {isEditing ? 'atualizar' : 'cadastrar'} a
-              construtora <strong>{values.name}</strong>.
+              Ocorreu um erro ao {isEditing ? 'atualizar' : 'cadastrar'} o OAC{' '}
+              <strong>{values.name}</strong>.
             </span>
           </div>
         ),

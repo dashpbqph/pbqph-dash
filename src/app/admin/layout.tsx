@@ -1,8 +1,8 @@
-import { ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
 
 import { AdminSidebar } from '@/components/admin'
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-1 shrink-0 flex-col gap-3 sm:flex-row">
       <AdminSidebar />

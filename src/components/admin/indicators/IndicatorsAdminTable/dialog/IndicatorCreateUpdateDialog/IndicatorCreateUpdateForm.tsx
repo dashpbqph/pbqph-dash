@@ -559,7 +559,11 @@ export default function IndicatorCreateUpdateForm({
               )}
             />
             <DialogFooter>
-              <DialogButtonSubmit isLoading={isSubmiting} subject="indicador" />
+              <DialogButtonSubmit
+                isUpdating={isEditing}
+                isLoading={isSubmiting}
+                subject="indicador"
+              />
             </DialogFooter>
           </TabsContent>
         </Tabs>

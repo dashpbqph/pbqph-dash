@@ -58,6 +58,14 @@ model ImpactedAgent {
     @@map("impacted_agents")
 }
 
+enum Region {
+    NORTE
+    NORDESTE
+    SUDESTE
+    SUL
+    CENTRO_OESTE
+}
+
 model IndicatorValue {
     id        String   @id @default(cuid())
     value     Float
@@ -66,6 +74,15 @@ model IndicatorValue {
 
     indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
     indicatorId String
+
+    // stratification
+    oac       OAC?     @relation(fields: [oacId], references: [id], onDelete: Cascade)
+    oacId     String?
+    region    Region?
+    company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId String?
+    project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    projectId String?
 
     @@map("indicator_values")
 }
@@ -111,8 +128,9 @@ model Company {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    employees User[]
-    projects  Project[]
+    employees       User[]
+    projects        Project[]
+    indicatorValues IndicatorValue[]
 
     @@index([name])
     @@map("companies")
@@ -125,11 +143,25 @@ model Project {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String
+    company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId       String
+    indicatorValues IndicatorValue[]
 
     @@index([name])
     @@map("projects")
+}
+
+model OAC {
+    id          String   @id @default(cuid())
+    name        String   @unique
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    indicatorValues IndicatorValue[]
+
+    @@index([name])
+    @@map("oacs")
 }
 
 enum UserRole {

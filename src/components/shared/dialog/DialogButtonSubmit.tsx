@@ -3,11 +3,13 @@ import Spinner from '@/components/ui/spinner'
 
 type DialogButtonSubmitProps = {
   isLoading: boolean
+  isUpdating: boolean
   subject: string
 }
 
 export default function DialogButtonSubmit({
   isLoading,
+  isUpdating,
   subject,
 }: DialogButtonSubmitProps) {
   return (
@@ -18,7 +20,9 @@ export default function DialogButtonSubmit({
       disabled={isLoading}
     >
       {isLoading && <Spinner />}
-      {isLoading ? 'Processando...' : `Criar ${subject}`}
+      {isLoading
+        ? 'Processando...'
+        : `${isUpdating ? 'Editar' : 'Criar'} ${subject}`}
     </Button>
   )
 }

@@ -101,7 +101,10 @@ export const getColumns = ({
       ),
       cell: ({ row }) => {
         const values = row.original.values
-        const lastValue = values[values.length - 1]
+        const lastValue =
+          values.length > 0
+            ? values.reduce((a, b) => (a.createdAt > b.createdAt ? a : b))
+            : null
         return (
           <div className="hidden min-w-[140px] text-center lg:block">
             {lastValue?.value.toLocaleString('pt-BR')}

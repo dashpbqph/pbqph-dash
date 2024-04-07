@@ -21,10 +21,16 @@ export function useProjectFormSubmit({
 }: ProjectFormSubmitProps) {
   const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createProject } = api.project.create.useMutation({
-    onSuccess: onClose,
+    onSuccess: () => {
+      onClose()
+      setIsSubmiting(false)
+    },
   })
   const { mutateAsync: updateProject } = api.project.update.useMutation({
-    onSuccess: onClose,
+    onSuccess: () => {
+      onClose()
+      setIsSubmiting(false)
+    },
   })
   async function handleSubmit(values: z.infer<typeof projectCreateFormSchema>) {
     setIsSubmiting(true)
@@ -61,7 +67,6 @@ export function useProjectFormSubmit({
         status: 'error',
       })
     }
-    setIsSubmiting(false)
   }
   return { handleSubmit, isSubmiting }
 }

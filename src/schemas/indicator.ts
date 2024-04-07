@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { IndicatorWithRelations } from '@/types/indicator'
+
 export const indicatorCreateUpdateFormSchema = z.object({
   // basic
   code: z
@@ -40,10 +42,30 @@ export const indicatorCreateUpdateFormSchema = z.object({
   stratifiedByProject: z.boolean(),
 })
 
-export const indicatorCRUDFormSchema = z.array(
-  z.object({
-    id: z.string(),
-    date: z.date(),
-    value: z.number(),
-  }),
-)
+const baseIndicatorCRUDFormSchema = z.object({
+  id: z.string(),
+  date: z.date(),
+  value: z.number(),
+})
+
+export function getDynamicIndicatorCRUDFormSchema(
+  indicator: IndicatorWithRelations,
+) {
+  const stratifications = []
+  if (indicator.stratifiedByRegion) stratifications.push('region')
+  if (indicator.stratifiedByCompany) stratifications.push('company')
+  if (indicator.stratifiedByProject) stratifications.push('project')
+  if (indicator.stratifiedByOAC) stratifications.push('oac')
+
+  return z.array(
+    baseIndicatorCRUDFormSchema.merge(
+      z.object(
+        stratifications.reduce((_, stratification) => {
+          return {
+            [stratification]: z.string(),
+          }
+        }, {}),
+      ),
+    ),
+  )
+}

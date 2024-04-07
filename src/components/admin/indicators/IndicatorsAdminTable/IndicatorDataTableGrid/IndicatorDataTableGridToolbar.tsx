@@ -39,12 +39,19 @@ export function useDataTableToolbar({
       ...indicatorWithoutRelations
     } = indicator
     return {
-      id: crypto.randomUUID(),
+      id: '',
       value: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
       indicatorId: indicator.id,
       indicator: indicatorWithoutRelations,
+      region: null,
+      company: null,
+      companyId: null,
+      project: null,
+      projectId: null,
+      oac: null,
+      oacId: null,
     }
   }
   function DataTableToolbar<TData>({

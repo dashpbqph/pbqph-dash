@@ -3,6 +3,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc'
+import { Region } from '@prisma/client'
 import { z } from 'zod'
 
 export const indicatorRouter = createTRPCRouter({
@@ -16,7 +17,13 @@ export const indicatorRouter = createTRPCRouter({
         category: true,
         impacts: true,
         impactedAgents: true,
-        values: true,
+        values: {
+          include: {
+            company: true,
+            project: true,
+            oac: true,
+          },
+        },
       },
     })
   }),
@@ -26,6 +33,9 @@ export const indicatorRouter = createTRPCRouter({
       return ctx.db.indicator.findUnique({
         where: {
           id: input.id,
+        },
+        include: {
+          values: true,
         },
       })
     }),
@@ -189,7 +199,189 @@ export const indicatorRouter = createTRPCRouter({
         },
         include: {
           indicator: true,
+          company: true,
+          project: true,
+          oac: true,
         },
       })
+    }),
+  upsertValues: publicProcedure
+    .input(
+      z.object({
+        indicatorId: z.string(),
+        values: z.array(
+          z.object({
+            id: z.string(),
+            date: z.date(),
+            value: z.number(),
+            region: z.string().nullable().optional(),
+            company: z.string().nullable().optional(),
+            project: z.string().nullable().optional(),
+            oac: z.string().nullable().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      // get all values from the indicator
+      const allValues = await ctx.db.indicatorValue.findMany({
+        where: {
+          indicatorId: input.indicatorId,
+        },
+      })
+
+      // delete values that are not in the input
+      const deletePromises = allValues
+        .filter(
+          (value) => !input.values.map((value) => value.id).includes(value.id),
+        )
+        .map(({ id }) => {
+          return ctx.db.indicatorValue.delete({
+            where: {
+              id,
+            },
+          })
+        })
+
+      // update values that are in the input
+      type CreateUpdateData = {
+        createdAt: Date
+        updatedAt: Date
+        value: number
+        indicator: {
+          connect: {
+            id: string
+          }
+        }
+        region?: Region
+        company?: {
+          connect: {
+            id: string
+          }
+        }
+        project?: {
+          connect: {
+            id: string
+          }
+        }
+        oac?: {
+          connect: {
+            id: string
+          }
+        }
+      }
+      const updatePromises = input.values
+        .filter((value) => value.id !== '')
+        .map(({ id, date, value, ...strats }) => {
+          let updateData: Omit<CreateUpdateData, 'indicator'> = {
+            createdAt: date,
+            updatedAt: new Date(),
+            value,
+          }
+          if (strats.region) {
+            updateData = {
+              ...updateData,
+              region: strats.region as Region,
+            }
+          }
+          if (strats.company) {
+            updateData = {
+              ...updateData,
+              company: {
+                connect: {
+                  id: strats.company,
+                },
+              },
+            }
+          }
+          if (strats.project) {
+            updateData = {
+              ...updateData,
+              project: {
+                connect: {
+                  id: strats.project,
+                },
+              },
+            }
+          }
+          if (strats.oac) {
+            updateData = {
+              ...updateData,
+              oac: {
+                connect: {
+                  id: strats.oac,
+                },
+              },
+            }
+          }
+          return ctx.db.indicatorValue.update({
+            where: {
+              id,
+            },
+            data: updateData,
+          })
+        })
+
+      // create values that are not in the input
+      const createPromises = input.values
+        .filter((value) => value.id === '')
+        .map(({ date, value, ...strats }) => {
+          let createData: CreateUpdateData = {
+            createdAt: date,
+            updatedAt: new Date(),
+            value,
+            indicator: {
+              connect: {
+                id: input.indicatorId,
+              },
+            },
+          }
+          if (strats.region) {
+            createData = {
+              ...createData,
+              region: strats.region as Region,
+            }
+          }
+          if (strats.company) {
+            createData = {
+              ...createData,
+              company: {
+                connect: {
+                  id: strats.company,
+                },
+              },
+            }
+          }
+          if (strats.project) {
+            createData = {
+              ...createData,
+              project: {
+                connect: {
+                  id: strats.project,
+                },
+              },
+            }
+          }
+          if (strats.oac) {
+            createData = {
+              ...createData,
+              oac: {
+                connect: {
+                  id: strats.oac,
+                },
+              },
+            }
+          }
+          return ctx.db.indicatorValue.create({
+            data: createData,
+          })
+        })
+
+      // execute all promises
+      return ctx.db.$transaction([
+        ...deletePromises,
+        ...updatePromises,
+        ...createPromises,
+      ])
     }),
 })

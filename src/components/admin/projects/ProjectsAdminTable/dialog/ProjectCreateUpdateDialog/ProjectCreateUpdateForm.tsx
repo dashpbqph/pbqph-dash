@@ -112,7 +112,11 @@ export default function ProjectCreateUpdateForm({
           )}
         />
         <DialogFooter>
-          <DialogButtonSubmit isLoading={isSubmiting} subject="obra" />
+          <DialogButtonSubmit
+            isUpdating={isEditing}
+            isLoading={isSubmiting}
+            subject="obra"
+          />
         </DialogFooter>
       </form>
     </Form>

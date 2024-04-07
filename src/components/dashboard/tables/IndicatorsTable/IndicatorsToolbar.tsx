@@ -14,6 +14,14 @@ export const systems = [
     value: 'SiAC',
     label: 'SiAC',
   },
+  {
+    value: 'SiMaC',
+    label: 'SiMaC',
+  },
+  {
+    value: 'SiNAT',
+    label: 'SiNAT',
+  },
 ]
 
 export const categories = [

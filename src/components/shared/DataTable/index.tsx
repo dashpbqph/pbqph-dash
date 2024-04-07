@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   subject: string
   rowClickFn?: (row: Row<TData>) => void
   refetchFn?: () => void
+  columnVisibilityDefault?: VisibilityState
 }
 
 export default function DataTable<TData, TValue>({
@@ -44,9 +45,12 @@ export default function DataTable<TData, TValue>({
   subject,
   rowClickFn,
   refetchFn,
+  columnVisibilityDefault = {},
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState(
+    columnVisibilityDefault,
+  )
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
 
