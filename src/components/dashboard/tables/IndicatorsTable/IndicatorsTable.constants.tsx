@@ -106,7 +106,10 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
       const emaValue = ema(values)
       return (
         <div className="hidden min-w-[140px] text-center lg:block">
-          {emaValue?.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}
+          {emaValue?.toLocaleString('pt-BR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}
         </div>
       )
     },
@@ -127,7 +130,10 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
           : null
       return (
         <div className="hidden min-w-[140px] text-center lg:block">
-          {lastValue?.value.toLocaleString('pt-BR')}
+          {lastValue?.value.toLocaleString('pt-BR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}
         </div>
       )
     },
@@ -158,10 +164,10 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
     id: 'trend',
     header: () => <div className="hidden lg:block">Tendência</div>,
     cell: ({ row }) => {
-      const values = row.original.values
+      const indicator = row.original
       return (
         <div className="hidden h-[100px] min-w-[180px] lg:block">
-          <TrendChart values={values} polarity={row.original.polarity} />
+          <TrendChart indicator={indicator} />
         </div>
       )
     },

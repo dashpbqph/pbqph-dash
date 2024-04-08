@@ -89,7 +89,7 @@ model IndicatorValue {
 
 model Indicator {
     id          String   @id @default(cuid())
-    code        String
+    code        String   @unique
     name        String
     description String   @default("")
     polarity    String

@@ -22,7 +22,7 @@ export default function IndicatorsTable() {
       toolbar={DataTableToolbar}
       pageSize={5}
       rowClickFn={(row: Row<(typeof indicators)[number]>) => {
-        router.push(`/detalhes?id=${row.original.id}`)
+        router.push(`/detalhes/${row.original.id}`)
       }}
       subject="indicadores"
     />

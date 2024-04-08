@@ -15,57 +15,6 @@ import {
 import type { IndicatorWithValues } from '@/types/indicator'
 import ChartTooltip from './ChartTooltip'
 
-// const pageData = [
-//   {
-//     date: '2018',
-//     'NPNC-Norte': 150,
-//     'NPNC-Nordeste': 48,
-//     'NPNC-Centro-Oeste': 180,
-//     'NPNC-Sul': -123,
-//     'NPNC-Sudeste': 90,
-//   },
-//   {
-//     date: '2019',
-//     'NPNC-Norte': 200,
-//     'NPNC-Nordeste': -78,
-//     'NPNC-Centro-Oeste': 140,
-//     'NPNC-Sul': -83,
-//     'NPNC-Sudeste': 70,
-//   },
-//   {
-//     date: '2020',
-//     'NPNC-Norte': 155,
-//     'NPNC-Nordeste': 108,
-//     'NPNC-Centro-Oeste': 120,
-//     'NPNC-Sul': -63,
-//     'NPNC-Sudeste': -40,
-//   },
-//   {
-//     date: '2021',
-//     'NPNC-Norte': 120,
-//     'NPNC-Nordeste': 118,
-//     'NPNC-Centro-Oeste': 160,
-//     'NPNC-Sul': -43,
-//     'NPNC-Sudeste': -100,
-//   },
-//   {
-//     date: '2022',
-//     'NPNC-Norte': 90,
-//     'NPNC-Nordeste': 168,
-//     'NPNC-Centro-Oeste': 190,
-//     'NPNC-Sul': -23,
-//     'NPNC-Sudeste': 10,
-//   },
-//   {
-//     date: '2023',
-//     'NPNC-Norte': 120,
-//     'NPNC-Nordeste': 198,
-//     'NPNC-Centro-Oeste': 140,
-//     'NPNC-Sul': -3,
-//     'NPNC-Sudeste': -10,
-//   },
-// ]
-
 function getMapColors(labels: string[]) {
   const colors = distinctColors({ samples: labels.length })
 
@@ -77,6 +26,14 @@ function getMapColors(labels: string[]) {
     },
     {},
   )
+}
+
+const mapRegion = {
+  NORTE: 'Norte',
+  NORDESTE: 'Nordeste',
+  CENTRO_OESTE: 'Centro-Oeste',
+  SUDESTE: 'Sudeste',
+  SUL: 'Sul',
 }
 
 // const mapColors = getMapColors([
@@ -124,16 +81,39 @@ function formatDateByPeriodicity(date: Date, periodicity: string) {
   })
 }
 
+type IndicatorValuesGroupedByRegion = {
+  date: string
+  NORTE?: number | null
+  NORDESTE?: number | null
+  CENTRO_OESTE?: number | null
+  SUDESTE?: number | null
+  SUL?: number | null
+}
+
 function getFormattedData(indicator: IndicatorWithValues) {
   if (indicator?.stratifiedByRegion) {
-    return indicator?.values.map((value) => ({
+    const indicatorValues = indicator.values.map((value) => ({
       date: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
-      Norte: value.value,
-      Nordeste: value.value,
-      'Centro-Oeste': value.value,
-      Sul: value.value,
-      Sudeste: value.value,
+      region: value.region,
+      value: value.value,
     }))
+    const groupedByDate: { [key: string]: IndicatorValuesGroupedByRegion } = {}
+    indicatorValues.forEach(({ date, region, value }) => {
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = {
+          date,
+          NORTE: null,
+          NORDESTE: null,
+          SUL: null,
+          SUDESTE: null,
+          CENTRO_OESTE: null,
+        }
+      }
+      if (region) {
+        groupedByDate[date]![region] = value
+      }
+    })
+    return Object.values(groupedByDate)
   } else {
     return indicator?.values.map((value) => ({
       date: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
@@ -184,9 +164,21 @@ export function LineChart({ indicator }: LineChartProps) {
           wrapperStyle={{ outline: 'none' }}
           isAnimationActive={false}
           cursor={{ stroke: '#d1d5db', strokeWidth: 1 }}
-          content={({ active, payload, label }) => (
-            <ChartTooltip active={active} payload={payload} label={label} />
-          )}
+          content={({ active, payload, label }) => {
+            const customPayload = payload?.map((item) => ({
+              ...item,
+              name: indicator?.stratifiedByRegion
+                ? mapRegion[item.name as keyof typeof mapRegion]
+                : item.name,
+            }))
+            return (
+              <ChartTooltip
+                active={active}
+                payload={customPayload}
+                label={label}
+              />
+            )
+          }}
           position={{ y: 0 }}
         />
         <Legend
@@ -214,7 +206,8 @@ export function LineChart({ indicator }: LineChartProps) {
                             <rect width="10" height="10" />
                           </svg>
                           <span className="whitespace-nowrap">
-                            {entry.value}
+                            {/* {entry.value} */}
+                            {mapRegion[entry.value as keyof typeof mapRegion]}
                           </span>
                         </li>
                       ))}

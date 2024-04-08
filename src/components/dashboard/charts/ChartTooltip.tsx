@@ -59,7 +59,10 @@ const ChartTooltip = ({ active, payload, label }: ChartTooltipProps) => {
             ) => (
               <ChartTooltipRow
                 key={`id-${idx}`}
-                value={String(value)}
+                value={value.toLocaleString('pt-BR', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                })}
                 name={name}
                 color={color}
               />

@@ -17,7 +17,7 @@ function titleCase(str: string) {
 
 function getStractification(stracts: Record<string, boolean> | undefined) {
   const stractification = []
-  if (!stracts?.stratifiedByRegion) stractification.push('Região')
+  if (stracts?.stratifiedByRegion) stractification.push('Região')
   if (stracts?.stratifiedByOAC) stractification.push('OAC')
   if (stracts?.stratifiedByCompany) stractification.push('Construtora')
   if (stracts?.stratifiedByProject) stractification.push('Obra')

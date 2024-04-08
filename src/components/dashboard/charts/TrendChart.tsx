@@ -8,16 +8,85 @@ import {
   YAxis,
 } from 'recharts'
 
-import type { IndicatorValue } from '@/types/indicator'
+import type { IndicatorWithValues } from '@/types/indicator'
 
-function getPageData(values: IndicatorValue[]) {
-  const valuesSorted = values.sort((a, b) =>
-    a.createdAt > b.createdAt ? 1 : -1,
+function formatDateByPeriodicity(date: Date, periodicity: string) {
+  const month = date.getMonth()
+  if (periodicity === 'mensal') {
+    return date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
+  } else if (periodicity === 'trimestral') {
+    const quarter = Math.floor(month / 3) + 1
+    return `Q${quarter} ${date.getFullYear()}`
+  } else if (periodicity === 'semestral') {
+    const semester = Math.floor(month / 6) + 1
+    return `S${semester} ${date.getFullYear()}`
+  } else if (periodicity === 'anual') {
+    return date.toLocaleDateString('pt-BR', { year: 'numeric' })
+  }
+
+  return date.toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+type IndicatorValuesGroupedByRegion = {
+  date: string
+  NORTE?: number | null
+  NORDESTE?: number | null
+  CENTRO_OESTE?: number | null
+  SUDESTE?: number | null
+  SUL?: number | null
+}
+
+function calculateMean(values: (number | null)[]): number {
+  const filteredValues = values.filter(
+    (value): value is number => value !== null,
   )
-  return valuesSorted.map((value, index) => ({
-    label: index.toString(),
-    value: value.value,
-  }))
+  return filteredValues.length > 0
+    ? filteredValues.reduce((sum, value) => sum + value, 0) /
+        filteredValues.length
+    : 0
+}
+
+function getFormattedData(indicator: IndicatorWithValues) {
+  if (indicator?.stratifiedByRegion) {
+    const indicatorValues = indicator.values.map((value) => ({
+      date: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
+      region: value.region,
+      value: value.value,
+    }))
+    const groupedByDate: { [key: string]: IndicatorValuesGroupedByRegion } = {}
+    indicatorValues.forEach(({ date, region, value }) => {
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = {
+          date,
+          NORTE: null,
+          NORDESTE: null,
+          SUL: null,
+          SUDESTE: null,
+          CENTRO_OESTE: null,
+        }
+      }
+      if (region) {
+        groupedByDate[date]![region] = value
+      }
+    })
+    return Object.values(groupedByDate)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map(({ date, ...regions }) => ({
+        label: date,
+        value: calculateMean(Object.values(regions)),
+      }))
+  } else {
+    return indicator?.values
+      .map((value) => ({
+        label: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
+        value: value.value,
+      }))
+      .sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
+  }
 }
 
 const error = console.error
@@ -28,16 +97,19 @@ console.error = (...args: any) => {
 }
 
 type TrendChartProps = {
-  values: IndicatorValue[]
-  polarity: string
+  indicator: IndicatorWithValues
 }
 
-export function TrendChart({ values, polarity }: TrendChartProps) {
+export function TrendChart({ indicator }: TrendChartProps) {
+  if (!indicator) return null
+
+  const { polarity, values } = indicator
   if (!values || values.length === 0) {
     return null
   }
 
-  const pageData = getPageData(values)
+  const pageData = getFormattedData(indicator)
+  if (!pageData || pageData.length === 0) return null
 
   const min = pageData.reduce((acc, cur) => {
     if (cur.value < acc.value) return cur

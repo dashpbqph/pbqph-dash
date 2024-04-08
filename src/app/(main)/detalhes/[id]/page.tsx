@@ -1,17 +1,20 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
 
 import { LineChart as DetailsLineChart } from '@/components/dashboard/charts'
 import { DetailsInfo, DetailsStatList } from '@/components/dashboard/details'
 import { Separator } from '@/components/ui/separator'
 
-export default function Details() {
-  const searchParams = useSearchParams()
-  const indicatorId = searchParams.get('id') as string
+type DetailsProps = {
+  params: {
+    id: string
+  }
+}
+
+export default function Details({ params }: DetailsProps) {
   const [indicator] = api.indicator.getIndicatorById.useSuspenseQuery({
-    id: indicatorId,
+    id: params.id,
   })
 
   if (!indicator) return null
