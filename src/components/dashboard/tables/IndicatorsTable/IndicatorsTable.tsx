@@ -24,6 +24,7 @@ export default function IndicatorsTable() {
       rowClickFn={(row: Row<(typeof indicators)[number]>) => {
         router.push(`/detalhes/${row.original.id}`)
       }}
+      fullSize
       subject="indicadores"
     />
   )

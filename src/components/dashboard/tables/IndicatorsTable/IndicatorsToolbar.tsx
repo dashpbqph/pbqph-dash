@@ -50,14 +50,14 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+    <div className="flex flex-col gap-3 md:flex-row md:gap-2">
       <Input
         placeholder="Buscar por código..."
         value={(table.getColumn('code')?.getFilterValue() as string) ?? ''}
         onChange={(event) =>
           table.getColumn('code')?.setFilterValue(event.target.value)
         }
-        className="h-8 w-full flex-1 sm:flex-none lg:w-[250px]"
+        className="h-8 w-full flex-1 sm:flex-none md:w-[250px]"
       />
       <div className="flex gap-2">
         {table.getColumn('system') && (

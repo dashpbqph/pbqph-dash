@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   subject: string
   rowClickFn?: (row: Row<TData>) => void
   refetchFn?: () => void
+  fullSize?: boolean
   columnVisibilityDefault?: VisibilityState
 }
 
@@ -45,6 +46,7 @@ export default function DataTable<TData, TValue>({
   subject,
   rowClickFn,
   refetchFn,
+  fullSize = false,
   columnVisibilityDefault = {},
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({})
@@ -114,14 +116,17 @@ export default function DataTable<TData, TValue>({
                   data-clickable={!!rowClickFn}
                   className="data-[clickable=true]:cursor-pointer"
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell, index) => (
                     <TableCell
                       key={cell.id}
                       className={cn(
+                        fullSize &&
+                          'data-[last=true]:w-[360px] data-[last=true]:xl:w-[480px]',
                         cell.column.id === 'name' &&
                           subject === 'usuários' &&
                           'pl-2',
                       )}
+                      data-last={index === row.getAllCells().length - 1}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

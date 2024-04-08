@@ -38,7 +38,7 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
     accessorKey: 'code',
     header: ({ column }) => {
       return (
-        <div className="flex">
+        <div className="flex-1">
           <Button
             variant="ghost"
             className="flex justify-start"
@@ -53,7 +53,7 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
     cell: ({ row }) => (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className="min-w-[140px] px-4 text-left font-medium">
+          <TooltipTrigger className="min-w-[140px] flex-1 px-4 text-left font-medium">
             <MathJax
               hideUntilTypeset="first"
               inline
@@ -162,11 +162,15 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
   },
   {
     id: 'trend',
-    header: () => <div className="hidden lg:block">Tendência</div>,
+    header: () => (
+      <div className="hidden w-[360px] lg:block xl:w-[480px] 2xl:w-[600px]">
+        Tendência
+      </div>
+    ),
     cell: ({ row }) => {
       const indicator = row.original
       return (
-        <div className="hidden h-[100px] min-w-[180px] lg:block">
+        <div className="hidden h-[100px] w-[360px] min-w-[180px] lg:block xl:w-[480px] 2xl:w-[600px]">
           <TrendChart indicator={indicator} />
         </div>
       )
