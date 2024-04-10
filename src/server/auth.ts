@@ -108,12 +108,3 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions)
-// export const getServerAuthSessionWithRetries = async (retry = 0) => {
-//   try {
-//     return await getServerAuthSession()
-//   } catch (error) {
-//     if (retry >= 3) throw error
-//     await new Promise((resolve) => setTimeout(resolve, 1000))
-//     return getServerAuthSessionWithRetries(retry + 1)
-//   }
-// }
