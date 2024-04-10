@@ -17,11 +17,13 @@ import ProjectCreateUpdateForm from './ProjectCreateUpdateForm'
 type ProjectCreateUpdateDialogProps = {
   project?: ProjectWithRelations
   refetchProjects: () => void
+  className?: string
 }
 
 export default function ProjectCreateUpdateDialog({
   project,
   refetchProjects,
+  className,
 }: ProjectCreateUpdateDialogProps) {
   const isEditing = !!project
   const [open, setOpen] = useState(false)
@@ -37,6 +39,7 @@ export default function ProjectCreateUpdateDialog({
         isEditing={isEditing}
         subject="obra"
         icon={BrickWall}
+        className={className}
       />
       <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
         <DialogHeader className="text-left">

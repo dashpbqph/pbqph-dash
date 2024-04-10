@@ -103,6 +103,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
           className="flex w-full flex-row gap-2 bg-[#005192] data-[loading=true]:cursor-not-allowed"
           data-loading={isLoading}
           disabled={isLoading}
+          data-testid="login-form-submit-button"
         >
           {isLoading && <Spinner />}
           {isLoading ? 'Processando...' : 'Entrar'}

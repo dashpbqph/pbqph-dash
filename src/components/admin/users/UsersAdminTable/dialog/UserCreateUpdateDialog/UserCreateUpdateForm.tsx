@@ -44,11 +44,13 @@ import {
 type UserCreateUpdateFormProps = {
   user?: User
   onClose: () => void
+  refetchUsers: () => void
 }
 
 export default function UserCreateUpdateForm({
   user,
   onClose,
+  refetchUsers,
 }: UserCreateUpdateFormProps) {
   const isEditing = !!user
   const avatarSeed = crypto.randomUUID()
@@ -88,6 +90,7 @@ export default function UserCreateUpdateForm({
     avatarSeed,
     isEditing,
     onClose,
+    refetchUsers,
   })
 
   const [avatarVisible, setAvatarVisible] = useState(false)
@@ -130,11 +133,7 @@ export default function UserCreateUpdateForm({
               render={({ field }) => (
                 <FormItem className="w-full space-y-0.5">
                   <FormControl>
-                    <Input
-                      placeholder="Nome de usuário*"
-                      autoFocus
-                      {...field}
-                    />
+                    <Input placeholder="Nome de usuário*" {...field} />
                   </FormControl>
                   <FormMessage className="font-light text-red-500" />
                 </FormItem>
@@ -150,7 +149,7 @@ export default function UserCreateUpdateForm({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="role">
                         <SelectValue placeholder="Função*" />
                       </SelectTrigger>
                     </FormControl>
@@ -216,6 +215,7 @@ export default function UserCreateUpdateForm({
               variant="outline"
               onClick={() => handleGeneratePassword({ renew: false })}
               disabled={userCreateUpdateForm.watch('password') !== ''}
+              data-testid="generate-password-button"
             >
               {userCreateUpdateForm.watch('password') === ''
                 ? 'Clique para gerar uma senha forte'

@@ -42,7 +42,7 @@
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "@types/bcrypt": "^5.0.1",
-    "@uploadthing/react": "^5.7.0",
+    "@uploadthing/react": "^6.4.2",
     "bcrypt": "^5.1.1",
     "better-react-mathjax": "^2.0.3",
     "class-variance-authority": "^0.7.0",
@@ -62,7 +62,7 @@
     "superjson": "^1.13.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "uploadthing": "^5.7.4",
+    "uploadthing": "^6.8.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

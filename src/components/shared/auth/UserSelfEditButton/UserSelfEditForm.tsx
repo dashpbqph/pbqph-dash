@@ -74,9 +74,8 @@ async function uploadImage({
   if (imageFile.size === 0) return
 
   try {
-    await uploadFiles({
+    await uploadFiles('imageUploader', {
       files: [imageFile],
-      endpoint: 'imageUploader',
       input: { username },
     })
   } catch (error) {

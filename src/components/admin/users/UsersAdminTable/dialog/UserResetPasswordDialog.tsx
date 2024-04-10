@@ -20,10 +20,12 @@ import type { User } from '@/types/user'
 
 type UserResetPasswordDialogProps = {
   user: User
+  className?: string
 }
 
 export default function UserResetPasswordDialog({
   user,
+  className,
 }: UserResetPasswordDialogProps) {
   const [password, setPassword] = useState('')
   const [open, setOpen] = useState(false)
@@ -47,7 +49,9 @@ export default function UserResetPasswordDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Redefinir senha</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
+        Redefinir senha
+      </AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

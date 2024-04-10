@@ -17,11 +17,13 @@ import type { OAC } from '@/types/oac'
 type OACDeleteDialogProps = {
   oac: OAC
   refetchOACs: () => void
+  className?: string
 }
 
 export default function OACDeleteDialog({
   oac,
   refetchOACs,
+  className,
 }: OACDeleteDialogProps) {
   const [open, setOpen] = useState(false)
   const { mutateAsync: deleteOAC, isLoading } = api.oac.delete.useMutation({
@@ -32,7 +34,7 @@ export default function OACDeleteDialog({
   })
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Remover OAC</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>Remover OAC</AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

@@ -55,7 +55,10 @@ export default function UserButton({ user }: UserButtonProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-center ring-[1.5px] ring-white">
+      <DropdownMenuTrigger
+        className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-center ring-[1.5px] ring-white"
+        data-testid="user-button"
+      >
         <UserAvatar avatar={avatar} name={name} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -78,10 +81,7 @@ export default function UserButton({ user }: UserButtonProps) {
         <DropdownMenuSeparator />
         <UserSelfEditButton user={user} />
         {isAdmin(role) && (
-          <DropdownMenuItem
-            className="flex space-x-4 py-4 transition-all hover:pl-3"
-            asChild
-          >
+          <DropdownMenuItem className="flex space-x-4 py-4 transition-all hover:pl-3">
             <Link href="/admin/usuarios">
               <Settings className="h-5 w-5" />
               <span>Administração</span>

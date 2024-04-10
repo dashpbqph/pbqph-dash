@@ -17,11 +17,13 @@ import OACCreateUpdateForm from './OACCreateUpdateForm'
 type OACCreateUpdateDialogProps = {
   oac?: OAC
   refetchOACs: () => void
+  className?: string
 }
 
 export default function OACCreateUpdateDialog({
   oac,
   refetchOACs,
+  className,
 }: OACCreateUpdateDialogProps) {
   const isEditing = !!oac
   const [open, setOpen] = useState(false)
@@ -37,6 +39,7 @@ export default function OACCreateUpdateDialog({
         isEditing={isEditing}
         subject="OAC"
         icon={Building}
+        className={className}
       />
       <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
         <DialogHeader className="text-left">

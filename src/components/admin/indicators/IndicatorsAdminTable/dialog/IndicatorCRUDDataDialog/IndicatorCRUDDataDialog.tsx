@@ -23,10 +23,12 @@ import { useIndicatorCRUDFormSubmit } from '../../IndicatorDataTableGrid/Indicat
 
 type IndicatorCRUDDataDialogProps = {
   indicator: IndicatorWithRelations
+  className?: string
 }
 
 export default function IndicatorCRUDDataDialog({
   indicator,
+  className,
 }: IndicatorCRUDDataDialogProps) {
   const [open, setOpen] = useState(false)
   const [indicatorValues, setIndicatorValues] = useState<
@@ -55,7 +57,7 @@ export default function IndicatorCRUDDataDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>Editar dados</DialogTrigger>
+      <DialogTrigger className={className}>Editar dados</DialogTrigger>
       <DialogContent className="flex w-fit max-w-fit flex-col p-7">
         <DialogHeader className="text-left">
           <DialogTitle>Editar dados do indicador</DialogTitle>

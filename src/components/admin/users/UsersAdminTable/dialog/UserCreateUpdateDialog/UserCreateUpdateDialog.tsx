@@ -17,18 +17,19 @@ import UserCreateUpdateForm from './UserCreateUpdateForm'
 type UserCreateUpdateDialogProps = {
   user?: User
   refetchUsers: () => void
+  className?: string
 }
 
 export default function UserCreateUpdateDialog({
   user,
   refetchUsers,
+  className,
 }: UserCreateUpdateDialogProps) {
   const isEditing = !!user
   const [open, setOpen] = useState(false)
 
   async function onClose() {
     setOpen(false)
-    refetchUsers()
   }
 
   return (
@@ -37,8 +38,12 @@ export default function UserCreateUpdateDialog({
         isEditing={isEditing}
         subject="usuário"
         icon={UserIcon}
+        className={className}
       />
-      <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
+      <DialogContent
+        className="max-w-[425px] p-7 md:max-w-[650px]"
+        data-testid="user-form-dialog"
+      >
         <DialogHeader className="text-left">
           <DialogTitle>{isEditing ? 'Editar' : 'Criar'} usuário</DialogTitle>
           <DialogDescription>
@@ -46,7 +51,11 @@ export default function UserCreateUpdateDialog({
             {isEditing ? 'editar o' : 'criar um novo'} usuário.
           </DialogDescription>
         </DialogHeader>
-        <UserCreateUpdateForm user={user} onClose={onClose} />
+        <UserCreateUpdateForm
+          user={user}
+          onClose={onClose}
+          refetchUsers={refetchUsers}
+        />
       </DialogContent>
     </Dialog>
   )

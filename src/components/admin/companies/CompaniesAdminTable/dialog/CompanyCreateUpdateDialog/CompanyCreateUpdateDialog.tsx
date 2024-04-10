@@ -17,11 +17,13 @@ import CompanyCreateUpdateForm from './CompanyCreateUpdateForm'
 type CompanyCreateUpdateDialogProps = {
   company?: Company
   refetchCompanies: () => void
+  className?: string
 }
 
 export default function CompanyCreateUpdateDialog({
   company,
   refetchCompanies,
+  className,
 }: CompanyCreateUpdateDialogProps) {
   const isEditing = !!company
   const [open, setOpen] = useState(false)
@@ -37,6 +39,7 @@ export default function CompanyCreateUpdateDialog({
         isEditing={isEditing}
         subject="construtora"
         icon={Building}
+        className={className}
       />
       <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
         <DialogHeader className="text-left">

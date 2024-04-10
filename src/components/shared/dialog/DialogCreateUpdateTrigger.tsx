@@ -8,18 +8,21 @@ type DialogCreateUpdateTriggerProps = {
   isEditing: boolean
   icon: LucideIcon
   subject: string
+  className?: string
 }
 
 export default function DialogCreateUpdateTrigger({
   isEditing,
   subject,
   icon: Icon,
+  className,
 }: DialogCreateUpdateTriggerProps) {
   return (
     <DialogTrigger
       className={cn(
         !isEditing && buttonVariants({ variant: 'outline' }),
         'group',
+        className,
       )}
       data-editing={isEditing}
     >

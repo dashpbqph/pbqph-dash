@@ -17,11 +17,13 @@ import type { Company } from '@/types/company'
 type CompanyDeleteDialogProps = {
   company: Company
   refetchCompanies: () => void
+  className?: string
 }
 
 export default function CompanyDeleteDialog({
   company,
   refetchCompanies,
+  className,
 }: CompanyDeleteDialogProps) {
   const [open, setOpen] = useState(false)
   const { mutateAsync: deleteCompany, isLoading } =
@@ -33,7 +35,9 @@ export default function CompanyDeleteDialog({
     })
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Remover construtora</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
+        Remover construtora
+      </AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

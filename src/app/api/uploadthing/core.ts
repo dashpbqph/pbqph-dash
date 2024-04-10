@@ -1,6 +1,6 @@
-import { utapi } from '@/server/api/routers/user'
 import { getServerAuthSession } from '@/server/auth'
 import { db } from '@/server/db'
+import { utapi } from '@/server/uploadthing'
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { z } from 'zod'
 

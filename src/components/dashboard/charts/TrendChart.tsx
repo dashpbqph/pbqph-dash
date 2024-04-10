@@ -110,7 +110,6 @@ export function TrendChart({ indicator }: TrendChartProps) {
 
   const pageData = getFormattedData(indicator)
   if (!pageData || pageData.length === 0) return null
-  console.log(indicator.code, pageData, indicator.values)
 
   const min = pageData.reduce((acc, cur) => {
     if (cur.value < acc.value) return cur

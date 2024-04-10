@@ -3,12 +3,10 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc'
+import { utapi } from '@/server/uploadthing'
 import { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
-import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
-
-export const utapi = new UTApi()
 
 export type UserEnriched = {
   id: string

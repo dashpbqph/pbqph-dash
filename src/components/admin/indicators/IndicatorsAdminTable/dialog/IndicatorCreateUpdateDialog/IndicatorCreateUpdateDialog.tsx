@@ -17,11 +17,13 @@ import IndicatorCreateUpdateForm from './IndicatorCreateUpdateForm'
 type IndicatorCreateUpdateDialogProps = {
   indicator?: IndicatorWithRelations
   refetchIndicators: () => void
+  className?: string
 }
 
 export default function IndicatorCreateUpdateDialog({
   indicator,
   refetchIndicators,
+  className,
 }: IndicatorCreateUpdateDialogProps) {
   const isEditing = !!indicator
   const [open, setOpen] = useState(false)
@@ -37,6 +39,7 @@ export default function IndicatorCreateUpdateDialog({
         isEditing={isEditing}
         subject="indicador"
         icon={PieChart}
+        className={className}
       />
       <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
         <DialogHeader className="text-left">

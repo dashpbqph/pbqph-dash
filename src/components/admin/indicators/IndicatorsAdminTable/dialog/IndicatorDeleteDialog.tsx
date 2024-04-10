@@ -18,11 +18,13 @@ import type { IndicatorWithRelations } from '@/types/indicator'
 type IndicatorDeleteDialogProps = {
   indicator: IndicatorWithRelations
   refetchIndicators: () => void
+  className?: string
 }
 
 export default function IndicatorDeleteDialog({
   indicator,
   refetchIndicators,
+  className,
 }: IndicatorDeleteDialogProps) {
   const [open, setOpen] = useState(false)
   const { mutateAsync: deleteIndicator, isLoading } =
@@ -34,7 +36,9 @@ export default function IndicatorDeleteDialog({
     })
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Remover indicador</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
+        Remover indicador
+      </AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

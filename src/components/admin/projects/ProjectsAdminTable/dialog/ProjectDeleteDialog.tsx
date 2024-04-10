@@ -17,11 +17,13 @@ import type { ProjectWithRelations } from '@/types/project'
 type ProjectDeleteDialogProps = {
   project: ProjectWithRelations
   refetchProjects: () => void
+  className?: string
 }
 
 export default function ProjectDeleteDialog({
   project,
   refetchProjects,
+  className,
 }: ProjectDeleteDialogProps) {
   const [open, setOpen] = useState(false)
   const { mutateAsync: deleteProject, isLoading } =
@@ -33,7 +35,9 @@ export default function ProjectDeleteDialog({
     })
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Remover obra</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
+        Remover obra
+      </AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

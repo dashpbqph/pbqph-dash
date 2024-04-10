@@ -17,7 +17,7 @@ export default function Tabs() {
       </Link>
       <div
         className="data-[active=true]:text-animation-underline text-right data-[active=false]:cursor-not-allowed data-[active=true]:font-semibold data-[active=false]:text-white/60 data-[active=true]:text-[#FFAE1B] data-[active=true]:before:bg-[#FFAE1B]"
-        data-active={pathname === '/detalhes'}
+        data-active={pathname.includes('/detalhes/')}
       >
         Detalhes do Indicador
       </div>

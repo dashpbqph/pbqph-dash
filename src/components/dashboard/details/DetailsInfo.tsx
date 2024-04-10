@@ -36,14 +36,14 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
 
   return (
     <>
-      <h1 className="text-2xl font-medium text-black">
+      <h1 className="text-2xl font-medium text-black" data-testid="title">
         <MathJax className="text-xl" hideUntilTypeset="first" inline dynamic>
           {`\\(${indicator?.code}\\)`}
         </MathJax>
         {' - '}
         {indicator?.name}
       </h1>
-      <span>
+      <span data-testid="objective">
         O objetivo é acompanhar, a cada ano, a tendência de variação da
         quantidade de novas empresas construtoras certificadas no SiAC –
         Execução de Obras, por região do País. Ele permite avaliar o desempenho
@@ -62,6 +62,7 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
               hideUntilTypeset="first"
               inline
               dynamic
+              data-testid="formula"
             >
               {`\\(${indicator?.equation}\\)`}
             </MathJax>
@@ -70,6 +71,7 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
         <DetailsMetaItem
           label="Unidade"
           value={indicator?.unit && titleCase(indicator?.unit)}
+          data-testid="unit"
         />
         <DetailsMetaItem
           label="Polaridade"
@@ -88,17 +90,24 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
               )}
             </div>
           }
+          data-testid="polarity"
         />
         <DetailsMetaItem
           label="Acumulativo"
           value={indicator?.cumulative ? 'Sim' : 'Não'}
+          data-testid="cumulative"
         />
         {stractification && (
-          <DetailsMetaItem label="Estratificação" value={stractification} />
+          <DetailsMetaItem
+            label="Estratificação"
+            value={stractification}
+            data-testid="stratification"
+          />
         )}
         <DetailsMetaItem
           label="Periodicidade"
           value={indicator?.periodicity && titleCase(indicator?.periodicity)}
+          data-testid="periodicity"
         />
       </div>
     </>

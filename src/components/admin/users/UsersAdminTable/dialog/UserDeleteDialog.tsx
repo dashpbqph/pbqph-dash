@@ -17,11 +17,13 @@ import type { User } from '@/types/user'
 type UserDeleteDialogProps = {
   user: User
   refetchUsers: () => void
+  className?: string
 }
 
 export default function UserDeleteDialog({
   user,
   refetchUsers,
+  className,
 }: UserDeleteDialogProps) {
   const [open, setOpen] = useState(false)
   const { mutateAsync: deleteUser, isLoading } = api.user.delete.useMutation({
@@ -32,7 +34,9 @@ export default function UserDeleteDialog({
   })
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>Remover usuário</AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
+        Remover usuário
+      </AlertDialogTrigger>
       <AlertDialogContent className="space-y-2 bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>

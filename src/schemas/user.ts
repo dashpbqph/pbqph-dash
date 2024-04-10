@@ -9,7 +9,7 @@ export const userCreateUpdateFormSchema = z.object({
     .string()
     .min(2, { message: 'O nome deve ter no mínimo 2 caracteres.' })
     .max(100, { message: 'O nome deve ter no máximo 100 caracteres.' })
-    .regex(/^[a-zA-Z]+$/, {
+    .regex(/^[a-zA-ZÀ-ÿ\u1E00-\u1EFF]+$/, {
       message: 'O nome só pode ter letras, sem espaços.',
     }),
   lastName: z

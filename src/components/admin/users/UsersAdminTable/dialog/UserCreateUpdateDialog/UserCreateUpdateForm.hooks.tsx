@@ -23,9 +23,8 @@ export async function uploadImage({
   if (imageFile.size === 0) return
 
   try {
-    await uploadFiles({
+    await uploadFiles('imageUploader', {
       files: [imageFile],
-      endpoint: 'imageUploader',
       input: { username },
     })
   } catch (error) {
@@ -132,6 +131,7 @@ type UserFormSubmitProps = {
   avatarSeed: string
   isEditing: boolean
   onClose: () => void
+  refetchUsers: () => void
 }
 
 export function useUserFormSubmit({
@@ -140,23 +140,28 @@ export function useUserFormSubmit({
   avatarSeed,
   isEditing,
   onClose,
+  refetchUsers,
 }: UserFormSubmitProps) {
   const [isSubmiting, setIsSubmiting] = useState(false)
   const { mutateAsync: createUser } = api.user.create.useMutation({
     onSuccess: async ({ id, username }) => {
+      onClose()
+      refetchUsers()
       const imageFile = userCreateUpdateForm.getValues('image')
       await uploadImage({
         username,
         imageFile: new File([imageFile], `${id}-${imageFile.name}`, {
           type: imageFile.type,
         }),
-      }).finally(() => setTimeout(onClose, 500))
+      }).finally(refetchUsers)
     },
   })
 
   const { mutateAsync: updateUser } = api.user.update.useMutation({
     onSuccess: async ({ id, username }) => {
+      onClose()
       if (userCreateUpdateForm.getValues('image').size > 0) {
+        refetchUsers()
         const imageFile = userCreateUpdateForm.getValues('image')
         const fileExt = imageFile.name.split('.').pop()
         await uploadImage({
@@ -164,9 +169,9 @@ export function useUserFormSubmit({
           imageFile: new File([imageFile], `${id}-${avatarSeed}.${fileExt}`, {
             type: imageFile.type,
           }),
-        }).finally(() => setTimeout(onClose, 500))
+        }).finally(refetchUsers)
       } else {
-        onClose()
+        refetchUsers()
       }
     },
   })

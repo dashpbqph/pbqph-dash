@@ -7,8 +7,10 @@ import {
   ChevronRightIcon,
   DotFilledIcon,
 } from '@radix-ui/react-icons'
+import { Slot } from '@radix-ui/react-slot'
 
 import { cn } from '@/lib/utils'
+import { ButtonProps } from './button'
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 
@@ -79,22 +81,36 @@ const DropdownMenuContent = React.forwardRef<
 ))
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
-const DropdownMenuItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
-    inset?: boolean
-  }
->(({ className, inset, ...props }, ref) => (
-  <DropdownMenuPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      inset && 'pl-8',
-      className,
-    )}
-    {...props}
-  />
-))
+// const DropdownMenuItem = React.forwardRef<
+//   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+//     inset?: boolean
+//   }
+// >(({ className, inset, ...props }, ref) => (
+//   <DropdownMenuPrimitive.Item
+//     ref={ref}
+//     className={cn(
+//       'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+//       inset && 'pl-8',
+//       className,
+//     )}
+//     {...props}
+//   />
+// ))
+const DropdownMenuItem = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <Slot
+        className={cn(
+          'relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+          className,
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
+)
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
 const DropdownMenuCheckboxItem = React.forwardRef<

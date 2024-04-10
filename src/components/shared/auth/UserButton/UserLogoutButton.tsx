@@ -32,8 +32,10 @@ export default function UserLogoutButton() {
       onClick={handleLogout}
       className="flex space-x-4 py-4 transition-all hover:pl-3"
     >
-      <LogOut className="h-5 w-5" />
-      <span>Sair</span>
+      <button>
+        <LogOut className="h-5 w-5" />
+        <span>Sair</span>
+      </button>
     </DropdownMenuItem>
   )
 }

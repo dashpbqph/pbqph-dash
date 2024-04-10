@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -20,6 +19,7 @@ import {
   UserDeleteDialog,
   UserResetPasswordDialog,
 } from './dialog'
+import UserAvatarWithSkeleton from './UserAvatarWithSkeleton'
 
 type GetColumnsProps = {
   refetchUsers: () => void
@@ -49,13 +49,7 @@ export const getColumns = ({
       },
       cell: ({ row }) => (
         <div className="flex min-w-[240px] flex-1 items-center gap-3">
-          <Image
-            src={row.original.avatar}
-            className="border-0.5 h-[40px] w-[40px] rounded-full border"
-            alt=""
-            width={40}
-            height={40}
-          />
+          <UserAvatarWithSkeleton src={row.original.avatar} />
           <div className="flex flex-col">
             <span className="whitespace-nowrap font-semibold">
               {row.original.name}
@@ -102,23 +96,27 @@ export const getColumns = ({
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-full min-w-[30px] p-0">
+              <Button
+                variant="ghost"
+                className="h-8 w-full min-w-[30px] max-w-[48px] p-0"
+                data-testid="actions-menu-button"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DropdownMenuItem>
                 <UserCreateUpdateDialog
                   user={user}
                   refetchUsers={refetchUsers}
                 />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DropdownMenuItem>
                 <UserResetPasswordDialog user={user} />
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DropdownMenuItem>
                 <UserDeleteDialog user={user} refetchUsers={refetchUsers} />
               </DropdownMenuItem>
             </DropdownMenuContent>

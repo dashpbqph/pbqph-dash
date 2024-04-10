@@ -18,6 +18,7 @@ export default function DialogButtonSubmit({
       className="flex w-full flex-row gap-2 data-[loading=true]:cursor-not-allowed"
       data-loading={isLoading}
       disabled={isLoading}
+      data-testid="dialog-form-submit-button"
     >
       {isLoading && <Spinner />}
       {isLoading

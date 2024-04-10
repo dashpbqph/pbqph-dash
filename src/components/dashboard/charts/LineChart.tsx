@@ -113,12 +113,16 @@ function getFormattedData(indicator: IndicatorWithValues) {
         groupedByDate[date]![region] = value
       }
     })
-    return Object.values(groupedByDate)
+    return Object.values(groupedByDate).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    )
   } else {
-    return indicator?.values.map((value) => ({
-      date: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
-      Indicador: value.value,
-    }))
+    return indicator?.values
+      .map((value) => ({
+        date: formatDateByPeriodicity(value.createdAt, indicator.periodicity),
+        Indicador: value.value,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   }
 }
 
@@ -134,7 +138,12 @@ export function LineChart({ indicator }: LineChartProps) {
       : {}
   return (
     <ResponsiveContainer width="100%" height="100%" className="flex-1">
-      <BaseLineChart width={500} height={300} data={pageData}>
+      <BaseLineChart
+        width={500}
+        height={300}
+        data={pageData}
+        id="historical-chart"
+      >
         <CartesianGrid strokeDasharray="5 5" />
         {!pageData ||
           (pageData.length === 0 && (
@@ -187,7 +196,10 @@ export function LineChart({ indicator }: LineChartProps) {
           content={(props) => {
             const { payload } = props
             return (
-              <ul className="mt-1.5 flex flex-col gap-4 text-xs font-medium text-[#687182] md:flex-row md:justify-between">
+              <ul
+                className="mt-1.5 flex flex-col gap-4 text-xs font-medium text-[#687182] md:flex-row md:justify-between"
+                id="chart-legend"
+              >
                 {mapColors && Object.keys(mapColors).length > 1 && (
                   <div className="flex gap-3 md:w-1/2">
                     <span>Legenda:</span>
@@ -225,12 +237,12 @@ export function LineChart({ indicator }: LineChartProps) {
         {Object.entries(mapColors).map(([key, value]) => (
           <Line
             key={key}
-            // type="monotone"
             dataKey={key}
             stroke={value.color}
             strokeWidth={3}
             dot={{ fill: value.color, r: 5 }}
             activeDot={{ fill: value.color, stroke: value.color, r: 6.5 }}
+            id={`chart-data-line-${key}`}
           />
         ))}
       </BaseLineChart>

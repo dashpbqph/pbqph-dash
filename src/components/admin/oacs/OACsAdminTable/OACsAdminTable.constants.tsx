@@ -73,17 +73,20 @@ export const getColumns = ({
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-full min-w-[30px] p-0">
+              <Button
+                variant="ghost"
+                className="h-8 w-full min-w-[30px] max-w-[48px] p-0"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DropdownMenuItem>
                 <OACCreateUpdateDialog oac={oac} refetchOACs={refetchOACs} />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DropdownMenuItem>
                 <OACDeleteDialog oac={oac} refetchOACs={refetchOACs} />
               </DropdownMenuItem>
             </DropdownMenuContent>
