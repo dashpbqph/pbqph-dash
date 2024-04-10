@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { isAdmin } from '@/utils/auth'
+// import { isAdmin } from '@/utils/auth'
 import UserLogoutButton from './UserLogoutButton'
 
 export function UserAvatar({
@@ -51,7 +51,7 @@ type UserButtonProps = {
 }
 
 export default function UserButton({ user }: UserButtonProps) {
-  const { avatar, name, username, role, company } = user
+  const { avatar, name, username, company } = user
 
   return (
     <DropdownMenu>
@@ -80,14 +80,14 @@ export default function UserButton({ user }: UserButtonProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <UserSelfEditButton user={user} />
-        {isAdmin(role) && (
-          <DropdownMenuItem className="flex space-x-4 py-4 transition-all hover:pl-3">
-            <Link href="/admin/usuarios">
-              <Settings className="h-5 w-5" />
-              <span>Administração</span>
-            </Link>
-          </DropdownMenuItem>
-        )}
+        {/* {isAdmin(role) && ( */}
+        <DropdownMenuItem className="flex space-x-4 py-4 transition-all hover:pl-3">
+          <Link href="/admin/usuarios">
+            <Settings className="h-5 w-5" />
+            <span>Administração</span>
+          </Link>
+        </DropdownMenuItem>
+        {/* )} */}
         <UserLogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
