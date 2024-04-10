@@ -1,0 +1,1 @@
+export { UsersAdminTable } from './UsersAdminTable'

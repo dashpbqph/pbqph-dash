@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { DialogProps } from '@radix-ui/react-dialog'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import { Command as CommandPrimitive } from 'cmdk'
+import { Command as CommandPrimitive, useCommandState } from 'cmdk'
 
 import { cn } from '@/lib/utils'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -70,15 +70,21 @@ const CommandList = React.forwardRef<
 CommandList.displayName = CommandPrimitive.List.displayName
 
 const CommandEmpty = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Empty>,
+  HTMLDivElement,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
-  <CommandPrimitive.Empty
-    ref={ref}
-    className="py-6 text-center text-sm"
-    {...props}
-  />
-))
+>((props, ref) => {
+  const render = useCommandState((state) => state.filtered.count === 0)
+  if (!render) return null
+
+  return (
+    <div
+      ref={ref}
+      className="py-6 text-center text-sm"
+      role="presentation"
+      {...props}
+    />
+  )
+})
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName
 

@@ -24,6 +24,8 @@ type ComboboxProps = {
   defaultValue?: string
   placeholderValue?: string
   placeholderSearch?: string
+  placeholderEmpty?: string | React.ReactNode
+  onChange: (value: string) => void
 }
 
 export function Combobox({
@@ -31,7 +33,9 @@ export function Combobox({
   contentList,
   placeholderValue,
   placeholderSearch,
+  placeholderEmpty,
   defaultValue,
+  onChange,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState(defaultValue)
@@ -43,10 +47,12 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('justify-between', className)}
+          className={cn('justify-between px-6', className)}
         >
           {value
-            ? contentList.find((content) => content.value === value)?.label
+            ? contentList.find(
+                (content) => content.value.toLowerCase() === value,
+              )?.label
             : placeholderValue}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -54,7 +60,7 @@ export function Combobox({
       <PopoverContent className="p-0" align="start">
         <Command>
           <CommandInput placeholder={placeholderSearch} />
-          <CommandEmpty>No content found.</CommandEmpty>
+          <CommandEmpty>{placeholderEmpty}</CommandEmpty>
           <CommandGroup>
             {contentList.map((content) => (
               <CommandItem
@@ -62,6 +68,10 @@ export function Combobox({
                 value={content.value}
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? '' : currentValue)
+                  const selected = contentList.find(
+                    (c) => c.value.toLowerCase() === currentValue,
+                  )
+                  if (selected) onChange(selected.value)
                   setOpen(false)
                 }}
               >
