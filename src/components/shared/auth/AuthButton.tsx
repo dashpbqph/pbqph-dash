@@ -5,6 +5,7 @@ import { LoginButton, UserButton } from '@/components/shared/auth'
 
 export default async function AuthButton() {
   console.log('vercel url', process.env.VERCEL_URL)
+  console.log('db url', process.env.DATABASE_URL)
   try {
     const session = await getServerAuthSession()
     console.log('session', session)
