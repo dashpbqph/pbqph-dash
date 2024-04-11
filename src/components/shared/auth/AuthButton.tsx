@@ -4,6 +4,7 @@ import { api } from '@/trpc/server'
 import { LoginButton, UserButton } from '@/components/shared/auth'
 
 export default async function AuthButton() {
+  console.log('vercel url', process.env.VERCEL_URL)
   try {
     const session = await getServerAuthSession()
     console.log(session)
