@@ -7,13 +7,13 @@ export default async function AuthButton() {
   console.log('vercel url', process.env.VERCEL_URL)
   try {
     const session = await getServerAuthSession()
-    console.log(session)
+    console.log('session', session)
     const user = session
       ? await api.user.getUserByUsername.query({
           username: 'super.admin',
         })
       : null
-    console.log(user)
+    console.log('user', user)
     return user ? <UserButton user={user} /> : <LoginButton />
   } catch (error) {
     console.error(error)
