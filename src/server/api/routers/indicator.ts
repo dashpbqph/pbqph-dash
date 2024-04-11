@@ -1,8 +1,4 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '@/server/api/trpc'
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import { Region } from '@prisma/client'
 import { z } from 'zod'
 
@@ -53,7 +49,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  create: protectedProcedure
+  create: publicProcedure
     .input(
       z.object({
         code: z.string(),
@@ -114,7 +110,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -179,7 +175,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  delete: protectedProcedure
+  delete: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.db.indicator.delete({
