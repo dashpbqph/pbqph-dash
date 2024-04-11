@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs'
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { PromptTemplate } from '@langchain/core/prompts'
 import { ChatOpenAI } from '@langchain/openai'
@@ -88,7 +88,7 @@ const chainTextToEquation = promptTextToEquation
 const chainTextToUnit = promptTextToUnit.pipe(chatModel).pipe(outputParser)
 
 export const openaiRouter = createTRPCRouter({
-  textToEquation: protectedProcedure
+  textToEquation: publicProcedure
     .input(
       z.object({
         text: z.string(),
@@ -98,7 +98,7 @@ export const openaiRouter = createTRPCRouter({
       const output = await chainTextToEquation.invoke({ text: input.text })
       return output.replace(/\$/g, '') // remove $ symbols
     }),
-  textToUnit: protectedProcedure
+  textToUnit: publicProcedure
     .input(
       z.object({
         text: z.string(),
