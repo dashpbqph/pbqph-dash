@@ -1,15 +1,16 @@
-import { env } from '@/env.mjs'
 import { db } from '@/server/db'
-import { loginSchema } from '@/server/validation/auth'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import { UserRole } from '@prisma/client'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import type { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from 'next-auth'
+import { type Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
+
+import { loginSchema } from './validation/auth'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -39,8 +40,8 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
   session: { strategy: 'jwt', maxAge: 24 * 60 * 60 }, // session expires in 1 day
+  adapter: PrismaAdapter(db) as Adapter,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -89,7 +90,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           username: user.username,
-          role: user.role?.role as UserRole,
+          role: user.role?.role,
           name: user.lastName
             ? `${user.firstName} ${user.lastName}`
             : user.firstName,
@@ -99,7 +100,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  secret: env.NEXTAUTH_SECRET,
 }
 
 /**

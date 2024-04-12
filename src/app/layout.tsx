@@ -1,14 +1,10 @@
 import '@/styles/globals.css'
 
-import type { ReactNode } from 'react'
 import { Inter } from 'next/font/google'
-import { headers } from 'next/headers'
-import { MathProvider } from '@/providers'
 import { TRPCReactProvider } from '@/trpc/react'
 
-import { Navbar } from '@/components/shared/navbar'
-import { TailwindIndicator } from '@/components/shared/utils'
 import { Toaster } from '@/components/ui/toaster'
+import Navbar from '@/app/_components/navbar'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,20 +17,19 @@ export const metadata = {
   icons: [{ rel: 'icon', url: '/favicon.png' }],
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider headers={headers()}>
+    <html lang="pt-BR">
+      <body className={`font-sans antialiased ${inter.variable}`}>
+        <TRPCReactProvider>
           <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-[#005192] to-[#007577] p-3 text-white dark:bg-black dark:from-black dark:to-black sm:p-6">
             <div className="flex w-full flex-1 flex-col space-y-3">
               <Navbar />
-              <MathProvider>{children}</MathProvider>
+              {children}
             </div>
           </main>
         </TRPCReactProvider>
         <Toaster />
-        <TailwindIndicator />
       </body>
     </html>
   )

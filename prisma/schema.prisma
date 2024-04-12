@@ -75,7 +75,6 @@ model IndicatorValue {
     indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
     indicatorId String
 
-    // stratification
     oac       OAC?     @relation(fields: [oacId], references: [id], onDelete: Cascade)
     oacId     String?
     region    Region?
