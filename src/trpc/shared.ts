@@ -11,9 +11,7 @@ function getBaseUrl() {
 }
 
 export function getUrl() {
-  const baseUrl = getBaseUrl() + '/api/trpc'
-  console.log('baseUrl', baseUrl)
-  return baseUrl
+  return getBaseUrl() + '/api/trpc'
 }
 
 /**
