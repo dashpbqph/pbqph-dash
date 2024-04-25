@@ -15,3 +15,5 @@ export default function Home() {
     </Card>
   )
 }
+
+export const dynamic = 'force-dynamic'
