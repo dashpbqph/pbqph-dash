@@ -1,1 +1,0 @@
-export { IndicatorsAdminTable } from './IndicatorsAdminTable'

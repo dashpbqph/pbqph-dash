@@ -1,8 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# openai
-openai.key
-
 # dependencies
 /node_modules
 /.pnp
@@ -12,8 +9,6 @@ openai.key
 /coverage
 
 # database
-/prisma/seeds/*
-/prisma/seed.ts
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 
@@ -45,11 +40,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-# test results
-/test-results
-/playwright-report

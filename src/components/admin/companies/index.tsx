@@ -1,1 +1,0 @@
-export { CompaniesAdminTable } from './CompaniesAdminTable'

@@ -1,1 +1,0 @@
-export { ProjectsAdminTable } from './ProjectsAdminTable'

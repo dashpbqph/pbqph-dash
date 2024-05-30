@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Aparelhos Economizadores de Água",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Argamassa Colante",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Blocos Cerâmicos",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Blocos Vazados de Concreto com Função Estrutural e Peças de Concreto para Pavimentação",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Cimento Portland",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Componentes para Sistemas Construtivos em Chapas de Gesso para Drywall",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Eletrodutos Plásticos para Sistemas Elétricos de Baixa Tensão em Edificações",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Esquadrias de PVC",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Fechaduras",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Louças Sanitárias para Sistemas Prediais",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Metais Sanitários",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Painéis de Partículas de Madeira (MDP) e Painéis de Fibras de Madeira (MDF)",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Pisos Laminados Fornecidos em Réguas",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Placas Cerâmicas para Revestimento",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Portas e Janelas de Correr de Alumínio",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Reservatórios Poliolefínicos para Água Potável de Volume até 3.000 L (inclusive)",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Telhas Cerâmicas",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Tintas Imobiliárias",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Tubos de PVC para Infraestrutura",
+    "system": "SiMaC"
+  },
+  {
+    "name": "Tubos e Conexões de PVC para Sistemas Hidráulicos Prediais",
+    "system": "SiMaC"
+  }
+]

@@ -1,9 +1,14 @@
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
 import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '@/server/api/trpc'
-import { Region } from '@prisma/client'
+  Category,
+  ImpactedAgent,
+  ImpactNature,
+  Periodicity,
+  Polarity,
+  Region,
+  SystemAbbrev,
+  SystemType,
+} from '@prisma/client'
 import { z } from 'zod'
 
 export const indicatorRouter = createTRPCRouter({
@@ -14,100 +19,90 @@ export const indicatorRouter = createTRPCRouter({
     return ctx.db.indicator.findMany({
       include: {
         system: true,
-        category: true,
-        impacts: true,
-        impactedAgents: true,
         values: {
           include: {
             company: true,
             project: true,
             oac: true,
+            psq: true,
+            guideline: true,
           },
         },
       },
     })
   }),
-  getIndicatorById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.indicator.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          values: true,
-        },
-      })
-    }),
-  getAllBySystemAndCategory: publicProcedure
-    .input(z.object({ systemCode: z.string(), categoryName: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.indicator.findMany({
-        where: {
-          system: {
-            code: input.systemCode,
-          },
-          category: {
-            name: input.categoryName,
+  getIndicatorById: publicProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
+    return ctx.db.indicator.findUnique({
+      where: {
+        id: input.id,
+      },
+      include: {
+        values: {
+          include: {
+            company: true,
+            project: true,
+            oac: true,
+            psq: true,
+            guideline: true,
           },
         },
-      })
-    }),
+      },
+    })
+  }),
   create: protectedProcedure
     .input(
       z.object({
         code: z.string(),
+        codeMathJax: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
+        purpose: z.string(),
         unit: z.string(),
         polarity: z.string(),
         cumulative: z.boolean(),
         source: z.string(),
         periodicity: z.string(),
-        impacts: z.array(z.record(z.string())),
-        impactedAgents: z.array(z.record(z.string())),
-        equation: z.string(),
-        equationDescription: z.string(),
+        impactNatures: z.array(z.custom<ImpactNature>()),
+        impactedAgents: z.array(z.custom<ImpactedAgent>()),
+        equationMathJax: z.string(),
         stratifiedByOAC: z.boolean(),
+        stratifiedByPSQ: z.boolean(),
+        stratifiedByGuideline: z.boolean(),
         stratifiedByRegion: z.boolean(),
         stratifiedByCompany: z.boolean(),
         stratifiedByProject: z.boolean(),
       }),
     )
     .mutation(({ ctx, input }) => {
+      const system = input.system.split('-')
       return ctx.db.indicator.create({
         data: {
           code: input.code,
+          codeMathJax: input.codeMathJax,
           system: {
             connect: {
-              id: input.system,
+              // eslint-disable-next-line camelcase
+              abbrev_type: {
+                abbrev: system[0] as SystemAbbrev,
+                type: system[1] ? SystemType.NAO_SE_APLICA : (system[1] as SystemType),
+              },
             },
           },
-          category: {
-            connect: {
-              id: input.category,
-            },
-          },
+          category: input.category as Category,
           name: input.name,
+          purpose: input.purpose,
           unit: input.unit,
-          equation: input.equation,
-          equationDescription: input.equationDescription,
-          polarity: input.polarity,
+          equationMathJax: input.equationMathJax,
+          polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,
-          periodicity: input.periodicity,
-          impacts: {
-            connect: input.impacts.map((impact) => ({
-              id: impact.value,
-            })),
-          },
-          impactedAgents: {
-            connect: input.impactedAgents.map((impactedAgent) => ({
-              id: impactedAgent.value,
-            })),
-          },
+          periodicity: input.periodicity as Periodicity,
+          impactNatures: input.impactNatures as ImpactNature[],
+          impactedAgents: input.impactedAgents as ImpactedAgent[],
           stratifiedByOAC: input.stratifiedByOAC,
+          stratifiedByPSQ: input.stratifiedByPSQ,
+          stratifiedByGuideline: input.stratifiedByGuideline,
           stratifiedByRegion: input.stratifiedByRegion,
           stratifiedByCompany: input.stratifiedByCompany,
           stratifiedByProject: input.stratifiedByProject,
@@ -119,25 +114,29 @@ export const indicatorRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         code: z.string(),
+        codeMathJax: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
+        purpose: z.string(),
         unit: z.string(),
         polarity: z.string(),
         cumulative: z.boolean(),
         source: z.string(),
         periodicity: z.string(),
-        impacts: z.array(z.record(z.string())),
-        impactedAgents: z.array(z.record(z.string())),
-        equation: z.string(),
-        equationDescription: z.string(),
+        impactNatures: z.array(z.custom<ImpactNature>()),
+        impactedAgents: z.array(z.custom<ImpactedAgent>()),
+        equationMathJax: z.string(),
         stratifiedByOAC: z.boolean(),
+        stratifiedByPSQ: z.boolean(),
+        stratifiedByGuideline: z.boolean(),
         stratifiedByRegion: z.boolean(),
         stratifiedByCompany: z.boolean(),
         stratifiedByProject: z.boolean(),
       }),
     )
     .mutation(({ ctx, input }) => {
+      const system = input.system.split('-')
       return ctx.db.indicator.update({
         where: {
           id: input.id,
@@ -146,48 +145,40 @@ export const indicatorRouter = createTRPCRouter({
           code: input.code,
           system: {
             connect: {
-              id: input.system,
+              // eslint-disable-next-line camelcase
+              abbrev_type: {
+                abbrev: system[0] as SystemAbbrev,
+                type: system[1] ? SystemType.NAO_SE_APLICA : (system[1] as SystemType),
+              },
             },
           },
-          category: {
-            connect: {
-              id: input.category,
-            },
-          },
+          category: input.category as Category,
           name: input.name,
+          purpose: input.purpose,
           unit: input.unit,
-          equation: input.equation,
-          equationDescription: input.equationDescription,
-          polarity: input.polarity,
+          equationMathJax: input.equationMathJax,
+          polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,
-          periodicity: input.periodicity,
-          impacts: {
-            connect: input.impacts.map((impact) => ({
-              id: impact.value,
-            })),
-          },
-          impactedAgents: {
-            connect: input.impactedAgents.map((impactedAgent) => ({
-              id: impactedAgent.value,
-            })),
-          },
+          periodicity: input.periodicity as Periodicity,
+          impactNatures: input.impactNatures as ImpactNature[],
+          impactedAgents: input.impactedAgents as ImpactedAgent[],
           stratifiedByOAC: input.stratifiedByOAC,
+          stratifiedByPSQ: input.stratifiedByPSQ,
+          stratifiedByGuideline: input.stratifiedByGuideline,
           stratifiedByRegion: input.stratifiedByRegion,
           stratifiedByCompany: input.stratifiedByCompany,
           stratifiedByProject: input.stratifiedByProject,
         },
       })
     }),
-  delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.db.indicator.delete({
-        where: {
-          id: input.id,
-        },
-      })
-    }),
+  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+    return ctx.db.indicator.delete({
+      where: {
+        id: input.id,
+      },
+    })
+  }),
 
   // values
   getValuesByIndicatorId: publicProcedure
@@ -202,6 +193,8 @@ export const indicatorRouter = createTRPCRouter({
           company: true,
           project: true,
           oac: true,
+          psq: true,
+          guideline: true,
         },
       })
     }),
@@ -232,9 +225,7 @@ export const indicatorRouter = createTRPCRouter({
 
       // delete values that are not in the input
       const deletePromises = allValues
-        .filter(
-          (value) => !input.values.map((value) => value.id).includes(value.id),
-        )
+        .filter((value) => !input.values.map((value) => value.id).includes(value.id))
         .map(({ id }) => {
           return ctx.db.indicatorValue.delete({
             where: {
@@ -378,10 +369,6 @@ export const indicatorRouter = createTRPCRouter({
         })
 
       // execute all promises
-      return ctx.db.$transaction([
-        ...deletePromises,
-        ...updatePromises,
-        ...createPromises,
-      ])
+      return ctx.db.$transaction([...deletePromises, ...updatePromises, ...createPromises])
     }),
 })

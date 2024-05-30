@@ -1,8 +1,4 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
 import { utapi } from '@/server/uploadthing'
 import { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
@@ -48,9 +44,7 @@ export const userRouter = createTRPCRouter({
       id: user.id,
       avatar: user.image,
       username: user.username,
-      name: user.lastName
-        ? `${user.firstName} ${user.lastName}`
-        : user.firstName,
+      name: user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -94,9 +88,7 @@ export const userRouter = createTRPCRouter({
       return {
         avatar: user.image,
         username: user.username,
-        name: user.lastName
-          ? `${user.firstName} ${user.lastName}`
-          : user.firstName,
+        name: user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,

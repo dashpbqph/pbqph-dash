@@ -1,0 +1,22 @@
+[
+  {
+    "abbrev": "SiAC",
+    "name": "Sistema de Avaliação da Conformidade de Empresas de Serviços e Obras da Construção Civil",
+    "type": "NAO_SE_APLICA"
+  },
+  {
+    "abbrev": "SiMaC",
+    "name": "Sistema de Qualificação de Empresas de Materiais, Componentes e Sistemas Construtivos",
+    "type": "NAO_SE_APLICA"
+  },
+  {
+    "abbrev": "SiNAT",
+    "name": "Sistema Nacional de Avaliações Técnicas de Produtos Inovadores e Sistemas Convencionais",
+    "type": "CONVENCIONAL"
+  },
+  {
+    "abbrev": "SiNAT",
+    "name": "Sistema Nacional de Avaliações Técnicas de Produtos Inovadores e Sistemas Convencionais",
+    "type": "INOVACAO"
+  }
+]

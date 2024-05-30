@@ -14,13 +14,9 @@ function generatePassword(length = 8) {
   }
 
   // 1 letra minúscula
-  password.push(
-    lowerCaseLetters[Math.floor(Math.random() * lowerCaseLetters.length)],
-  )
+  password.push(lowerCaseLetters[Math.floor(Math.random() * lowerCaseLetters.length)])
   // 1 letra maiúscula
-  password.push(
-    upperCaseLetters[Math.floor(Math.random() * upperCaseLetters.length)],
-  )
+  password.push(upperCaseLetters[Math.floor(Math.random() * upperCaseLetters.length)])
   // 1 caractere especial
   password.push(specialChars[Math.floor(Math.random() * specialChars.length)])
   // 2 números

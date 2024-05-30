@@ -2,7 +2,7 @@ import {
   userCreateUpdateFormSchema,
   userCreateUpdateFormSchemaOptionalPassword,
 } from '@/schemas/user'
-import { RouterOutputs } from '@/trpc/shared'
+import { RouterOutputs } from '@/server/api/root'
 import { z } from 'zod'
 
 export type User = Awaited<RouterOutputs['user']['getAll'][number]>

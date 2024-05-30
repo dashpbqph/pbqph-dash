@@ -1,15 +1,12 @@
-import { env } from '@/env.mjs'
 import { db } from '@/server/db'
-import { loginSchema } from '@/server/validation/auth'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { PrismaAdapter } from '@auth/prisma-adapter'
 import { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
-import {
-  getServerSession,
-  type DefaultSession,
-  type NextAuthOptions,
-} from 'next-auth'
+import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth'
+import { type Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
+
+import { loginSchema } from './validation/auth'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -39,7 +36,6 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
   session: { strategy: 'jwt', maxAge: 24 * 60 * 60 }, // session expires in 1 day
   callbacks: {
     async jwt({ token, user }) {
@@ -62,6 +58,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
+  adapter: PrismaAdapter(db) as Adapter,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -78,28 +75,24 @@ export const authOptions: NextAuthOptions = {
           where: { username: cred.username },
           include: { role: true },
         })
+        console.log('user', user)
+
         if (!user) throw new Error('Invalid Credentials')
 
-        const isValidPassword = await bcrypt.compare(
-          cred.password,
-          user.password,
-        )
+        const isValidPassword = await bcrypt.compare(cred.password, user.password)
         if (!isValidPassword) throw new Error('Invalid Credentials')
 
         return {
           id: user.id,
           username: user.username,
-          role: user.role?.role as UserRole,
-          name: user.lastName
-            ? `${user.firstName} ${user.lastName}`
-            : user.firstName,
+          role: user.role?.role,
+          name: user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName,
           email: user.email,
           image: user.image,
         }
       },
     }),
   ],
-  secret: env.NEXTAUTH_SECRET,
 }
 
 /**

@@ -1,8 +1,6 @@
-import { RouterOutputs } from '@/trpc/shared'
+import { RouterOutputs } from '@/server/api/root'
 
-export type IndicatorWithValues = Awaited<
-  RouterOutputs['indicator']['getIndicatorById']
->
+export type IndicatorWithValues = Awaited<RouterOutputs['indicator']['getIndicatorById']>
 
 export type IndicatorWithRelations = Awaited<
   RouterOutputs['indicator']['getAllWithRelations'][number]
@@ -17,4 +15,4 @@ export type IndicatorValue = Omit<
   'indicator'
 >
 
-export type Tab = 'basic' | 'formula' | 'stratification'
+export type Tab = 'infos' | 'properties' | 'stratifications'
