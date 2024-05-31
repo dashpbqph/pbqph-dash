@@ -50,12 +50,12 @@ const fibra = localFont({
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/fibra-semiBold.otf',
+      path: '../../assets/fonts/fibra-semibold.otf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/fibra-semiBold-it.otf',
+      path: '../../assets/fonts/fibra-semibold-it.otf',
       weight: '600',
       style: 'italic',
     },
@@ -75,7 +75,7 @@ const fibra = localFont({
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/fibra-ultraBold-it.otf',
+      path: '../../assets/fonts/fibra-ultrabold-it.otf',
       weight: '800',
       style: 'italic',
     },
