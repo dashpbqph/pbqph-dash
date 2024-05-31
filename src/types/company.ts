@@ -1,3 +1,3 @@
-import { RouterOutputs } from '@/trpc/shared'
+import { RouterOutputs } from '@/server/api/root'
 
 export type Company = Awaited<RouterOutputs['company']['getAll'][number]>

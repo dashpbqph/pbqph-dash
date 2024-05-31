@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
 import { z } from 'zod'
 
 export const companyRouter = createTRPCRouter({
@@ -16,14 +16,12 @@ export const companyRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        description: z.string(),
       }),
     )
     .mutation(({ ctx, input }) => {
       return ctx.db.company.create({
         data: {
           name: input.name,
-          description: input.description,
         },
       })
     }),
@@ -32,7 +30,6 @@ export const companyRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-        description: z.string(),
       }),
     )
     .mutation(({ ctx, input }) => {
@@ -42,17 +39,14 @@ export const companyRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
-          description: input.description,
         },
       })
     }),
-  delete: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.db.company.delete({
-        where: {
-          id: input.id,
-        },
-      })
-    }),
+  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+    return ctx.db.company.delete({
+      where: {
+        id: input.id,
+      },
+    })
+  }),
 })

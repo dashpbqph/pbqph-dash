@@ -1,201 +1,214 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SystemAbbrev {
+  SiNAT
+  SiAC
+  SiMaC
+}
+
+enum SystemType {
+  NAO_SE_APLICA
+  CONVENCIONAL
+  INOVACAO
 }
 
 model System {
-    id        String   @id @default(cuid())
-    name      String
-    code      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  name   String
+  abbrev SystemAbbrev
+  type   SystemType
 
-    categories Category[]
-    indicators Indicator[]
+  indicators Indicator[]
 
-    @@index([name])
-    @@map("systems")
+  @@unique([abbrev, type])
+  @@map("systems")
 }
 
-model Category {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    systems    System[]
-    indicators Indicator[]
-
-    @@index([name])
-    @@map("categories")
+enum ImpactNature {
+  AMBIENTAL
+  ECONOMICA
+  LEGAL
+  SOCIAL
+  GERENCIAL
+  TECNOLOGICA
 }
 
-model Impact {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    indicators Indicator[]
-
-    @@index([name])
-    @@map("impacts")
+enum ImpactedAgent {
+  EMPRESA_CONSTRUTORA
+  FABRICANTE
+  TRABALHADOR
+  SOCIEDADE
 }
 
-model ImpactedAgent {
-    id        String   @id @default(cuid())
-    name      String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum Polarity {
+  POSITIVA
+  NEGATIVA
+}
 
-    indicators Indicator[]
+enum Periodicity {
+  EVENTUAL
+  ANUAL
+  SEMESTRAL
+  TRIMESTRAL
+}
 
-    @@index([name])
-    @@map("impacted_agents")
+enum Category {
+  DESEMPENHO
+  ESTRATEGICO
+  RESULTADO
 }
 
 enum Region {
-    NORTE
-    NORDESTE
-    SUDESTE
-    SUL
-    CENTRO_OESTE
-}
-
-model IndicatorValue {
-    id        String   @id @default(cuid())
-    value     Float
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
-    indicatorId String
-
-    // stratification
-    oac       OAC?     @relation(fields: [oacId], references: [id], onDelete: Cascade)
-    oacId     String?
-    region    Region?
-    company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String?
-    project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    projectId String?
-
-    @@map("indicator_values")
+  NORTE
+  NORDESTE
+  SUDESTE
+  SUL
+  CENTRO_OESTE
 }
 
 model Indicator {
-    id          String   @id @default(cuid())
-    code        String   @unique
-    name        String
-    description String   @default("")
-    polarity    String
-    cumulative  Boolean
-    source      String
-    periodicity String
-    unit        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id              String          @id @default(cuid())
+  category        Category
+  code            String          @unique
+  codeMathJax     String
+  name            String
+  unit            String
+  polarity        Polarity
+  cumulative      Boolean
+  source          String
+  periodicity     Periodicity
+  impactNatures   ImpactNature[]
+  impactedAgents  ImpactedAgent[]
+  purpose         String
+  equationMathJax String
 
-    impacts        Impact[]
-    impactedAgents ImpactedAgent[]
-    values         IndicatorValue[]
+  stratifiedByRegion    Boolean @default(false)
+  stratifiedByCompany   Boolean @default(false)
+  stratifiedByProject   Boolean @default(false)
+  stratifiedByOAC       Boolean @default(false)
+  stratifiedByPSQ       Boolean @default(false)
+  stratifiedByGuideline Boolean @default(false)
 
-    equation            String
-    equationDescription String
+  system       System           @relation(fields: [systemAbbrev, systemType], references: [abbrev, type], onDelete: Cascade)
+  systemAbbrev SystemAbbrev
+  systemType   SystemType
+  values       IndicatorValue[]
 
-    stratifiedByOAC     Boolean @default(false)
-    stratifiedByRegion  Boolean @default(false)
-    stratifiedByCompany Boolean @default(false)
-    stratifiedByProject Boolean @default(false)
+  @@map("indicators")
+}
 
-    system     System   @relation(fields: [systemId], references: [id], onDelete: Cascade)
-    systemId   String
-    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-    categoryId String
+model IndicatorValue {
+  id        String   @id @default(cuid())
+  value     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([name])
-    @@map("indicators")
+  indicator   Indicator @relation(fields: [indicatorId], references: [id])
+  indicatorId String
+
+  region      Region?
+  company     Company?   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId   String?
+  project     Project?   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String?
+  oac         Oac?       @relation(fields: [oacId], references: [id])
+  oacId       String?
+  psq         Psq?       @relation(fields: [psqId], references: [id])
+  psqId       String?
+  guideline   Guideline? @relation(fields: [guidelineId], references: [id])
+  guidelineId String?
+
+  @@map("indicator_values")
 }
 
 model Company {
-    id          String   @id @default(cuid())
-    name        String   @unique
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id   String @id @default(cuid())
+  name String @unique
 
-    employees       User[]
-    projects        Project[]
-    indicatorValues IndicatorValue[]
+  employees User[]
 
-    @@index([name])
-    @@map("companies")
+  projects        Project[]
+  indicatorValues IndicatorValue[]
+
+  @@map("companies")
 }
 
 model Project {
-    id          String   @id @default(cuid())
-    name        String   @unique
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id   String @id @default(cuid())
+  name String @unique
 
-    company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId       String
-    indicatorValues IndicatorValue[]
+  company         Company          @relation(fields: [companyId], references: [id])
+  companyId       String
+  indicatorValues IndicatorValue[]
 
-    @@index([name])
-    @@map("projects")
+  @@map("projects")
 }
 
-model OAC {
-    id          String   @id @default(cuid())
-    name        String   @unique
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+model Guideline {
+  id   String @id @default(cuid())
+  name String @unique // int string: 001, 002, 003, ...
 
-    indicatorValues IndicatorValue[]
+  indicatorValues IndicatorValue[]
 
-    @@index([name])
-    @@map("oacs")
+  @@map("guidelines")
+}
+
+model Psq {
+  id   String @id @default(cuid())
+  name String @unique
+
+  indicatorValues IndicatorValue[]
+
+  @@map("psqs")
+}
+
+model Oac {
+  id   String @id @default(cuid())
+  name String @unique
+
+  indicatorValues IndicatorValue[]
+
+  @@map("oacs")
 }
 
 enum UserRole {
-    SUPER_ADMIN
-    ADMIN
-    STAFF
-    MEMBER
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+  MEMBER
 }
 
 model Role {
-    id   String   @id @default(cuid())
-    role UserRole @unique
+  id   String   @id @default(cuid())
+  role UserRole @unique
 
-    users User[]
+  users User[]
 
-    @@map("roles")
+  @@map("roles")
 }
 
 model User {
-    id        String   @id @default(cuid())
-    username  String   @unique
-    firstName String
-    lastName  String?
-    password  String
-    salt      String
-    email     String   @unique
-    image     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  username  String   @unique
+  firstName String
+  lastName  String?
+  password  String
+  salt      String
+  email     String   @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-    roleId    String
-    company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    companyId String?
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String?
 
-    @@map("users")
+  @@map("users")
 }

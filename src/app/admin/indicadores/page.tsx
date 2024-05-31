@@ -1,14 +1,14 @@
 import { Suspense } from 'react'
-import { PieChart } from 'lucide-react'
 
-import { AdminPageHeader } from '@/components/admin'
-import { IndicatorsAdminTable } from '@/components/admin/indicators'
-import SkeletonTable from '@/components/shared/DataTable/skeleton'
+import SkeletonTable from '@/components/ui/skeleton/skeleton-table'
+import AdminPageHeader from '@/app/admin/_components/page-header'
+
+import IndicatorsAdminTable from './_components/table'
 
 export default function AdminIndicator() {
   return (
     <>
-      <AdminPageHeader title="Administração de Indicadores" icon={PieChart} />
+      <AdminPageHeader title="Indicadores" />
       <Suspense fallback={<SkeletonTable hasCreateButton />}>
         <IndicatorsAdminTable />
       </Suspense>

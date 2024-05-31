@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Estratégico",
+    "systems": ["SiAC", "SiMaC", "SiNAT"]
+  },
+  {
+    "name": "Desempenho",
+    "systems": ["SiAC", "SiMaC", "SiNAT"]
+  },
+  {
+    "name": "Resultado",
+    "systems": ["SiAC", "SiMaC", "SiNAT"]
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Construtora A",
+    "projects": [
+      {
+        "name": "Obra A1"
+      },
+      {
+        "name": "Obra A2"
+      },
+      {
+        "name": "Obra A3"
+      }
+    ]
+  },
+  {
+    "name": "Construtora B",
+    "projects": [
+      {
+        "name": "Obra B1"
+      },
+      {
+        "name": "Obra B2"
+      }
+    ]
+  }
+]

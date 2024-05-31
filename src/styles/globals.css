@@ -1,87 +1,117 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 94%;
+    --foreground: 0 0% 5%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --card-foreground: 0 0% 5%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+
+    --primary: 182.34 96.25% 31.37%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 200.77, 68.42%, 14.9%;
+    --secondary-foreground: 0 0% 5%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 47.21, 100%, 47.84%;
+    --accent-foreground: 0 0% 5%;
+
+    --destructive: 47.21, 100%, 47.84%;
+    --destructive-foreground: 200.77, 68.42%, 14.9%;
+
+    --border: 0 0% 92%;
+    --input: 0 0% 85%;
+    --ring: 182.34 96.25% 31.37%;
+
     --radius: 0.5rem;
   }
- 
+
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --background: 60 3% 6%;
+    --foreground: 0 0% 98%;
+
+    --card: 60 6% 7%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 60 6% 7%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 39 100% 55%;
+    --primary-foreground: 0 0% 2%;
+
+    --secondary: 30 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 40 5% 22%;
+    --muted-foreground: 40 5% 49%;
+
+    --accent: 40 45% 14%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 47.21, 100%, 47.84%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 40 5% 12%;
+    --input: 45 4% 18%;
+    --ring: 39 100% 40%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
-.popover-content {
-  width: var(--radix-popover-trigger-width);
-  max-height: var(--radix-popover-content-available-height);
-}
-
 @layer components {
   .text-animation-underline {
-    @apply relative before:absolute before:bottom-0 before:left-0 before:block before:h-[2px] before:w-full before:origin-top-left before:scale-x-0 before:bg-white before:transition before:duration-300 before:ease-in-out before:content-[''] before:hover:scale-x-100;
+    @apply relative before:absolute before:bottom-0 before:left-0 before:block before:h-[2px] before:w-full before:origin-top-left before:scale-x-0 before:bg-secondary before:transition before:duration-300 before:ease-in-out before:content-[''] before:hover:scale-x-100;
+  }
+
+  .artificial-border {
+    @apply after:absolute after:bottom-0 after:left-0 after:h-full after:w-full after:border-b after:border-white after:content-['']
+  }
+
+  /* Estilos para scrollbar */
+  .scrollbar::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background-color: #F0F0F0;
+  }
+
+  .scrollbar::-webkit-scrollbar-track:horizontal {
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track:vertical {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  .scrollbar::-webkit-scrollbar-corner {
+    display: none;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+    background-color: #03979D;
   }
 }

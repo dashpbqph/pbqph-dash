@@ -1,1 +1,0 @@
-export { OACsAdminTable } from './OACsAdminTable'

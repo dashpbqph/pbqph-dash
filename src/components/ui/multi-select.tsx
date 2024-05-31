@@ -1,31 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import { Check, X } from 'lucide-react'
+import { Check, ChevronsUpDownIcon, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 export type OptionType = Record<'value' | 'label', string>
 
 interface MultiSelectProps {
   options: Record<'value' | 'label', string>[]
   selected: Record<'value' | 'label', string>[]
-  onChange: React.Dispatch<
-    React.SetStateAction<Record<'value' | 'label', string>[]>
-  >
+  onChange: React.Dispatch<React.SetStateAction<Record<'value' | 'label', string>[]>>
   className?: string
   placeholder?: string
 }
@@ -33,40 +20,24 @@ interface MultiSelectProps {
 const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
   ({ options, selected, onChange, className, ...props }, ref) => {
     const [open, setOpen] = React.useState(false)
-    const [query, setQuery] = React.useState<string>('')
+    const [triggerWidth, setTriggerWidth] = React.useState<number>()
 
     const handleUnselect = (item: Record<'value' | 'label', string>) => {
       onChange(selected.filter((i) => i.value !== item.value))
     }
 
-    React.useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' && query === '' && selected.length > 0) {
-          onChange(selected.filter((_, index) => index !== selected.length - 1))
-        }
-
-        if (e.key === 'Escape') {
-          setOpen(false)
-        }
-      }
-
-      document.addEventListener('keydown', handleKeyDown)
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown)
-      }
-    }, [onChange, query, selected])
-
     return (
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild className={className}>
+        <PopoverTrigger asChild className={cn('w-full', className)}>
           <Button
-            ref={ref}
+            ref={(node) => {
+              if (node) setTriggerWidth(node.offsetWidth)
+            }}
             variant="outline"
             role="combobox"
             aria-expanded={open}
             data-empty={selected.length === 0}
-            className="group w-full justify-between px-3 data-[empty=true]:h-9"
+            className="group justify-between px-3 data-[empty=true]:h-9"
             onClick={() => setOpen(!open)}
           >
             <div className="flex flex-wrap items-center gap-1">
@@ -105,49 +76,35 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                 </Badge>
               ))}
               {selected.length === 0 && (
-                <span className="text-sm text-muted-foreground">
-                  {props.placeholder ?? 'Select ...'}
-                </span>
+                <span className="text-sm">{props.placeholder ?? 'Select ...'}</span>
               )}
             </div>
-            <CaretSortIcon className="h-4 w-4 opacity-25" />
+            <ChevronsUpDownIcon className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
-          <Command className={className}>
-            <CommandInput
-              onValueChange={(item) => {
-                setQuery(item)
+        <PopoverContent
+          className="flex flex-col gap-1 rounded-md p-1.5"
+          style={{ width: triggerWidth || undefined }}
+          align="start"
+        >
+          {options.map((option) => (
+            <div
+              className="group flex w-full cursor-pointer items-center rounded-md px-2 py-1 text-sm hover:bg-accent data-[selected=true]:bg-primary data-[selected=true]:text-white"
+              key={option.value}
+              onClick={() => {
+                onChange(
+                  selected.some((item) => item.value === option.value)
+                    ? selected.filter((item) => item.value !== option.value)
+                    : [...selected, option],
+                )
+                setOpen(true)
               }}
-              placeholder="Buscar..."
-            />
-            <CommandEmpty>Nenhum resultado</CommandEmpty>
-            <CommandGroup className="max-h-64 overflow-auto">
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  onSelect={() => {
-                    onChange(
-                      selected.some((item) => item.value === option.value)
-                        ? selected.filter((item) => item.value !== option.value)
-                        : [...selected, option],
-                    )
-                    setOpen(true)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      selected.some((item) => item.value === option.value)
-                        ? 'opacity-100'
-                        : 'opacity-0',
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
+              data-selected={selected.some((item) => item.value === option.value)}
+            >
+              <Check className="mr-2 h-4 w-4 opacity-0 group-data-[selected=true]:opacity-100" />
+              {option.label}
+            </div>
+          ))}
         </PopoverContent>
       </Popover>
     )

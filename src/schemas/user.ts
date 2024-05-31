@@ -25,7 +25,6 @@ export const userCreateUpdateFormSchema = z.object({
   role: z.nativeEnum(UserRole),
 })
 
-export const userCreateUpdateFormSchemaOptionalPassword =
-  userCreateUpdateFormSchema.extend({
-    password: z.string().optional(),
-  })
+export const userCreateUpdateFormSchemaOptionalPassword = userCreateUpdateFormSchema.extend({
+  password: z.string().optional(),
+})
