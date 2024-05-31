@@ -10,6 +10,8 @@ import {
   DownloadIcon,
   MoreHorizontal,
   SearchIcon,
+  SignalHighIcon,
+  SignalLowIcon,
 } from 'lucide-react'
 
 import { ChartDataItem } from '@/types/chart'
@@ -61,6 +63,19 @@ const LAG_OPTIONS = [
   { value: 'all', label: 'Todos' },
 ]
 
+function getStats(chartData: ChartDataItem[]) {
+  const values = chartData.map((item) => item.Indicador as number)
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const avg = values.reduce((acc, curr) => acc + curr, 0) / values.length
+
+  return {
+    Mínimo: { value: min, icon: SignalLowIcon },
+    Média: { value: avg, icon: Activity },
+    Máximo: { value: max, icon: SignalHighIcon },
+  }
+}
+
 type DetailsProps = {
   params: {
     id: string
@@ -78,6 +93,13 @@ export default function Details({ params }: DetailsProps) {
     if (!indicator) return [] as ChartDataItem[]
     return getChartData({ indicator, stratifications })
   }, [indicator, stratifications])
+
+  const statsGlobal = useMemo(() => {
+    const globalChartData = getChartData({ indicator, stratifications: [] })
+    return getStats(globalChartData)
+  }, [indicator])
+
+  console.log('statsGlobal', statsGlobal)
 
   const rawStratifications = useMemo(() => getStratificationList(indicator), [indicator])
 
@@ -142,7 +164,7 @@ export default function Details({ params }: DetailsProps) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="flex w-[210px] flex-col gap-3 p-3"
+                  className="flex w-[200px] flex-col gap-3 p-3"
                   align="start"
                   sideOffset={6}
                 >
@@ -207,17 +229,16 @@ export default function Details({ params }: DetailsProps) {
             )}
             <Button
               className="flex h-8 w-full"
-              // variant="primary"
               icon={DownloadIcon}
               onClick={() => handleDownloadCSV(indicator)}
             >
               Baixar dados
             </Button>
           </div>
-          <div className="flex w-[228px] flex-1 flex-col gap-3">
-            <DetailsStatCard title="Estatística 1" value="123,4" icon={Activity} />
-            <DetailsStatCard title="Estatística 2" value="123,4" icon={Activity} />
-            <DetailsStatCard title="Estatística 3" value="123,4" icon={Activity} />
+          <div className="flex w-[200px] flex-1 flex-col gap-3">
+            {Object.entries(statsGlobal).map(([key, value]) => (
+              <DetailsStatCard key={key} title={key} value={value.value} icon={value.icon} />
+            ))}
           </div>
         </div>
       </div>

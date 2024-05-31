@@ -10,72 +10,72 @@ import MathProvider from '@/app/_providers/math-provider'
 const fibra = localFont({
   src: [
     {
-      path: '../../assets/fonts/7861255c-3d7f-4127-a537-e7f2b29016f9.otf',
+      path: '../../assets/fonts/fibra-thin.otf',
       weight: '100',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/434a9764-cd3e-4b64-9e54-3a811d9ff62c.otf',
+      path: '../../assets/fonts/fibra-thin-it.otf',
       weight: '100',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/08bfb66e-3467-49e0-bf80-fe4d8c1c53d8.otf',
+      path: '../../assets/fonts/fibra-ultralight.otf',
       weight: '200',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/e89089d9-5182-413f-8987-ff12dc46c8e8.otf',
+      path: '../../assets/fonts/fibra-ultralight-it.otf',
       weight: '200',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/eb257248-1a80-4bc6-b99f-6791dae7101c.otf',
+      path: '../../assets/fonts/fibra-light.otf',
       weight: '300',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/cda54c97-2715-4310-8d56-aeabd5ed746b.otf',
+      path: '../../assets/fonts/fibra-light-it.otf',
       weight: '300',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/338aaa8c-06ad-4cb2-9005-3b290f46016f.otf',
+      path: '../../assets/fonts/fibra-regular.otf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/905c6aa6-01e1-44b6-905d-8e1c70a7e7de.otf',
+      path: '../../assets/fonts/fibra-regular-it.otf',
       weight: '400',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/e8738805-ad7c-40db-8435-58768bf70976.otf',
+      path: '../../assets/fonts/fibra-semiBold.otf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/05f15479-35ba-4cb4-8b88-03acdd3cc6ed.otf',
+      path: '../../assets/fonts/fibra-semiBold-it.otf',
       weight: '600',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/e95fd454-8470-4d97-8f0f-d1c8d4ad1265.otf',
+      path: '../../assets/fonts/fibra-bold.otf',
       weight: '700',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/4ff69b0e-bbb6-4399-a217-7800fcea2e66.otf',
+      path: '../../assets/fonts/fibra-bold-it.otf',
       weight: '700',
       style: 'italic',
     },
     {
-      path: '../../assets/fonts/36f9fae0-db3e-4dad-8ca9-79c496697e29.otf',
+      path: '../../assets/fonts/fibra-ultrabold.otf',
       weight: '800',
       style: 'normal',
     },
     {
-      path: '../../assets/fonts/681bde69-f253-443f-b031-321a66618da0.otf',
+      path: '../../assets/fonts/fibra-ultraBold-it.otf',
       weight: '800',
       style: 'italic',
     },

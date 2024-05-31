@@ -219,7 +219,7 @@ export default function UserCreateUpdateForm({
         />
         {!isEditing && (
           <div className="relative flex gap-2">
-            <FormInputLabel label="Nome de usuário" />
+            <FormInputLabel label="Senha" />
             <Button
               type="button"
               className="flex-1 justify-start text-sm font-medium text-muted-foreground disabled:bg-gray-100 disabled:opacity-100"

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 type DetailsStatListProps = {
   title: string
-  value: string
+  value: number
   icon: LucideIcon
 }
 
@@ -16,7 +16,12 @@ export default function DetailsStatCard({ title, value, icon: Icon }: DetailsSta
         <Icon strokeWidth={2} className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="py-2">
-        <div className="text-3xl font-bold">{value}</div>
+        <div className="text-3xl font-bold">
+          {value.toLocaleString('pt-BR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}
+        </div>
       </CardContent>
     </Card>
   )
