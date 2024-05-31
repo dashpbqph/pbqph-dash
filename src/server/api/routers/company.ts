@@ -12,7 +12,7 @@ export const companyRouter = createTRPCRouter({
       },
     })
   }),
-  create: protectedProcedure
+  create: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -25,7 +25,7 @@ export const companyRouter = createTRPCRouter({
         },
       })
     }),
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),

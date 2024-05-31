@@ -109,7 +109,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),

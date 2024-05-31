@@ -5,14 +5,14 @@ export const projectRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.project.findMany()
   }),
-  getAllWithRelations: protectedProcedure.query(({ ctx }) => {
+  getAllWithRelations: publicProcedure.query(({ ctx }) => {
     return ctx.db.project.findMany({
       include: {
         company: true,
       },
     })
   }),
-  create: protectedProcedure
+  create: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -31,7 +31,7 @@ export const projectRouter = createTRPCRouter({
         },
       })
     }),
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),

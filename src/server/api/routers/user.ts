@@ -145,7 +145,7 @@ export const userRouter = createTRPCRouter({
         data: userData,
       })
     }),
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),
