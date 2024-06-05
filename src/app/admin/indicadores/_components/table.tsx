@@ -2,24 +2,25 @@
 
 import { api } from '@/trpc/react'
 
+import { IndicatorWithRelations } from '@/types/indicator'
 import { DataTable } from '@/components/ui/data-table'
 
 import { getColumns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function IndicatorsAdminTable() {
-  const [indicators, { refetch }] = api.indicator.getAllWithRelations.useSuspenseQuery()
+  const { data: indicators, isPending, refetch } = api.indicator.getAll.useQuery()
   const columns = getColumns({ refetchIndicators: refetch })
 
-  if (!indicators) return null
   return (
     <DataTable
-      data={indicators}
+      data={indicators || ([] as IndicatorWithRelations[])}
       columns={columns}
       toolbar={DataTableToolbar}
       pageSize={9}
       subject="indicadores"
       refetchFn={refetch}
+      isLoading={isPending}
     />
   )
 }

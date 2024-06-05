@@ -11,11 +11,21 @@ import {
 } from '@prisma/client'
 import { z } from 'zod'
 
+// function updateStratifications(system: string) {
+//   if (system === 'SiAC') {
+//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
+//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
+//   } else if (system === 'SiMaC') {
+//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
+//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
+//   } else if (system.includes('SiNAT')) {
+//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
+//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
+//   }
+// }
+
 export const indicatorRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.indicator.findMany()
-  }),
-  getAllWithRelations: publicProcedure.query(({ ctx }) => {
     return ctx.db.indicator.findMany({
       include: {
         system: true,
@@ -76,6 +86,8 @@ export const indicatorRouter = createTRPCRouter({
     )
     .mutation(({ ctx, input }) => {
       const system = input.system.split('-')
+      const systemAbbrev = system[0] as SystemAbbrev
+      const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
       return ctx.db.indicator.create({
         data: {
           code: input.code,
@@ -84,8 +96,8 @@ export const indicatorRouter = createTRPCRouter({
             connect: {
               // eslint-disable-next-line camelcase
               abbrev_type: {
-                abbrev: system[0] as SystemAbbrev,
-                type: system[1] ? SystemType.NAO_SE_APLICA : (system[1] as SystemType),
+                abbrev: systemAbbrev,
+                type: systemType,
               },
             },
           },
@@ -109,7 +121,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  update: publicProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -136,7 +148,10 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      console.log(input)
       const system = input.system.split('-')
+      const systemAbbrev = system[0] as SystemAbbrev
+      const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
       return ctx.db.indicator.update({
         where: {
           id: input.id,
@@ -147,8 +162,8 @@ export const indicatorRouter = createTRPCRouter({
             connect: {
               // eslint-disable-next-line camelcase
               abbrev_type: {
-                abbrev: system[0] as SystemAbbrev,
-                type: system[1] ? SystemType.NAO_SE_APLICA : (system[1] as SystemType),
+                abbrev: systemAbbrev,
+                type: systemType,
               },
             },
           },
@@ -181,7 +196,7 @@ export const indicatorRouter = createTRPCRouter({
   }),
 
   // values
-  getValuesByIndicatorId: publicProcedure
+  getValuesByIndicatorId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.db.indicatorValue.findMany({
@@ -198,7 +213,7 @@ export const indicatorRouter = createTRPCRouter({
         },
       })
     }),
-  upsertValues: publicProcedure
+  upsertValues: protectedProcedure
     .input(
       z.object({
         indicatorId: z.string(),

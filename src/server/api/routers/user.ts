@@ -1,27 +1,13 @@
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
 import { utapi } from '@/server/uploadthing'
 import { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
 
-export type UserEnriched = {
-  id: string
-  avatar: string
-  username: string
-  name: string
-  firstName: string
-  lastName: string
-  email: string
-  createdAt: Date
-  role: UserRole
-  company: {
-    id: string
-    name: string
-  }
-}
+import { UserEnriched } from '@/types/user'
 
 export const userRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({
       orderBy: {
         createdAt: 'desc',
@@ -96,7 +82,7 @@ export const userRouter = createTRPCRouter({
         company: user.company?.name,
       }
     }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         username: z.string(),
@@ -145,7 +131,7 @@ export const userRouter = createTRPCRouter({
         data: userData,
       })
     }),
-  update: publicProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -192,59 +178,7 @@ export const userRouter = createTRPCRouter({
         },
       })
     }),
-  updateSelf: publicProcedure
-    .input(
-      z.object({
-        username: z.string(),
-        firstName: z.string(),
-        lastName: z.string(),
-        email: z.string(),
-        password: z.string(),
-        image: z.string(),
-      }),
-    )
-    .mutation(({ ctx, input }) => {
-      const updateData: Record<string, unknown> = {
-        firstName: input.firstName,
-        email: input.email,
-      }
-
-      if (input.lastName) updateData.lastName = input.lastName
-      if (input.password) {
-        const salt = bcrypt.genSaltSync(10)
-        const hashedPassword = bcrypt.hashSync(input.password, salt)
-        updateData.password = hashedPassword
-        updateData.salt = salt
-      }
-      if (input.image) updateData.image = input.image
-
-      return ctx.db.user.update({
-        where: {
-          username: input.username,
-        },
-        data: updateData,
-      })
-    }),
-  updateImage: publicProcedure
-    .input(
-      z.object({
-        username: z.string(),
-        image: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const updatedUser = await ctx.db.user.update({
-        where: {
-          username: input.username,
-        },
-        data: {
-          image: input.image,
-        },
-      })
-      const imageKey = updatedUser.image?.split('/').pop()
-      if (imageKey) await utapi.deleteFiles(imageKey)
-    }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(
       z.object({
         username: z.string(),
@@ -259,7 +193,7 @@ export const userRouter = createTRPCRouter({
       const imageKey = deletedUser.image?.split('/').pop()
       if (imageKey) await utapi.deleteFiles(imageKey)
     }),
-  updatePassword: publicProcedure
+  updatePassword: protectedProcedure
     .input(
       z.object({
         username: z.string(),

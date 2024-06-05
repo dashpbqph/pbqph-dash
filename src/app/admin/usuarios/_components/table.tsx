@@ -2,23 +2,24 @@
 
 import { api } from '@/trpc/react'
 
+import { UserEnriched } from '@/types/user'
 import { DataTable } from '@/components/ui/data-table'
 
 import { getColumns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function UsersAdminTable() {
-  const [users, { refetch }] = api.user.getAll.useSuspenseQuery()
+  const { data: users, isPending, refetch } = api.user.getAll.useQuery()
   const columns = getColumns({ refetchUsers: refetch })
 
-  if (!users) return null
   return (
     <DataTable
-      data={users}
+      data={users || ([] as UserEnriched[])}
       columns={columns}
       toolbar={DataTableToolbar}
       subject="usuários"
       refetchFn={refetch}
+      isLoading={isPending}
     />
   )
 }

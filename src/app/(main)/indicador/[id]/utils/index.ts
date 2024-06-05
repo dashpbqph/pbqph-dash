@@ -43,7 +43,7 @@ function objectToCSV<T extends object>(data: T[]) {
   return csv.join('\n')
 }
 
-export default function handleDownloadCSV(data: IndicatorWithValues) {
+export function handleDownloadCSV(data: IndicatorWithValues) {
   const formattedData = formatObjectValues(data)
   const csv = objectToCSV(formattedData)
   const blob = new Blob([csv], { type: 'text/csv' })

@@ -35,6 +35,7 @@ interface DataTableProps<TData, TValue> {
   subject: string
   rowClickFn?: (row: Row<TData>) => void
   refetchFn?: () => void
+  isLoading?: boolean
   fullSize?: boolean
   columnVisibilityDefault?: VisibilityState
   paginationVariant?: 'light' | 'dark'
@@ -50,6 +51,7 @@ export default function DataTable<TData, TValue>({
   subject,
   rowClickFn,
   refetchFn,
+  isLoading = false,
   fullSize = false,
   columnVisibilityDefault = {},
   paginationVariant = 'light',
@@ -140,7 +142,7 @@ export default function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className={cn('h-24 bg-white text-center')}>
-                  Nenhum registro encontrado.
+                  {isLoading ? 'Carregando...' : 'Nenhum registro encontrado.'}
                 </TableCell>
               </TableRow>
             )}

@@ -8,6 +8,7 @@ import {
   CheckIcon,
   ChevronDown,
   DownloadIcon,
+  LucideIcon,
   MoreHorizontal,
   SearchIcon,
   SignalHighIcon,
@@ -26,13 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { getChartData } from '@/app/(main)/_utils'
 
 import { LineChart as DetailsLineChart } from './_components/charts/line-chart'
-import { getChartData } from './_components/charts/utils'
-import { DetailsInfo } from './_components/details'
-import DetailsStatCard from './_components/details/stat-card'
-import DetailsTable from './_components/table'
-import handleDownloadCSV from './helpers/export-data'
+import { DetailsInfo, DetailsSkeleton, DetailsStatCard, DetailsTable } from './_components/details'
+import { handleDownloadCSV } from './utils'
 
 const STRATIFICATION_OPTIONS = [
   { value: 'region', label: 'Região' },
@@ -85,7 +84,7 @@ type DetailsProps = {
 export default function Details({ params }: DetailsProps) {
   const [lag, setLag] = useState('5')
   const [stratifications, setStratifications] = useState<string[]>([])
-  const [indicator] = api.indicator.getIndicatorById.useSuspenseQuery({
+  const { data: indicator } = api.indicator.getIndicatorById.useQuery({
     id: params.id,
   })
 
@@ -95,13 +94,15 @@ export default function Details({ params }: DetailsProps) {
   }, [indicator, stratifications])
 
   const statsGlobal = useMemo(() => {
+    if (!indicator) return {} as Record<string, { value: number; icon: LucideIcon }>
     const globalChartData = getChartData({ indicator, stratifications: [] })
     return getStats(globalChartData)
   }, [indicator])
 
-  console.log('statsGlobal', statsGlobal)
-
-  const rawStratifications = useMemo(() => getStratificationList(indicator), [indicator])
+  const rawStratifications = useMemo(() => {
+    if (!indicator) return [] as string[]
+    return getStratificationList(indicator)
+  }, [indicator])
 
   function handleStratificationChange(value: string) {
     // se selecionar projeto, seleciona também construtora
@@ -130,7 +131,7 @@ export default function Details({ params }: DetailsProps) {
 
   const isTable = indicator?.code === 'ITC'
 
-  if (!indicator) return null
+  if (!indicator) return <DetailsSkeleton />
   return (
     <div
       className={cn(

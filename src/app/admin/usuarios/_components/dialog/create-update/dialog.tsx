@@ -27,7 +27,7 @@ const UserCreateUpdateDialog = forwardRef<HTMLElement, UserCreateUpdateDialogPro
     const isEditing = !!user
     const [open, setOpen] = useState(false)
 
-    async function onClose() {
+    async function handleClose() {
       setOpen(false)
     }
 
@@ -38,10 +38,7 @@ const UserCreateUpdateDialog = forwardRef<HTMLElement, UserCreateUpdateDialogPro
           subject="usuário"
           className={cn(isEditing && 'w-full hover:bg-accent', className)}
         />
-        <DialogContent
-          className="max-w-[425px] p-7 md:max-w-[650px]"
-          data-testid="user-form-dialog"
-        >
+        <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
           <DialogHeader className="text-left">
             <DialogTitle>{isEditing ? 'Editar' : 'Criar'} usuário</DialogTitle>
             <DialogDescription>
@@ -49,7 +46,7 @@ const UserCreateUpdateDialog = forwardRef<HTMLElement, UserCreateUpdateDialogPro
               usuário.
             </DialogDescription>
           </DialogHeader>
-          <UserCreateUpdateForm user={user} onClose={onClose} refetchUsers={refetchUsers} />
+          <UserCreateUpdateForm user={user} onClose={handleClose} refetchUsers={refetchUsers} />
         </DialogContent>
       </Dialog>
     )

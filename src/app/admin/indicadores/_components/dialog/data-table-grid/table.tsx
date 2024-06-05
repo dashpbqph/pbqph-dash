@@ -20,28 +20,31 @@ export default function IndicatorDataTableGrid({
   indicatorValues,
   setIndicatorValues,
 }: IndicatorDataTableGridProps) {
-  const [defaultIndicatorValues, { refetch }] =
-    api.indicator.getValuesByIndicatorId.useSuspenseQuery({ id: indicator.id })
-  const { data: companies } = api.company.getAllWithProjects.useQuery(undefined, {
-    enabled: !indicator.stratifiedByCompany,
+  const {
+    data: defaultIndicatorValues,
+    isPending,
+    refetch,
+  } = api.indicator.getValuesByIndicatorId.useQuery({ id: indicator.id })
+  const { data: companies } = api.company.getAll.useQuery(undefined, {
+    enabled: !!indicator.stratifiedByCompany,
   })
-  const { data: projects } = api.project.getAllWithRelations.useQuery(undefined, {
-    enabled: !indicator.stratifiedByProject,
+  const { data: projects } = api.project.getAll.useQuery(undefined, {
+    enabled: !!indicator.stratifiedByProject,
   })
   const { data: oacs } = api.entity.getAllOACs.useQuery(undefined, {
-    enabled: !indicator.stratifiedByOAC,
+    enabled: !!indicator.stratifiedByOAC,
   })
   const { data: psqs } = api.entity.getAllPSQS.useQuery(undefined, {
-    enabled: !indicator.stratifiedByPSQ,
+    enabled: !!indicator.stratifiedByPSQ,
   })
   const { data: guidelines } = api.entity.getAllGuidelines.useQuery(undefined, {
-    enabled: !indicator.stratifiedByGuideline,
+    enabled: !!indicator.stratifiedByGuideline,
   })
   const [idEditValues, setIdEditValues] = useState<string[]>([])
   const [idDeleteValues, setIdDeleteValues] = useState<string[]>([])
 
   useEffect(
-    () => setIndicatorValues(defaultIndicatorValues),
+    () => setIndicatorValues(defaultIndicatorValues || []),
     [defaultIndicatorValues, setIndicatorValues],
   )
 
@@ -100,6 +103,7 @@ export default function IndicatorDataTableGrid({
         guideline: indicator.stratifiedByGuideline,
       }}
       border
+      isLoading={isPending}
     />
   )
 }

@@ -69,13 +69,11 @@ const IndicatorCRUDDataDialog = forwardRef<HTMLElement, IndicatorCRUDDataDialogP
               .
             </DialogDescription>
           </DialogHeader>
-          <Suspense fallback={<SkeletonTable />}>
-            <IndicatorDataTableGrid
-              indicator={indicator}
-              indicatorValues={indicatorValues}
-              setIndicatorValues={setIndicatorValues}
-            />
-          </Suspense>
+          <IndicatorDataTableGrid
+            indicator={indicator}
+            indicatorValues={indicatorValues}
+            setIndicatorValues={setIndicatorValues}
+          />
           <DialogFooter>
             <Button
               type="button"
@@ -96,18 +94,3 @@ const IndicatorCRUDDataDialog = forwardRef<HTMLElement, IndicatorCRUDDataDialogP
 IndicatorCRUDDataDialog.displayName = 'IndicatorCRUDDataDialog'
 
 export default IndicatorCRUDDataDialog
-
-function SkeletonTable() {
-  return (
-    <div className="flex h-[240px] w-full flex-col gap-4">
-      <div className="flex h-8 w-full justify-end">
-        <div className="w-[140px] animate-pulse rounded-md bg-gray-200" />
-      </div>
-      <div className="w-full flex-1 animate-pulse rounded-md bg-gray-200" />
-      <div className="flex h-8 w-full justify-between gap-2">
-        <div className="w-[140px] animate-pulse rounded-md bg-gray-200" />
-        <div className="w-[240px] animate-pulse rounded-md bg-gray-200" />
-      </div>
-    </div>
-  )
-}

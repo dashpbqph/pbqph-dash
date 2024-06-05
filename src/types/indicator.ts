@@ -2,9 +2,7 @@ import { RouterOutputs } from '@/server/api/root'
 
 export type IndicatorWithValues = Awaited<RouterOutputs['indicator']['getIndicatorById']>
 
-export type IndicatorWithRelations = Awaited<
-  RouterOutputs['indicator']['getAllWithRelations'][number]
->
+export type IndicatorWithRelations = Awaited<RouterOutputs['indicator']['getAll'][number]>
 
 export type IndicatorValuesWithRelation = Awaited<
   RouterOutputs['indicator']['getValuesByIndicatorId'][number]

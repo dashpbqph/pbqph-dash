@@ -1,8 +1,8 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { z } from 'zod'
 
 export const entityRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const [oacs, psqs, guidelines] = await Promise.all([
       ctx.db.oac.findMany(),
       ctx.db.psq.findMany(),
@@ -15,13 +15,13 @@ export const entityRouter = createTRPCRouter({
       ...guidelines.map((guideline) => ({ ...guideline, type: 'guideline' })),
     ]
   }),
-  getAllOACs: publicProcedure.query(({ ctx }) => {
+  getAllOACs: protectedProcedure.query(({ ctx }) => {
     return ctx.db.oac.findMany()
   }),
-  getAllPSQS: publicProcedure.query(({ ctx }) => {
+  getAllPSQS: protectedProcedure.query(({ ctx }) => {
     return ctx.db.psq.findMany()
   }),
-  getAllGuidelines: publicProcedure.query(({ ctx }) => {
+  getAllGuidelines: protectedProcedure.query(({ ctx }) => {
     return ctx.db.guideline.findMany()
   }),
   create: protectedProcedure
@@ -32,7 +32,24 @@ export const entityRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.oac.create({
+      if (input.type === 'oac') {
+        return ctx.db.oac.create({
+          data: {
+            name: input.name,
+          },
+        })
+      }
+
+      if (input.type === 'psq') {
+        return ctx.db.oac.create({
+          data: {
+            name: input.name,
+          },
+        })
+      }
+
+      // input.type === 'guideline'
+      return ctx.db.guideline.create({
         data: {
           name: input.name,
         },
@@ -47,7 +64,30 @@ export const entityRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.oac.update({
+      if (input.type === 'oac') {
+        return ctx.db.oac.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            name: input.name,
+          },
+        })
+      }
+
+      if (input.type === 'psq') {
+        return ctx.db.psq.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            name: input.name,
+          },
+        })
+      }
+
+      // input.type === 'guideline'
+      return ctx.db.guideline.update({
         where: {
           id: input.id,
         },
@@ -56,11 +96,30 @@ export const entityRouter = createTRPCRouter({
         },
       })
     }),
-  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
-    return ctx.db.oac.delete({
-      where: {
-        id: input.id,
-      },
-    })
-  }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string(), type: z.string() }))
+    .mutation(({ ctx, input }) => {
+      if (input.type === 'oac') {
+        return ctx.db.oac.delete({
+          where: {
+            id: input.id,
+          },
+        })
+      }
+
+      if (input.type === 'psq') {
+        return ctx.db.psq.delete({
+          where: {
+            id: input.id,
+          },
+        })
+      }
+
+      // input.type === 'guideline'
+      return ctx.db.guideline.delete({
+        where: {
+          id: input.id,
+        },
+      })
+    }),
 })

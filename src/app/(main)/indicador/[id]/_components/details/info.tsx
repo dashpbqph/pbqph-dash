@@ -35,7 +35,7 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
 
   return (
     <>
-      <h1 className="text-2xl font-medium leading-none text-background" data-testid="title">
+      <h1 className="text-2xl font-medium leading-none text-background">
         <span className="hidden data-[loaded=true]:inline" data-loaded={mathJaxLoaded}>
           <MathJax
             className="mr-1 text-xl"
@@ -50,9 +50,7 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
         {' - '}
         {indicator?.name}
       </h1>
-      <span data-testid="objective" className="text-sm font-extralight text-background">
-        {indicator?.purpose}
-      </span>
+      <span className="text-sm font-extralight text-background">{indicator?.purpose}</span>
       <div className="flex flex-col flex-wrap gap-x-3 gap-y-1 sm:flex-row">
         <div className="flex h-12 items-center gap-5 rounded-md bg-primary px-3 text-sm text-background hover:bg-primary/95">
           <span className="hidden data-[loaded=true]:block" data-loaded={mathJaxLoaded}>
@@ -73,24 +71,16 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
               )}
             </div>
           }
-          data-testid="polarity"
         />
         {indicator?.cumulative && (
           <div className="flex h-12 items-center gap-5 rounded-md bg-primary px-3 text-sm text-background hover:bg-primary/95">
             <span className="font-regular">Acumulativo</span>{' '}
           </div>
         )}
-        {stractification && (
-          <DetailsMetaItem
-            label="Estratificação"
-            value={stractification}
-            data-testid="stratification"
-          />
-        )}
+        {stractification && <DetailsMetaItem label="Estratificação" value={stractification} />}
         <DetailsMetaItem
           label="Periodicidade"
           value={indicator?.periodicity && capitalizeWords(indicator?.periodicity)}
-          data-testid="periodicity"
         />
       </div>
     </>

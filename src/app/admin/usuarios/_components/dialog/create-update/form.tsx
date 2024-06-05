@@ -69,7 +69,7 @@ export default function UserCreateUpdateForm({
       image: new File([], user?.avatar || ''),
       userHasCompany: !!user?.company.id,
       companyId: user?.company.id || '',
-      role: UserRole.MEMBER,
+      role: user?.role || UserRole.MEMBER,
     },
   })
 
@@ -116,10 +116,10 @@ export default function UserCreateUpdateForm({
               }
               alt=""
               fill
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: 'cover' }}
               sizes="25w"
               className="group-data-[avatarvisible=false]:hidden"
-              onLoadingComplete={() => setAvatarVisible(true)}
+              onLoad={() => setAvatarVisible(true)}
             />
             <Camera className="relative z-10 hidden h-7 w-7 text-white transition-all group-hover:block" />
             <div className="absolute inset-0 bg-black bg-opacity-0 transition-all group-hover:bg-opacity-50" />
@@ -149,8 +149,8 @@ export default function UserCreateUpdateForm({
                   <FormItem className="grid w-full items-center gap-2.5">
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger data-testid="role">
-                          <SelectValue placeholder="Função*" />
+                        <SelectTrigger>
+                          <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -226,7 +226,6 @@ export default function UserCreateUpdateForm({
               variant="outline"
               onClick={() => handleGeneratePassword({ renew: false })}
               disabled={userCreateUpdateForm.watch('password') !== ''}
-              data-testid="generate-password-button"
             >
               {userCreateUpdateForm.watch('password') === ''
                 ? 'Clique para gerar uma senha forte'

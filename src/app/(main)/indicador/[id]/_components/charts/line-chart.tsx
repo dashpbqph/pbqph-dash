@@ -28,13 +28,12 @@ console.error = (...args) => {
   error(...args)
 }
 
-function getMapColors(labels: string[]) {
-  // const colors = distinctColors({ samples: labels.length })
+function getColorMap(labels: string[]) {
   const colors = chroma.scale(['#03979D', '#0067B1', '#0C2E40', '#F4C000']).colors(labels.length)
 
-  return labels.reduce((acc: { [key: string]: { color: string } }, label, index) => {
+  return labels.reduce((acc: { [key: string]: string }, label, index) => {
     const colorIndex = index % colors.length
-    acc[label] = { color: colors[colorIndex]! }
+    acc[label] = colors[colorIndex]!
     return acc
   }, {})
 }
@@ -48,9 +47,9 @@ type LineChartProps = {
 
 export function LineChart({ indicator, chartData, className, lagLimit = 5 }: LineChartProps) {
   const [selectedLine, setSelectedLine] = useState<string | null>(null)
-  const mapColors =
+  const colorMap =
     chartData && chartData.length > 0
-      ? getMapColors(Object.keys(chartData[0]!).filter((key) => key !== 'period'))
+      ? getColorMap(Object.keys(chartData[0]!).filter((key) => key !== 'period'))
       : {}
   const chartDataSliced = chartData.length > lagLimit ? chartData.slice(-lagLimit) : chartData
   const isStratified = chartData && chartData.length > 0 && !('Indicador' in chartData[0]!)
@@ -97,75 +96,27 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
         <Legend
           iconType="square"
           align="left"
-          content={(props) => {
-            const { payload } = props
-            return (
-              <ul
-                className="mt-1.5 flex flex-col gap-4 text-xs font-medium text-[#687182] md:flex-row md:justify-between"
-                id="chart-legend"
-              >
-                {mapColors && Object.keys(mapColors).length > 1 && (
-                  <div className="flex gap-3 md:w-1/2">
-                    <span>Legenda:</span>
-                    <div className="flex flex-1 flex-wrap">
-                      {payload
-                        ?.sort((a, b) => {
-                          if (indicator?.stratifiedByGuideline) {
-                            // Sort by guideline number
-                            return Number(a.value) - Number(b.value)
-                          } else {
-                            // Sort by alphabetical order
-                            return a.value.localeCompare(b.value)
-                          }
-                        })
-                        .map((entry, index) => (
-                          <li
-                            key={`item-${index}`}
-                            className="flex items-start gap-1 rounded-md px-2 py-1.5 hover:cursor-pointer hover:bg-gray-200"
-                            onClick={() =>
-                              setSelectedLine(
-                                selectedLine
-                                  ? selectedLine === entry.value
-                                    ? null
-                                    : entry.value
-                                  : entry.value,
-                              )
-                            }
-                          >
-                            <svg
-                              className="h-4 w-4"
-                              viewBox="0 0 10 10"
-                              fill={entry.color}
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <rect width="10" height="10" />
-                            </svg>
-                            <span className="whitespace-nowrap">{entry.value}</span>
-                          </li>
-                        ))}
-                    </div>
-                  </div>
-                )}
-                <div className="flex gap-1 md:ml-auto md:max-w-[300px] lg:max-w-[400px]">
-                  <span>Fonte:</span>
-                  <p>{indicator?.source}</p>
-                </div>
-              </ul>
-            )
-          }}
+          content={
+            <ChartLegend
+              colorMap={colorMap}
+              selectedLine={selectedLine}
+              setSelectedLine={setSelectedLine}
+              indicator={indicator}
+            />
+          }
         />
-        {Object.entries(mapColors)
+        {Object.entries(colorMap)
           .filter(([key]) => selectedLine !== key)
-          .map(([key, value]) => (
+          .map(([key, color]) => (
             <Line
               key={key}
               dataKey={key}
-              stroke={selectedLine ? (selectedLine === key ? value.color : '#D1D5DB') : value.color}
+              stroke={selectedLine ? (selectedLine === key ? color : '#D1D5DB') : color}
               strokeWidth={selectedLine ? (selectedLine === key ? 4 : 2) : 3}
-              dot={{ fill: value.color, r: selectedLine ? (selectedLine === key ? 5 : 4) : 5 }}
+              dot={{ fill: color, r: selectedLine ? (selectedLine === key ? 5 : 4) : 5 }}
               activeDot={{
-                fill: value.color,
-                stroke: value.color,
+                fill: color,
+                stroke: color,
                 r: selectedLine ? (selectedLine === key ? 8 : 2) : 6.5,
               }}
               id={`chart-data-line-${key}`}
@@ -177,16 +128,16 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
           ))}
         {isStratified &&
           selectedLine &&
-          Object.entries(mapColors).find(([key]) => key === selectedLine) && (
+          Object.entries(colorMap).find(([key]) => key === selectedLine) && (
             <Line
               key={selectedLine}
               dataKey={selectedLine}
-              stroke={mapColors[selectedLine]!.color}
+              stroke={colorMap[selectedLine]!}
               strokeWidth={4}
-              dot={{ fill: mapColors[selectedLine]!.color, r: 6 }}
+              dot={{ fill: colorMap[selectedLine]!, r: 6 }}
               activeDot={{
-                fill: mapColors[selectedLine]!.color,
-                stroke: mapColors[selectedLine]!.color,
+                fill: colorMap[selectedLine]!,
+                stroke: colorMap[selectedLine]!,
                 r: 8,
               }}
               id={`chart-data-line-${selectedLine}`}
@@ -196,5 +147,50 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
           )}
       </BaseLineChart>
     </ResponsiveContainer>
+  )
+}
+
+type ChartLegendProps = {
+  colorMap: { [key: string]: string }
+  selectedLine: string | null
+  setSelectedLine: (value: string | null) => void
+  indicator: IndicatorWithValues
+}
+
+function ChartLegend({ colorMap, selectedLine, setSelectedLine, indicator }: ChartLegendProps) {
+  return (
+    <ul
+      className="mt-1.5 flex flex-col gap-4 text-xs font-medium text-[#687182] md:flex-row md:justify-between"
+      id="chart-legend"
+    >
+      {Object.entries(colorMap).length > 1 && (
+        <div className="flex gap-3 md:w-1/2">
+          <span>Legenda:</span>
+          <div className="flex flex-1 flex-wrap">
+            {Object.entries(colorMap).map(([key, color], index) => (
+              <li
+                key={`item-${index}`}
+                className="flex items-start gap-1 rounded-md px-2 py-1.5 hover:cursor-pointer hover:bg-gray-200"
+                onClick={() => setSelectedLine(selectedLine === key ? null : key)}
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 10 10"
+                  fill={color}
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="10" height="10" />
+                </svg>
+                <span className="whitespace-nowrap">{key}</span>
+              </li>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="flex gap-1 md:ml-auto md:max-w-[300px] lg:max-w-[400px]">
+        <span>Fonte:</span>
+        <p>{indicator?.source}</p>
+      </div>
+    </ul>
   )
 }

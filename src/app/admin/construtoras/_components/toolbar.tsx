@@ -4,7 +4,7 @@ import { Table } from '@tanstack/react-table'
 
 import { Input } from '@/components/ui/input'
 
-import { CompanyCreateUpdateDialog } from './dialog/create-update'
+import CompanyCreateUpdateDialog from './dialog/create-update'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>

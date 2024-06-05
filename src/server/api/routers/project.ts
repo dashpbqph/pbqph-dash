@@ -1,18 +1,15 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { z } from 'zod'
 
 export const projectRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.project.findMany()
-  }),
-  getAllWithRelations: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.db.project.findMany({
       include: {
         company: true,
       },
     })
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -31,7 +28,7 @@ export const projectRouter = createTRPCRouter({
         },
       })
     }),
-  update: publicProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),

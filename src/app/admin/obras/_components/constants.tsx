@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { ProjectCreateUpdateDialog } from './dialog/create-update'
+import ProjectCreateUpdateDialog from './dialog/create-update'
 import ProjectDeleteDialog from './dialog/delete-project'
 
 type GetColumnsProps = {
@@ -30,7 +30,7 @@ export const getColumns = ({
           <div className="flex">
             <Button
               variant="ghost"
-              className="flex justify-start"
+              className="flex justify-start hover:bg-transparent hover:text-accent"
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
               Nome

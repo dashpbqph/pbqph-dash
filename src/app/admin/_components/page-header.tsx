@@ -39,7 +39,6 @@ export default function AdminPageHeader({ title }: AdminPageHeaderProps) {
               <DropdownMenuContent align="center" className="flex flex-col gap-0.5">
                 <DropdownMenuItem
                   className={cn('text-xs', title === 'Usuários' && 'bg-primary text-white')}
-                  asChild
                 >
                   <Link className="w-full" href="/admin/usuarios">
                     Usuários

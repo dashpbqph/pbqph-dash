@@ -48,7 +48,7 @@ const EntityDeleteDialog = forwardRef<HTMLElement, EntityDeleteDialogProps>(
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <DialogDeleteButton
               isLoading={isPending}
-              deleteFn={() => deleteEntity({ id: entity.id })}
+              deleteFn={() => deleteEntity({ id: entity.id, type: entity.type })}
             />
           </AlertDialogFooter>
         </AlertDialogContent>

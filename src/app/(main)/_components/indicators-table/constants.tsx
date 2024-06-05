@@ -6,9 +6,8 @@ import { ArrowUpDown } from 'lucide-react'
 import { IndicatorWithRelations } from '@/types/indicator'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { getChartData } from '@/app/(main)/indicador/[id]/_components/charts/utils'
-
-import TrendChart from '../trend-chart/chart'
+import TrendChart from '@/app/(main)/_components/trend-chart'
+import { getChartData } from '@/app/(main)/_utils'
 
 const CATEGORY_MAP: Record<Category, string> = {
   ESTRATEGICO: 'Estratégico',

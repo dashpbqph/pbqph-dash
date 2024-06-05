@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { CompanyCreateUpdateDialog } from './dialog/create-update'
+import CompanyCreateUpdateDialog from './dialog/create-update'
 import CompanyDeleteDialog from './dialog/delete-company'
 
 type GetColumnsProps = {
@@ -28,7 +28,7 @@ export const getColumns = ({ refetchCompanies }: GetColumnsProps): ColumnDef<Com
           <div className="flex">
             <Button
               variant="ghost"
-              className="flex justify-start"
+              className="flex justify-start hover:bg-transparent hover:text-accent"
               onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
               Nome

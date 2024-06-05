@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { IndicatorCreateUpdateDialog } from './dialog/create-update'
+import IndicatorCreateUpdateDialog from './dialog/create-update'
 import IndicatorCRUDDataDialog from './dialog/crud-data'
 import IndicatorDeleteDialog from './dialog/delete-indicator'
 
