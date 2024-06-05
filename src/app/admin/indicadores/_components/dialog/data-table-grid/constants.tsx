@@ -33,7 +33,7 @@ const mapPeriod = {
 const mapPeriodFn = {
   [Periodicity.ANUAL]: (date: Date) => getQuarter(date),
   [Periodicity.TRIMESTRAL]: (date: Date) => getQuarter(date),
-  [Periodicity.SEMESTRAL]: (date: Date) => Math.ceil(getMonth(date) / 6), // Divide por 6 e arredonda para cima
+  [Periodicity.SEMESTRAL]: (date: Date) => Math.ceil(getMonth(date) / 6) + 1,
 }
 
 type GetColumnsProps = {

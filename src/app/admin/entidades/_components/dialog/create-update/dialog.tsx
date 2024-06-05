@@ -27,7 +27,7 @@ const EntityCreateUpdateDialog = forwardRef<HTMLElement, EntityCreateUpdateDialo
     const isEditing = !!entity
     const [open, setOpen] = useState(false)
 
-    async function onClose() {
+    async function handleClose() {
       setOpen(false)
       refetchEntities()
     }
@@ -47,7 +47,7 @@ const EntityCreateUpdateDialog = forwardRef<HTMLElement, EntityCreateUpdateDialo
               {!isEditing && ' nova'} entidade.
             </DialogDescription>
           </DialogHeader>
-          <EntityCreateUpdateForm entity={entity} onClose={onClose} />
+          <EntityCreateUpdateForm entity={entity} onClose={handleClose} />
         </DialogContent>
       </Dialog>
     )

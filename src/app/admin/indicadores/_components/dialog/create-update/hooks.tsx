@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { indicatorCreateUpdateFormSchema } from '@/schemas/indicator'
 import { api } from '@/trpc/react'
-import { ImpactedAgent, ImpactNature } from '@prisma/client'
+import { ImpactedAgent, ImpactNature, SystemAbbrev, SystemType } from '@prisma/client'
 import type { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -66,7 +66,16 @@ export function useIndicatorFormSubmit({
   })
 
   async function handleSubmit(values: z.infer<typeof indicatorCreateUpdateFormSchema>) {
-    const { impactNatures, impactedAgents, ...otherValues } = values
+    const {
+      impactNatures,
+      impactedAgents,
+      stratifiedByOAC,
+      stratifiedByPSQ,
+      stratifiedByGuideline,
+      ...otherValues
+    } = values
+    const system = values.system.split('-')
+    const systemAbbrev = system[0] as SystemAbbrev
     setIsSubmiting(true)
     try {
       if (isEditing && indicator) {
@@ -74,12 +83,20 @@ export function useIndicatorFormSubmit({
           id: indicator.id,
           impactNatures: values.impactNatures.map((impact) => impact.value as ImpactNature),
           impactedAgents: values.impactedAgents.map((impact) => impact.value as ImpactedAgent),
+          stratifiedByOAC: systemAbbrev === SystemAbbrev.SiAC ? stratifiedByOAC : false,
+          stratifiedByPSQ: systemAbbrev === SystemAbbrev.SiMaC ? stratifiedByPSQ : false,
+          stratifiedByGuideline:
+            systemAbbrev === SystemAbbrev.SiNAT ? stratifiedByGuideline : false,
           ...otherValues,
         })
       } else {
         createIndicator({
           impactNatures: values.impactNatures.map((impact) => impact.value as ImpactNature),
           impactedAgents: values.impactedAgents.map((impact) => impact.value as ImpactedAgent),
+          stratifiedByOAC: systemAbbrev === SystemAbbrev.SiAC ? stratifiedByOAC : false,
+          stratifiedByPSQ: systemAbbrev === SystemAbbrev.SiMaC ? stratifiedByPSQ : false,
+          stratifiedByGuideline:
+            systemAbbrev === SystemAbbrev.SiNAT ? stratifiedByGuideline : false,
           ...otherValues,
         })
       }

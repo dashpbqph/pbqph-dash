@@ -34,7 +34,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
     },
   })
 
-  async function onSubmitLoginForm(values: z.infer<typeof loginSchema>) {
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
     const response = await login(values)
     if (response.ok) {
       onClose()
@@ -46,7 +46,7 @@ export default function LoginForm({ onClose }: LoginFormProps) {
 
   return (
     <Form {...loginForm}>
-      <form className="space-y-7 rounded-xl" onSubmit={loginForm.handleSubmit(onSubmitLoginForm)}>
+      <form className="space-y-7 rounded-xl" onSubmit={loginForm.handleSubmit(onSubmit)}>
         <DialogHeader>
           <DialogTitle className="flex flex-col items-start space-y-5">
             <div className="relative h-20 w-20">

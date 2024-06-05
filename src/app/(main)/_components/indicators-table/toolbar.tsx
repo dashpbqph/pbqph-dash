@@ -1,48 +1,15 @@
 'use client'
 
-import { Category } from '@prisma/client'
 import { Table } from '@tanstack/react-table'
 import { XIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DataTableFacetedFilter } from '@/components/ui/data-table'
 import { Input } from '@/components/ui/input'
-
-// TODO: filter values from database
-
-export const systems = [
-  {
-    value: 'SiAC',
-    label: 'SiAC',
-  },
-  {
-    value: 'SiMaC',
-    label: 'SiMaC',
-  },
-  {
-    value: 'SiNAT',
-    label: 'SiNAT',
-  },
-]
-
-export const categories = [
-  {
-    value: Category.ESTRATEGICO,
-    label: 'Estratégico',
-  },
-  {
-    value: Category.DESEMPENHO,
-    label: 'Desempenho',
-  },
-  {
-    value: Category.RESULTADO,
-    label: 'Resultado',
-  },
-]
+import { CATEGORY_OPTIONS, SYSTEM_OPTIONS } from '@/app/constants'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
-  refetchFn?: () => void
 }
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
@@ -61,14 +28,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           <DataTableFacetedFilter
             column={table.getColumn('system')}
             title="Sistema"
-            options={systems}
+            options={SYSTEM_OPTIONS}
           />
         )}
         {table.getColumn('category') && (
           <DataTableFacetedFilter
             column={table.getColumn('category')}
             title="Categoria"
-            options={categories}
+            options={CATEGORY_OPTIONS}
           />
         )}
         {isFiltered && (

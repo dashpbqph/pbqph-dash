@@ -27,7 +27,7 @@ const IndicatorCreateUpdateDialog = forwardRef<HTMLElement, IndicatorCreateUpdat
     const isEditing = !!indicator
     const [open, setOpen] = useState(false)
 
-    async function onClose() {
+    async function handleClose() {
       setOpen(false)
       refetchIndicators()
     }
@@ -47,7 +47,7 @@ const IndicatorCreateUpdateDialog = forwardRef<HTMLElement, IndicatorCreateUpdat
               indicador.
             </DialogDescription>
           </DialogHeader>
-          <IndicatorCreateUpdateForm onClose={onClose} indicator={indicator} />
+          <IndicatorCreateUpdateForm onClose={handleClose} indicator={indicator} />
         </DialogContent>
       </Dialog>
     )

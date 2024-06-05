@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { EntityCreateUpdateDialog } from './dialog/create-update'
+import EntityCreateUpdateDialog from './dialog/create-update'
 import EntityDeleteDialog from './dialog/delete-entity'
 
 export const ENTITY_MAP = {

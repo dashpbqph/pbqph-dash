@@ -27,7 +27,7 @@ const CompanyCreateUpdateDialog = forwardRef<HTMLElement, CompanyCreateUpdateDia
     const isEditing = !!company
     const [open, setOpen] = useState(false)
 
-    async function onClose() {
+    async function handleClose() {
       setOpen(false)
       refetchCompanies()
     }
@@ -47,7 +47,7 @@ const CompanyCreateUpdateDialog = forwardRef<HTMLElement, CompanyCreateUpdateDia
               {!isEditing && ' nova'} construtora.
             </DialogDescription>
           </DialogHeader>
-          <CompanyCreateUpdateForm company={company} onClose={onClose} />
+          <CompanyCreateUpdateForm company={company} onClose={handleClose} />
         </DialogContent>
       </Dialog>
     )

@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import UserAvatar from '@/components/user-avatar'
 
-import { UserCreateUpdateDialog } from './dialog/create-update'
+import UserCreateUpdateDialog from './dialog/create-update'
 import UserDeleteDialog from './dialog/delete-account'
 import UserResetPasswordDialog from './dialog/reset-password'
 
@@ -83,7 +83,6 @@ export const getColumns = ({ refetchUsers }: GetColumnsProps): ColumnDef<User>[]
               <Button
                 variant="ghost"
                 className="h-8 w-full min-w-[30px] max-w-[48px] p-0 hover:bg-accent"
-                data-testid="actions-menu-button"
               >
                 <MoreHorizontal className="h-4 w-4 text-secondary" />
               </Button>

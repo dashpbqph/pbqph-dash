@@ -1,6 +1,6 @@
 import { Separator } from '@/components/ui/separator'
 
-export default function loading() {
+export default function DetailsSkeleton() {
   return (
     <div className="flex w-full flex-1 flex-col gap-3 rounded-md bg-white p-6 text-black">
       <div className="flex animate-pulse flex-col gap-3">

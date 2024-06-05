@@ -33,7 +33,7 @@ const ProjectDeleteDialog = forwardRef<HTMLElement, ProjectDeleteDialogProps>(
     })
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger className={cn('w-full bg-accent', className)}>
+        <AlertDialogTrigger className={cn('w-full hover:bg-accent', className)}>
           Remover obra
         </AlertDialogTrigger>
         <AlertDialogContent className="space-y-2 bg-white">

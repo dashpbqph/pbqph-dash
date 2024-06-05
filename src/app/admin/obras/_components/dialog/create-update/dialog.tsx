@@ -27,7 +27,7 @@ const ProjectCreateUpdateDialog = forwardRef<HTMLElement, ProjectCreateUpdateDia
     const isEditing = !!project
     const [open, setOpen] = useState(false)
 
-    async function onClose() {
+    async function handleClose() {
       setOpen(false)
       refetchProjects()
     }
@@ -37,7 +37,7 @@ const ProjectCreateUpdateDialog = forwardRef<HTMLElement, ProjectCreateUpdateDia
         <DialogCreateUpdateTrigger
           isEditing={isEditing}
           subject="obra"
-          className={cn('w-full hover:bg-accent', className)}
+          className={cn(isEditing && 'w-full hover:bg-accent', className)}
         />
         <DialogContent className="max-w-[425px] p-7 md:max-w-[650px]">
           <DialogHeader className="text-left">
@@ -46,7 +46,7 @@ const ProjectCreateUpdateDialog = forwardRef<HTMLElement, ProjectCreateUpdateDia
               Preencha as informações abaixo para {isEditing ? 'editar a' : 'criar uma nova'} obra.
             </DialogDescription>
           </DialogHeader>
-          <ProjectCreateUpdateForm project={project} onClose={onClose} />
+          <ProjectCreateUpdateForm project={project} onClose={handleClose} />
         </DialogContent>
       </Dialog>
     )

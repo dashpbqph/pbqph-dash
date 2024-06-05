@@ -171,13 +171,11 @@ export function useUserFormSubmit({
     try {
       // create or update user
       if (isEditing && user) {
-        if (userCreateUpdateForm.getValues('image').size > 0) {
-          updateUser({
-            id: user.id,
-            ...values,
-            image: userCreateUpdateForm.getValues('image').size > 0 ? '' : user.avatar,
-          })
-        }
+        updateUser({
+          id: user.id,
+          ...values,
+          image: userCreateUpdateForm.getValues('image').size > 0 ? '' : user.avatar,
+        })
       } else {
         createUser({
           ...values,

@@ -1,12 +1,12 @@
 'use client'
 
 import { Polarity } from '@prisma/client'
-import { LineChart as BaseLineChart, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
 import type { IndicatorWithValues } from '@/types/indicator'
-import { getChartData } from '@/app/(main)/indicador/[id]/_components/charts/utils'
+import { getChartData } from '@/app/(main)/_utils'
 
-import { reduceMean } from './helpers'
+import { reduceMeanFromChartData } from './utils'
 
 const error = console.error
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +31,7 @@ export default function TrendChart({ indicator }: TrendChartProps) {
 
   const pageData = getChartData({ indicator, stratifications: [] })
 
-  const reducedPageData = reduceMean(pageData)
+  const reducedPageData = reduceMeanFromChartData(pageData)
   if (!reducedPageData || reducedPageData.length === 0) return null
 
   const min = reducedPageData.reduce((acc, cur) => {
@@ -49,7 +49,7 @@ export default function TrendChart({ indicator }: TrendChartProps) {
       : reducedPageData
   return (
     <ResponsiveContainer width="100%" height="100%" className="flex-1">
-      <BaseLineChart
+      <LineChart
         width={600}
         height={300}
         data={reducedPageDataSliced}
@@ -65,7 +65,7 @@ export default function TrendChart({ indicator }: TrendChartProps) {
           dot={
             reducedPageData.length > 1
               ? ({ cx, cy, value }) => (
-                  <CustomDot
+                  <DotIndicator
                     key={cx}
                     min={polarity === Polarity.POSITIVA ? min : max}
                     max={polarity === Polarity.POSITIVA ? max : min}
@@ -77,12 +77,12 @@ export default function TrendChart({ indicator }: TrendChartProps) {
               : undefined
           }
         />
-      </BaseLineChart>
+      </LineChart>
     </ResponsiveContainer>
   )
 }
 
-type CustomDotProps = {
+type DotIndicatorProps = {
   cx: number
   cy: number
   value: number
@@ -90,7 +90,7 @@ type CustomDotProps = {
   max: { period: string; mean: number }
 }
 
-function CustomDot({ cx, cy, value, min, max }: CustomDotProps) {
+function DotIndicator({ cx, cy, value, min, max }: DotIndicatorProps) {
   if (value === min.mean) {
     return (
       <circle

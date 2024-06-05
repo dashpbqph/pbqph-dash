@@ -1,7 +1,6 @@
 'use client'
 
 import { indicatorCreateUpdateFormSchema } from '@/schemas/indicator'
-import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Category,
@@ -43,12 +42,6 @@ import FormInputLabel from '@/app/admin/_components/form-input-label'
 
 import { useIndicatorFormSubmit, useIndicatorFormTabs } from './hooks'
 
-const SYSTEM_TYPE_MAP = {
-  [SystemType.NAO_SE_APLICA]: 'Não se aplica',
-  [SystemType.CONVENCIONAL]: 'Convencional',
-  [SystemType.INOVACAO]: 'Inovação',
-}
-
 const CATEGORY_MAP = {
   [Category.DESEMPENHO]: 'Desempenho',
   [Category.ESTRATEGICO]: 'Estratégico',
@@ -83,6 +76,13 @@ const IMPACTED_AGENTS_MAP = {
   [ImpactedAgent.TRABALHADOR]: 'Trabalhador',
 }
 
+const SYSTEMS_WITH_TYPE = {
+  SiAC: 'SiAC',
+  SiMaC: 'SiMaC',
+  'SiNAT-CONVENCIONAL': 'SiNAT - Convencional',
+  'SiNAT-INOVACAO': 'SiNAT - Inovação',
+}
+
 type IndicatorCreateUpdateFormProps = {
   indicator?: IndicatorWithRelations
   onClose: () => void
@@ -93,16 +93,17 @@ export default function IndicatorCreateUpdateForm({
   indicator,
 }: IndicatorCreateUpdateFormProps) {
   const isEditing = !!indicator?.id
-  const { data: systems } = api.system.getAll.useQuery()
+  const systemWithType = `${indicator?.system.abbrev}${indicator?.system.type !== SystemType.NAO_SE_APLICA ? '-' + indicator?.system.type : ''}`
 
   const indicatorCreateUpdateForm = useForm<z.infer<typeof indicatorCreateUpdateFormSchema>>({
     resolver: zodResolver(indicatorCreateUpdateFormSchema),
     defaultValues: {
       code: indicator?.code || '',
       codeMathJax: indicator?.codeMathJax || '',
-      system: indicator?.system.abbrev || '',
+      system: systemWithType,
       category: indicator?.category || '',
       name: indicator?.name || '',
+      purpose: indicator?.purpose || '',
       polarity: indicator?.polarity || '',
       cumulative: indicator?.cumulative || false,
       source: indicator?.source || '',
@@ -184,14 +185,9 @@ export default function IndicatorCreateUpdateForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {systems?.map((system, index) => (
-                            <SelectItem
-                              key={index}
-                              value={`${system.abbrev}${system.type !== SystemType.NAO_SE_APLICA ? '-' + system.type : ''}`}
-                            >
-                              {system.abbrev}
-                              {system.type !== SystemType.NAO_SE_APLICA &&
-                                ` - ${SYSTEM_TYPE_MAP[system.type]}`}
+                          {Object.entries(SYSTEMS_WITH_TYPE).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>
+                              {value}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -271,6 +267,21 @@ export default function IndicatorCreateUpdateForm({
               render={({ field }) => (
                 <div className="relative w-full">
                   <FormInputLabel label="Nome do indicador" />
+                  <FormItem className="w-full space-y-0.5">
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage className="font-light text-red-500" />
+                  </FormItem>
+                </div>
+              )}
+            />
+            <FormField
+              control={indicatorCreateUpdateForm.control}
+              name="purpose"
+              render={({ field }) => (
+                <div className="relative w-full">
+                  <FormInputLabel label="Finalidade" />
                   <FormItem className="w-full space-y-0.5">
                     <FormControl>
                       <Input {...field} />

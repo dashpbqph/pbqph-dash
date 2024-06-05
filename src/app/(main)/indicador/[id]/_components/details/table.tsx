@@ -34,28 +34,6 @@ interface TransformedData {
   }
 }
 
-// function transformData(psqs: string[]) {
-//   const transformedData: TransformedData = {}
-
-//   for (let year = 2019; year <= 2024; year++) {
-//     transformedData[year] = {}
-
-//     for (let quarter = 1; quarter <= 4; quarter++) {
-//       transformedData[year]![quarter] = {}
-
-//       psqs.forEach((psq) => {
-//         const randomValue = Math.random() * 100 // Valores entre 0 e 100
-//         // if year is 2019 and quarter is 3, don't show the value
-//         // eslint-disable-next-line no-useless-return
-//         if (year === 2019 && quarter === 3 && psq === 'Aparelhos Economizadores de Água') return
-//         else transformedData[year]![quarter]![psq] = randomValue
-//       })
-//     }
-//   }
-
-//   return transformedData
-// }
-
 function getTableData(indicator: IndicatorWithValues): TransformedData {
   const transformedData: TransformedData = {}
 

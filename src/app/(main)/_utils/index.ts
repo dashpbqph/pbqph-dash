@@ -40,6 +40,21 @@ function getStratificationString(
   return stratificationLabels.join(' - ') || 'Indicador'
 }
 
+function sortChartDataByPeriod(chartData: ChartDataItem[]): ChartDataItem[] {
+  return chartData.sort((a, b) => {
+    const yearA = parseInt(a.period.substring(0, 4))
+    const yearB = parseInt(b.period.substring(0, 4))
+    const periodNumberA = parseInt(a.period.substring(5, a.period.length))
+    const periodNumberB = parseInt(b.period.substring(5, b.period.length))
+
+    if (yearA !== yearB) {
+      return yearA - yearB
+    } else {
+      return periodNumberA - periodNumberB
+    }
+  })
+}
+
 type GetChartDataProps = {
   indicator: IndicatorWithValues
   stratifications: string[]
@@ -126,19 +141,4 @@ export function getChartData({ indicator, stratifications }: GetChartDataProps):
   })
 
   return sortChartDataByPeriod(pageData)
-}
-
-function sortChartDataByPeriod(chartData: ChartDataItem[]): ChartDataItem[] {
-  return chartData.sort((a, b) => {
-    const yearA = parseInt(a.period.substring(0, 4))
-    const yearB = parseInt(b.period.substring(0, 4))
-    const periodNumberA = parseInt(a.period.substring(5, a.period.length))
-    const periodNumberB = parseInt(b.period.substring(5, b.period.length))
-
-    if (yearA !== yearB) {
-      return yearA - yearB
-    } else {
-      return periodNumberA - periodNumberB
-    }
-  })
 }

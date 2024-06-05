@@ -25,7 +25,7 @@ export default function UserButton({ user }: UserButtonProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex h-8 items-end gap-0.5 text-center">
+      <DropdownMenuTrigger className="flex h-8 items-end gap-0.5 text-center focus:outline-none">
         <div className="flex overflow-hidden rounded-sm">
           <div className="w-[9px] bg-accent" />
           <UserAvatar avatar={avatar} name={name} className="h-8 w-8 rounded-none" />
@@ -41,7 +41,7 @@ export default function UserButton({ user }: UserButtonProps) {
           <UserAvatar avatar={avatar} name={name} className="rounded-md" />
           <div className="flex flex-col justify-center gap-0.5 text-left">
             <span className="font-semibold text-secondary">
-              {name} {company ? <span className="font-normal">({company})</span> : ''}
+              {name} {company && <span className="font-normal">({company})</span>}
             </span>
             <span className="text-xs font-extralight">{username}</span>
           </div>

@@ -6,43 +6,14 @@ import { XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataTableFacetedFilter } from '@/components/ui/data-table'
 import { Input } from '@/components/ui/input'
+import { CATEGORY_OPTIONS, SYSTEM_OPTIONS } from '@/app/constants'
 
-import { IndicatorCreateUpdateDialog } from './dialog/create-update'
+import IndicatorCreateUpdateDialog from './dialog/create-update'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
   refetchFn: () => void
 }
-
-const systems = [
-  {
-    value: 'SiAC',
-    label: 'SiAC',
-  },
-  {
-    value: 'SiMaC',
-    label: 'SiMaC',
-  },
-  {
-    value: 'SiNAT',
-    label: 'SiNAT',
-  },
-]
-
-const categories = [
-  {
-    value: 'Estratégico',
-    label: 'Estratégico',
-  },
-  {
-    value: 'Desempenho',
-    label: 'Desempenho',
-  },
-  {
-    value: 'Resultado',
-    label: 'Resultado',
-  },
-]
 
 export function DataTableToolbar<TData>({ table, refetchFn }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
@@ -60,7 +31,7 @@ export function DataTableToolbar<TData>({ table, refetchFn }: DataTableToolbarPr
             <DataTableFacetedFilter
               column={table.getColumn('system')}
               title="Sistema"
-              options={systems}
+              options={SYSTEM_OPTIONS}
               className="border"
             />
           )}
@@ -68,7 +39,7 @@ export function DataTableToolbar<TData>({ table, refetchFn }: DataTableToolbarPr
             <DataTableFacetedFilter
               column={table.getColumn('category')}
               title="Categoria"
-              options={categories}
+              options={CATEGORY_OPTIONS}
               className="border"
             />
           )}

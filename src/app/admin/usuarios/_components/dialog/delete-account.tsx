@@ -31,6 +31,7 @@ const UserDeleteDialog = forwardRef<HTMLElement, UserDeleteDialogProps>(
         setOpen(false)
       },
     })
+
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger className={cn('w-full hover:bg-accent', className)}>

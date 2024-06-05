@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { type AppRouter } from '@/server/api/root'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { loggerLink, unstable_httpBatchStreamLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
+
+import { toast } from '@/components/ui/use-toast'
 
 const createQueryClient = () =>
   new QueryClient({
@@ -21,6 +23,14 @@ const createQueryClient = () =>
         retry: false,
       },
     },
+    queryCache: new QueryCache({
+      onError: () =>
+        toast({
+          title: 'Oops, algo deu errado!',
+          description: 'Tente novamente mais tarde',
+          status: 'error',
+        }),
+    }),
   })
 
 let clientQueryClientSingleton: QueryClient | undefined

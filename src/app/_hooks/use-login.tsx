@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 
+type LoginResponse = {
+  ok: boolean
+  error?: string
+}
+
 export default function useLogin() {
   const [isLoading, setIsLoading] = useState(false)
 
-  const login = async (credentials: { username: string; password: string }) => {
+  const login = async (credentials: {
+    username: string
+    password: string
+  }): Promise<LoginResponse> => {
     try {
       setIsLoading(true)
 
@@ -25,6 +33,9 @@ export default function useLogin() {
           error: 'Erro ao fazer login. Tente novamente mais tarde.',
         }
       }
+
+      setIsLoading(false)
+      return { ok: true }
     } catch (error) {
       setIsLoading(false)
       return {
@@ -32,9 +43,6 @@ export default function useLogin() {
         error: 'Erro ao fazer login. Tente novamente mais tarde.',
       }
     }
-
-    setIsLoading(false)
-    return { ok: true }
   }
 
   return { isLoading, login }

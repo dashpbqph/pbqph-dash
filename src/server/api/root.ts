@@ -1,9 +1,7 @@
 import { companyRouter } from '@/server/api/routers/company'
 import { entityRouter } from '@/server/api/routers/entity'
-import { guidelineRouter } from '@/server/api/routers/guideline'
 import { indicatorRouter } from '@/server/api/routers/indicator'
 import { projectRouter } from '@/server/api/routers/project'
-import { psqRouter } from '@/server/api/routers/psq'
 import { systemRouter } from '@/server/api/routers/system'
 import { userRouter } from '@/server/api/routers/user'
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
@@ -17,10 +15,8 @@ import { inferRouterOutputs } from '@trpc/server'
 export const appRouter = createTRPCRouter({
   company: companyRouter,
   indicator: indicatorRouter,
-  guideline: guidelineRouter,
   entity: entityRouter,
   project: projectRouter,
-  psq: psqRouter,
   system: systemRouter,
   user: userRouter,
 })
