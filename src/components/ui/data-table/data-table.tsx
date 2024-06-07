@@ -62,6 +62,7 @@ export default function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState(columnVisibilityDefault)
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [pageIndex, setPageIndex] = useState(0)
 
   const table = useReactTable({
     data,
@@ -71,9 +72,8 @@ export default function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
-    },
-    initialState: {
       pagination: {
+        pageIndex,
         pageSize,
       },
     },
@@ -149,7 +149,13 @@ export default function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} subject={subject} variant={paginationVariant} />
+      <DataTablePagination
+        table={table}
+        subject={subject}
+        variant={paginationVariant}
+        pageIndex={pageIndex}
+        setPageIndex={setPageIndex}
+      />
     </div>
   )
 }

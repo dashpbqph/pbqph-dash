@@ -44,7 +44,7 @@ export const getColumns = ({ refetchEntities }: GetColumnsProps): ColumnDef<Enti
         )
       },
       cell: ({ row }) => (
-        <div className="min-w-[100px] px-4 font-medium">
+        <div className="flex h-10 min-w-[100px] items-center px-4 font-medium">
           {ENTITY_MAP[row.getValue('type') as keyof typeof ENTITY_MAP]}
         </div>
       ),
