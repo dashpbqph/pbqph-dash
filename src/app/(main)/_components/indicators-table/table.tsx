@@ -8,6 +8,7 @@ import { IndicatorWithRelations } from '@/types/indicator'
 import { DataTable } from '@/components/ui/data-table'
 import SkeletonTable from '@/components/ui/skeleton/skeleton-table'
 import { toast } from '@/components/ui/use-toast'
+import { useDinamicPageSize } from '@/app/_utils/table'
 
 import { columns } from './constants'
 import { Legend } from './legend'
@@ -16,6 +17,10 @@ import { DataTableToolbar } from './toolbar'
 export default function IndicatorsTable() {
   const { data: indicators, error } = api.indicator.getAll.useQuery()
   const router = useRouter()
+
+  const pageSize = useDinamicPageSize({
+    rowHeight: 108,
+  })
 
   if (!indicators) return <SkeletonTable />
   if (error) {
@@ -36,7 +41,7 @@ export default function IndicatorsTable() {
       data={indicators || []}
       columns={columns}
       toolbar={DataTableToolbar}
-      pageSize={4}
+      pageSize={pageSize}
       rowClickFn={handleRowClick}
       subject="indicadores"
       fullSize

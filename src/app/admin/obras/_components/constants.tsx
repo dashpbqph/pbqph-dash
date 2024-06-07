@@ -40,7 +40,9 @@ export const getColumns = ({
         )
       },
       cell: ({ row }) => (
-        <div className="min-w-[240px] px-4 font-medium">{row.getValue('name')}</div>
+        <div className="flex h-10 min-w-[240px] items-center px-4 font-medium">
+          {row.getValue('name')}
+        </div>
       ),
     },
     {

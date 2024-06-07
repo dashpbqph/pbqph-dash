@@ -12,12 +12,16 @@ interface DataTablePaginationProps<TData> {
   table: Table<TData>
   subject: string
   variant: 'light' | 'dark'
+  pageIndex: number
+  setPageIndex: (index: number) => void
 }
 
 export function DataTablePagination<TData>({
   table,
   subject,
   variant,
+  pageIndex,
+  setPageIndex,
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="group flex items-center justify-between pl-0.5" data-dark={variant === 'dark'}>
@@ -34,7 +38,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 hover:border-accent hover:bg-accent lg:flex"
-            onClick={() => table.setPageIndex(0)}
+            onClick={() => setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Ir para primeira página</span>
@@ -43,7 +47,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className="h-8 w-8 p-0 hover:border-accent hover:bg-accent"
-            onClick={() => table.previousPage()}
+            onClick={() => setPageIndex(pageIndex - 1)}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Ir para página anterior</span>
@@ -52,7 +56,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className="h-8 w-8 p-0 hover:border-accent hover:bg-accent"
-            onClick={() => table.nextPage()}
+            onClick={() => setPageIndex(pageIndex + 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Ir para próxima página</span>
@@ -61,7 +65,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 hover:border-accent hover:bg-accent lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            onClick={() => setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Ir para última página</span>

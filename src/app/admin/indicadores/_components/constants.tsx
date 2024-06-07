@@ -75,7 +75,7 @@ export const getColumns = ({
       accessorKey: 'name',
       header: () => <div>Nome</div>,
       cell: ({ row }) => (
-        <div className="line-clamp-2 min-w-[240px] text-left">{row.getValue('name')}</div>
+        <div className="line-clamp-2 h-10 min-w-[240px] text-left">{row.getValue('name')}</div>
       ),
     },
     {

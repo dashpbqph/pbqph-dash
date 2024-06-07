@@ -41,7 +41,7 @@ export const getColumns = ({ refetchUsers }: GetColumnsProps): ColumnDef<User>[]
         )
       },
       cell: ({ row }) => (
-        <div className="flex min-w-[240px] flex-1 items-center gap-3 pl-[5px]">
+        <div className="flex h-10 min-w-[240px] flex-1 items-center gap-3 pl-[5px]">
           <UserAvatar
             avatar={row.original.avatar}
             name={row.original.name}
