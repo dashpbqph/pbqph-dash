@@ -55,7 +55,7 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
               ? '#134e4a'
               : '#000'
       return (
-        <div className="flex h-[100px] flex-col items-center gap-1 pl-4">
+        <div className="flex h-[100px] flex-col justify-center gap-1 pl-4">
           <MathJax hideUntilTypeset="first" inline dynamic suppressHydrationWarning>
             {`\\(${row.original.codeMathJax}\\)`}
           </MathJax>
