@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
 import { type Row } from '@tanstack/react-table'
 
@@ -15,6 +15,8 @@ import { Legend } from './legend'
 import { DataTableToolbar } from './toolbar'
 
 export default function IndicatorsTable() {
+  const searchParams = useSearchParams()
+  const pageIndex = searchParams.get('p')
   const { data: indicators, error } = api.indicator.getAll.useQuery()
   const router = useRouter()
 
@@ -32,8 +34,17 @@ export default function IndicatorsTable() {
     return null
   }
 
-  function handleRowClick(row: Row<IndicatorWithRelations>) {
-    router.push(`/indicador/${row.original.id}`)
+  function handleRowClick({
+    row,
+    pageIndex,
+  }: {
+    row: Row<IndicatorWithRelations>
+    pageIndex: number
+  }) {
+    const params = new URLSearchParams({
+      fp: pageIndex.toString(),
+    })
+    router.push(`/indicador/${row.original.id}?${params.toString()}`)
   }
 
   return (
@@ -48,6 +59,7 @@ export default function IndicatorsTable() {
       paginationVariant="dark"
       legendComponent={Legend}
       border={false}
+      pageIndex={Number(pageIndex) || undefined}
     />
   )
 }

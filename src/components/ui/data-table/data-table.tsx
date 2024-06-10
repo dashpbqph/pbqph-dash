@@ -27,13 +27,21 @@ import {
 
 import { DataTablePagination } from './pagination'
 
+function getValidPageIndex(maxPageIndex: number, pageIndex?: number) {
+  if (!pageIndex || pageIndex < 0) return 0
+  if (pageIndex > maxPageIndex) return maxPageIndex
+
+  return pageIndex
+}
+
 interface DataTableProps<TData, TValue> {
   data: TData[]
   columns: ColumnDef<TData, TValue>[]
   toolbar: ElementType
   pageSize?: number
+  pageIndex?: number
   subject: string
-  rowClickFn?: (row: Row<TData>) => void
+  rowClickFn?: ({ row, pageIndex }: { row: Row<TData>; pageIndex: number }) => void
   refetchFn?: () => void
   isLoading?: boolean
   fullSize?: boolean
@@ -48,6 +56,7 @@ export default function DataTable<TData, TValue>({
   columns,
   toolbar: Toolbar,
   pageSize = 9,
+  pageIndex,
   subject,
   rowClickFn,
   refetchFn,
@@ -62,7 +71,11 @@ export default function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState(columnVisibilityDefault)
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const [pageIndex, setPageIndex] = useState(0)
+  const maxPageIndex = Math.ceil(data.length / pageSize) - 1
+  const [pageIndexInternal, setPageIndexInternal] = useState(
+    getValidPageIndex(maxPageIndex, pageIndex),
+  )
+  console.log(pageIndexInternal)
 
   const table = useReactTable({
     data,
@@ -73,7 +86,7 @@ export default function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
       pagination: {
-        pageIndex,
+        pageIndex: pageIndexInternal,
         pageSize,
       },
     },
@@ -117,7 +130,9 @@ export default function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={rowClickFn ? () => rowClickFn(row) : undefined}
+                  onClick={
+                    rowClickFn ? () => rowClickFn({ row, pageIndex: pageIndexInternal }) : undefined
+                  }
                   data-clickable={!!rowClickFn}
                   className="bg-white data-[clickable=true]:cursor-pointer data-[odd=true]:bg-background/95 data-[odd=true]:hover:bg-muted/80"
                   data-odd={index % 2 === 1}
@@ -153,8 +168,8 @@ export default function DataTable<TData, TValue>({
         table={table}
         subject={subject}
         variant={paginationVariant}
-        pageIndex={pageIndex}
-        setPageIndex={setPageIndex}
+        pageIndex={pageIndexInternal}
+        setPageIndex={setPageIndexInternal}
       />
     </div>
   )
