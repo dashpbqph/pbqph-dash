@@ -1,12 +1,15 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
 import {
   Activity,
   CalendarClockIcon,
   CheckIcon,
   ChevronDown,
+  ChevronLeft,
   DownloadIcon,
   LucideIcon,
   MoreHorizontal,
@@ -18,7 +21,7 @@ import {
 import { ChartDataItem } from '@/types/chart'
 import { IndicatorWithValues } from '@/types/indicator'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   Select,
@@ -82,6 +85,8 @@ type DetailsProps = {
 }
 
 export default function Details({ params }: DetailsProps) {
+  const searchParams = useSearchParams()
+  const fromPage = searchParams.get('fp')
   const [lag, setLag] = useState('5')
   const [stratifications, setStratifications] = useState<string[]>([])
   const { data: indicator } = api.indicator.getIndicatorById.useQuery({
@@ -139,6 +144,13 @@ export default function Details({ params }: DetailsProps) {
         isTable && 'max-h-[calc(100vh-108px)]',
       )}
     >
+      <Link
+        href={`/?p=${fromPage}`}
+        className={cn(buttonVariants(), 'flex h-8 w-fit items-center gap-0.5 px-3 py-2 pl-2')}
+      >
+        <ChevronLeft className="h-5 w-5" strokeWidth={2.6} />
+        <span className="text-sm font-medium">Voltar</span>
+      </Link>
       <DetailsInfo indicator={indicator} />
       <div className="flex flex-1 gap-3 overflow-auto xxs:flex-col sm:flex-row">
         {isTable ? (

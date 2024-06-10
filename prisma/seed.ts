@@ -142,7 +142,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByRegion) {
       const regions = Object.values(Region)
       return regions.map((region) => ({
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
         region,
       }))
@@ -150,7 +152,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
 
     if (indicator.stratifiedByGuideline) {
       return seeds.guidelines.map((guideline) => ({
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
         guideline,
       }))
@@ -159,7 +163,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByProject) {
       return seeds.companies.flatMap((company) =>
         company.projects.map((project) => ({
-          value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+          value: parseFloat(
+            faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          ),
           date: new Date(date),
           company,
           project,
@@ -169,7 +175,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
 
     if (indicator.stratifiedByCompany) {
       return seeds.companies.map((company) => ({
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
         company,
       }))
@@ -177,7 +185,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
 
     if (indicator.stratifiedByOAC) {
       return seeds.oacs.map((oac) => ({
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
         oac,
       }))
@@ -185,7 +195,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
 
     if (indicator.stratifiedByPSQ) {
       return seeds.psqs.map((psq) => ({
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
         psq,
       }))
@@ -193,7 +205,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
 
     return [
       {
-        value: faker.number.float({ min: -100, max: 100, multipleOf: 0.01 }),
+        value: parseFloat(
+          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+        ),
         date: new Date(date),
       },
     ]
@@ -259,7 +273,7 @@ const createSuperAdminUser = prisma.user.create({
     email: 'super.admin@gmail.com',
     password: bcrypt.hashSync('SADMIN@dashboard2023', adminSalt),
     salt: adminSalt,
-    image: faker.image.avatar(),
+    image: 'https://mighty.tools/mockmind-api/content/human/41.jpg',
     createdAt: faker.date.past(),
     role: {
       connect: {
