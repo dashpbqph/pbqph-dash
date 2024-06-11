@@ -148,7 +148,6 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      console.log(input)
       const system = input.system.split('-')
       const systemAbbrev = system[0] as SystemAbbrev
       const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA

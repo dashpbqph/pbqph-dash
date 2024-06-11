@@ -75,7 +75,6 @@ export const authOptions: NextAuthOptions = {
           where: { username: cred.username },
           include: { role: true },
         })
-        console.log('user', user)
 
         if (!user) throw new Error('Invalid Credentials')
 
