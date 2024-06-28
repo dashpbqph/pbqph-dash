@@ -4,7 +4,7 @@ export const steps: Array<{ id: Tab; name: string; fields: string[] }> = [
   {
     id: 'infos',
     name: 'Informações básicas',
-    fields: ['system', 'category', 'code', 'codeMathJax', 'name', 'source'],
+    fields: ['system', 'category', 'code', 'codeMarkdown', 'name', 'source'],
   },
   {
     id: 'properties',
@@ -15,7 +15,7 @@ export const steps: Array<{ id: Tab; name: string; fields: string[] }> = [
       'impactNatures',
       'impactedAgents',
       'cumulative',
-      'equationMathJax',
+      'equationMarkdown',
       'unit',
     ],
   },

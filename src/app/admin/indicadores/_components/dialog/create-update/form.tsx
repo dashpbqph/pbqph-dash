@@ -10,7 +10,6 @@ import {
   Polarity,
   SystemType,
 } from '@prisma/client'
-import { MathJax } from 'better-react-mathjax'
 import { ArrowRight } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -37,6 +36,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Markdown from '@/app/_providers/markdown-provider'
 import DialogSubmitButton from '@/app/admin/_components/dialog-submit-button'
 import FormInputLabel from '@/app/admin/_components/form-input-label'
 
@@ -99,7 +99,7 @@ export default function IndicatorCreateUpdateForm({
     resolver: zodResolver(indicatorCreateUpdateFormSchema),
     defaultValues: {
       code: indicator?.code || '',
-      codeMathJax: indicator?.codeMathJax || '',
+      codeMarkdown: indicator?.codeMarkdown || '',
       system: systemWithType,
       category: indicator?.category || '',
       name: indicator?.name || '',
@@ -116,7 +116,7 @@ export default function IndicatorCreateUpdateForm({
         value: agent,
         label: IMPACTED_AGENTS_MAP[agent],
       })),
-      equationMathJax: indicator?.equationMathJax || '',
+      equationMarkdown: indicator?.equationMarkdown || '',
       unit: indicator?.unit || '',
       stratifiedByOAC: indicator?.stratifiedByOAC || false,
       stratifiedByPSQ: indicator?.stratifiedByPSQ || false,
@@ -241,10 +241,10 @@ export default function IndicatorCreateUpdateForm({
             />
             <FormField
               control={indicatorCreateUpdateForm.control}
-              name="codeMathJax"
+              name="codeMarkdown"
               render={({ field }) => (
                 <div className="relative w-full">
-                  <FormInputLabel label="Código em MathJax" />
+                  <FormInputLabel label="Código em Markdown" />
                   <FormItem className="w-full space-y-0.5">
                     <FormControl>
                       <Input {...field} />
@@ -254,11 +254,9 @@ export default function IndicatorCreateUpdateForm({
                 </div>
               )}
             />
-            {currentTab === ('infos' as Tab) && indicatorCreateUpdateForm.watch('codeMathJax') && (
+            {currentTab === ('infos' as Tab) && indicatorCreateUpdateForm.watch('codeMarkdown') && (
               <div className="flex justify-center gap-2 rounded-md bg-primary/10 py-3">
-                <MathJax hideUntilTypeset="every" dynamic>
-                  {`\\(${indicatorCreateUpdateForm.watch('codeMathJax')}\\)`}
-                </MathJax>
+                <Markdown>{`${indicatorCreateUpdateForm.watch('codeMarkdown')}`}</Markdown>
               </div>
             )}
             <FormField
@@ -432,10 +430,10 @@ export default function IndicatorCreateUpdateForm({
             />
             <FormField
               control={indicatorCreateUpdateForm.control}
-              name="equationMathJax"
+              name="equationMarkdown"
               render={({ field }) => (
                 <div className="relative w-full">
-                  <FormInputLabel label="Fórmula de cálculo em MathJax" />
+                  <FormInputLabel label="Fórmula de cálculo em Markdown" />
                   <FormItem className="w-full space-y-0.5">
                     <FormControl>
                       <Input {...field} />
@@ -446,11 +444,9 @@ export default function IndicatorCreateUpdateForm({
               )}
             />
             {currentTab === ('properties' as Tab) &&
-              indicatorCreateUpdateForm.watch('equationMathJax') && (
+              indicatorCreateUpdateForm.watch('equationMarkdown') && (
                 <div className="flex justify-center gap-2 rounded-md bg-primary/10 py-3">
-                  <MathJax hideUntilTypeset="every" dynamic>
-                    {`\\(${indicatorCreateUpdateForm.watch('equationMathJax')}\\)`}
-                  </MathJax>
+                  <Markdown>{`${indicatorCreateUpdateForm.watch('equationMarkdown')}`}</Markdown>
                 </div>
               )}
             <FormField
@@ -458,7 +454,7 @@ export default function IndicatorCreateUpdateForm({
               name="unit"
               render={({ field }) => (
                 <div className="relative w-full">
-                  <FormInputLabel label="Unidade de medida em MathJax" />
+                  <FormInputLabel label="Unidade de medida em Markdown" />
                   <FormItem className="w-full space-y-0.5">
                     <FormControl>
                       <Input {...field} />
@@ -470,11 +466,11 @@ export default function IndicatorCreateUpdateForm({
             />
             {currentTab === ('properties' as Tab) && isEditing && (
               <div className="flex justify-center gap-2 rounded-md bg-primary/10 py-3">
-                <MathJax hideUntilTypeset="every" dynamic>
+                <Markdown>
                   {indicatorCreateUpdateForm.watch('unit') === '%'
-                    ? `\\(\\%\\)`
-                    : `\\(${indicatorCreateUpdateForm.watch('unit')}\\)`}
-                </MathJax>
+                    ? `\\%`
+                    : `${indicatorCreateUpdateForm.watch('unit')}`}
+                </Markdown>
               </div>
             )}
             <Button

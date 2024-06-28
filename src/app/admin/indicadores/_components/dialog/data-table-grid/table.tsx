@@ -31,13 +31,13 @@ export default function IndicatorDataTableGrid({
   const { data: projects } = api.project.getAll.useQuery(undefined, {
     enabled: !!indicator.stratifiedByProject,
   })
-  const { data: oacs } = api.entity.getAllOACs.useQuery(undefined, {
+  const { data: oacs } = api.oac.getAll.useQuery(undefined, {
     enabled: !!indicator.stratifiedByOAC,
   })
-  const { data: psqs } = api.entity.getAllPSQS.useQuery(undefined, {
+  const { data: psqs } = api.psq.getAll.useQuery(undefined, {
     enabled: !!indicator.stratifiedByPSQ,
   })
-  const { data: guidelines } = api.entity.getAllGuidelines.useQuery(undefined, {
+  const { data: guidelines } = api.guideline.getAll.useQuery(undefined, {
     enabled: !!indicator.stratifiedByGuideline,
   })
   const [idEditValues, setIdEditValues] = useState<string[]>([])

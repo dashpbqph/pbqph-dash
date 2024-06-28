@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { forwardRef, useState } from 'react'
 import { api } from '@/trpc/react'
-import { MathJax } from 'better-react-mathjax'
+import Markdown from 'react-markdown'
 
 import type { IndicatorWithRelations } from '@/types/indicator'
 import { cn } from '@/lib/utils'
@@ -42,10 +42,7 @@ const IndicatorDeleteDialog = forwardRef<HTMLElement, IndicatorDeleteDialogProps
           <AlertDialogHeader>
             <AlertDialogTitle>
               Deseja realmente remover o indicador{' '}
-              <MathJax hideUntilTypeset="first" inline dynamic>
-                {`\\(${indicator.codeMathJax}\\)`}
-              </MathJax>
-              ?
+              <Markdown>{`${indicator.codeMarkdown}`}</Markdown>?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xl-1">
               Esta ação não pode ser desfeita. Isso vai remover permanentemente o indicador e todos

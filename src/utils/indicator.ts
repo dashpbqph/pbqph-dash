@@ -3,22 +3,20 @@ import { Periodicity } from '@prisma/client'
 export function formatDateByPeriodicity(date: Date, periodicity: Periodicity) {
   const month = date.getMonth()
   const year = date.getFullYear()
-  if (periodicity === Periodicity.TRIMESTRAL) {
+  if (periodicity === Periodicity.MENSAL) {
+    return date
+      .toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
+      .replace('. de ', '/')
+  } else if (periodicity === Periodicity.TRIMESTRAL) {
     const quarter = Math.floor(month / 3) + 1
     return `${year}.T${quarter}`
   } else if (periodicity === Periodicity.SEMESTRAL) {
     const semester = Math.floor(month / 6) + 1
     return `${year}.S${semester}`
-  } else if (periodicity === Periodicity.ANUAL) {
-    return date.toLocaleDateString('pt-BR', { year: 'numeric' })
   }
 
-  // periodicity === 'eventual'
-  return date.toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  // periodicity === 'anual'
+  return date.toLocaleDateString('pt-BR', { year: 'numeric' })
 }
 
 export function ema(values: number[], period: number = 3) {

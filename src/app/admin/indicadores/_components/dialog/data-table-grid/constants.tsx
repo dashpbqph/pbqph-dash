@@ -1,6 +1,5 @@
 import { Periodicity, type Region } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
-import { MathJax } from 'better-react-mathjax'
 import { format, getMonth, getQuarter } from 'date-fns'
 import { Check, Pencil, Trash } from 'lucide-react'
 
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import Markdown from '@/app/_providers/markdown-provider'
 
 const mapRegion = {
   NORTE: 'Norte',
@@ -155,9 +155,7 @@ export const getColumns = ({
               (row.getValue('value') as number).toLocaleString('pt-BR')
             )}{' '}
             {!['absoluta', 'adimensional'].includes(unit) && !isEditing && (
-              <MathJax hideUntilTypeset="first" inline dynamic suppressHydrationWarning>
-                {`\\(${unit}\\)`}
-              </MathJax>
+              <Markdown>{`${unit}`}</Markdown>
             )}
           </div>
         )

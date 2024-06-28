@@ -1,6 +1,7 @@
 import { fakerPT_BR as faker } from '@faker-js/faker'
 import {
   Category,
+  Group,
   ImpactedAgent,
   ImpactNature,
   Periodicity,
@@ -75,10 +76,13 @@ const createIndicators = seeds.indicators.map((indicator) => {
   return prisma.indicator.create({
     data: {
       category: indicator.category as Category,
+      group: indicator?.group as Group,
+      index: indicator.index,
       code: indicator.code,
-      codeMathJax: indicator.codeMathJax,
+      codeMarkdown: indicator.codeMarkdown,
       name: indicator.name,
       unit: indicator.unit,
+      decimalPlaces: indicator?.decimalPlaces || 1,
       polarity: indicator.polarity as Polarity,
       cumulative: indicator.cumulative,
       source: indicator.source,
@@ -86,7 +90,8 @@ const createIndicators = seeds.indicators.map((indicator) => {
       impactNatures: indicator.impactNatures as ImpactNature[],
       impactedAgents: indicator.impactedAgents as ImpactedAgent[],
       purpose: indicator.purpose,
-      equationMathJax: indicator.equationMathJax,
+      equationMarkdown: indicator.equationMarkdown,
+      equationVarsMarkdown: indicator.equationVarsMarkdown,
       stratifiedByRegion: indicator.stratifiedByRegion,
       stratifiedByCompany: indicator.stratifiedByCompany,
       stratifiedByProject: indicator.stratifiedByProject,

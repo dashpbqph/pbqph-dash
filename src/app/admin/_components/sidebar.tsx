@@ -3,10 +3,30 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { RouterOutputs } from '@/trpc/react'
-import { Box, BrickWall, Building, LucideIcon, PieChart, Users } from 'lucide-react'
+import {
+  BarChartBig,
+  Box,
+  BrickWall,
+  Building,
+  Compass,
+  FileCog,
+  LucideIcon,
+  Microscope,
+  PieChart,
+  SearchCheck,
+  SendToBack,
+  Shield,
+  Users,
+} from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { mapUserRoleToLabel } from '@/utils/auth'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -42,23 +62,133 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         >
           Indicadores
         </AdminSidebarItem>
-        <AdminSidebarItem
-          href="/admin/construtoras"
-          icon={Building}
-          active={pathname === '/admin/construtoras'}
-        >
-          Construtoras
-        </AdminSidebarItem>
-        <AdminSidebarItem href="/admin/obras" icon={BrickWall} active={pathname === '/admin/obras'}>
-          Obras
-        </AdminSidebarItem>
-        <AdminSidebarItem
-          href="/admin/entidades"
-          icon={Box}
-          active={pathname === '/admin/entidades'}
-        >
-          Entidades
-        </AdminSidebarItem>
+        <Accordion className="flex flex-col gap-1.5" type="single" collapsible>
+          <AccordionItem value="siac">
+            <AccordionTrigger
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'flex h-auto w-full items-center justify-between gap-2 rounded-md border-none bg-transparent px-3 py-2 text-sm text-white hover:bg-white/10',
+              )}
+            >
+              SiAC
+              <GeomIcon className="h-[10px] w-[10px] shrink-0 text-primary transition-all duration-200" />
+            </AccordionTrigger>
+            <AccordionContent className="pl-2">
+              <AdminSidebarList>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/oacs"
+                  icon={Box}
+                  active={pathname === '/admin/oacs'}
+                >
+                  OACs
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/construtoras"
+                  icon={Building}
+                  active={pathname === '/admin/construtoras'}
+                >
+                  Construtoras
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/obras"
+                  icon={BrickWall}
+                  active={pathname === '/admin/obras'}
+                >
+                  Obras
+                </AdminSidebarItem>
+              </AdminSidebarList>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="simac">
+            <AccordionTrigger
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'flex h-auto w-full items-center justify-between gap-2 rounded-md border-none bg-transparent px-3 py-2 text-sm text-white hover:bg-white/10',
+              )}
+            >
+              SiMaC
+              <GeomIcon className="h-[10px] w-[10px] shrink-0 text-primary transition-all duration-200" />
+            </AccordionTrigger>
+            <AccordionContent className="pl-2">
+              <AdminSidebarList>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/egts"
+                  icon={SendToBack}
+                  active={pathname === '/admin/egts'}
+                >
+                  EGTs
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/ems"
+                  icon={Shield}
+                  active={pathname === '/admin/ems'}
+                >
+                  EMs
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/psqs"
+                  icon={SearchCheck}
+                  active={pathname === '/admin/psqs'}
+                >
+                  PSQs
+                </AdminSidebarItem>
+              </AdminSidebarList>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="sinat">
+            <AccordionTrigger
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'flex h-auto w-full items-center justify-between gap-2 rounded-md border-none bg-transparent px-3 py-2 text-sm text-white hover:bg-white/10',
+              )}
+            >
+              SiNAT
+              <GeomIcon className="h-[10px] w-[10px] shrink-0 text-primary transition-all duration-200" />
+            </AccordionTrigger>
+            <AccordionContent className="pl-2">
+              <AdminSidebarList>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/itas"
+                  icon={Microscope}
+                  active={pathname === '/admin/itas'}
+                >
+                  ITAs
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/fads"
+                  icon={BarChartBig}
+                  active={pathname === '/admin/fads'}
+                >
+                  FADs
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/diretrizes"
+                  icon={Compass}
+                  active={pathname === '/admin/diretrizes'}
+                >
+                  Diretrizes
+                </AdminSidebarItem>
+                <AdminSidebarItem
+                  className="rounded-l-none"
+                  href="/admin/datecs"
+                  icon={FileCog}
+                  active={pathname === '/admin/datecs'}
+                >
+                  DATECs
+                </AdminSidebarItem>
+              </AdminSidebarList>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       <DropdownMenu>
@@ -83,11 +213,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
             <GeomIcon className="h-[10px] w-[10px] rotate-180 text-primary" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          // align="end"
-          sideOffset={8}
-          className="flex w-[192px] rounded-md p-1 shadow-xl"
-        >
+        <DropdownMenuContent sideOffset={8} className="flex w-[192px] rounded-md p-1 shadow-xl">
           <LogoutButton />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -95,20 +221,32 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
   )
 }
 
+function AdminSidebarList({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-1.5 border-l-[1px] border-accent py-1">{children}</div>
+}
+
 type AdminSidebarItemProps = {
   href: string
   icon: LucideIcon
+  className?: string
   active?: boolean
   children: React.ReactNode
 }
 
-function AdminSidebarItem({ href, icon: Icon, active, children }: AdminSidebarItemProps) {
+function AdminSidebarItem({
+  href,
+  icon: Icon,
+  className,
+  active,
+  children,
+}: AdminSidebarItemProps) {
   return (
     <Link
       href={href}
       className={cn(
         buttonVariants({ variant: 'outline' }),
         'flex h-auto w-full items-center justify-start gap-2 rounded-md border-none bg-transparent px-3 py-2 text-sm text-white hover:bg-white/10 data-[active=true]:bg-primary data-[active=false]:shadow-none',
+        className,
       )}
       data-active={active}
     >

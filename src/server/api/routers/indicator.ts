@@ -11,21 +11,8 @@ import {
 } from '@prisma/client'
 import { z } from 'zod'
 
-// function updateStratifications(system: string) {
-//   if (system === 'SiAC') {
-//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
-//   } else if (system === 'SiMaC') {
-//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
-//   } else if (system.includes('SiNAT')) {
-//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
-//   }
-// }
-
 export const indicatorRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.db.indicator.findMany({
       include: {
         system: true,
@@ -39,31 +26,88 @@ export const indicatorRouter = createTRPCRouter({
           },
         },
       },
+      orderBy: {
+        index: 'asc',
+      },
     })
   }),
-  getIndicatorById: publicProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
-    return ctx.db.indicator.findUnique({
-      where: {
-        id: input.id,
-      },
-      include: {
-        values: {
-          include: {
-            company: true,
-            project: true,
-            oac: true,
-            psq: true,
-            guideline: true,
+  getAllByCompany: publicProcedure
+    .input(z.object({ company: z.string().nullable() }))
+    .query(async ({ ctx, input }) => {
+      const indicators = await ctx.db.indicator.findMany({
+        where: {
+          stratifiedByCompany: input.company ? undefined : false,
+        },
+        include: {
+          system: true,
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
           },
         },
-      },
-    })
-  }),
+        orderBy: {
+          index: 'asc',
+        },
+      })
+
+      if (!input.company) {
+        return indicators
+      }
+
+      return indicators.map((indicator) => {
+        if (indicator.stratifiedByCompany) {
+          return {
+            ...indicator,
+            values: indicator.values.filter((value) => value.companyId === input.company),
+          }
+        }
+
+        return indicator
+      })
+    }),
+  getIndicatorById: publicProcedure
+    .input(z.object({ id: z.string(), company: z.string().nullable() }))
+    .query(async ({ ctx, input }) => {
+      const indicator = await ctx.db.indicator.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
+          },
+        },
+      })
+
+      if (indicator?.stratifiedByCompany) {
+        if (!input.company) {
+          throw new Error('FORBIDDEN')
+        }
+
+        return {
+          ...indicator,
+          values: indicator.values.filter((value) => value.companyId === input.company),
+        }
+      }
+
+      return indicator
+    }),
   create: protectedProcedure
     .input(
       z.object({
         code: z.string(),
-        codeMathJax: z.string(),
+        codeMarkdown: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
@@ -75,7 +119,8 @@ export const indicatorRouter = createTRPCRouter({
         periodicity: z.string(),
         impactNatures: z.array(z.custom<ImpactNature>()),
         impactedAgents: z.array(z.custom<ImpactedAgent>()),
-        equationMathJax: z.string(),
+        equationMarkdown: z.string(),
+        equationVarsMarkdown: z.string(),
         stratifiedByOAC: z.boolean(),
         stratifiedByPSQ: z.boolean(),
         stratifiedByGuideline: z.boolean(),
@@ -91,7 +136,7 @@ export const indicatorRouter = createTRPCRouter({
       return ctx.db.indicator.create({
         data: {
           code: input.code,
-          codeMathJax: input.codeMathJax,
+          codeMarkdown: input.codeMarkdown,
           system: {
             connect: {
               // eslint-disable-next-line camelcase
@@ -105,7 +150,8 @@ export const indicatorRouter = createTRPCRouter({
           name: input.name,
           purpose: input.purpose,
           unit: input.unit,
-          equationMathJax: input.equationMathJax,
+          equationMarkdown: input.equationMarkdown,
+          equationVarsMarkdown: input.equationVarsMarkdown,
           polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,
@@ -126,7 +172,7 @@ export const indicatorRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         code: z.string(),
-        codeMathJax: z.string(),
+        codeMarkdown: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
@@ -138,7 +184,8 @@ export const indicatorRouter = createTRPCRouter({
         periodicity: z.string(),
         impactNatures: z.array(z.custom<ImpactNature>()),
         impactedAgents: z.array(z.custom<ImpactedAgent>()),
-        equationMathJax: z.string(),
+        equationMarkdown: z.string(),
+        equationVarsMarkdown: z.string(),
         stratifiedByOAC: z.boolean(),
         stratifiedByPSQ: z.boolean(),
         stratifiedByGuideline: z.boolean(),
@@ -170,7 +217,8 @@ export const indicatorRouter = createTRPCRouter({
           name: input.name,
           purpose: input.purpose,
           unit: input.unit,
-          equationMathJax: input.equationMathJax,
+          equationMarkdown: input.equationMarkdown,
+          equationVarsMarkdown: input.equationVarsMarkdown,
           polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,

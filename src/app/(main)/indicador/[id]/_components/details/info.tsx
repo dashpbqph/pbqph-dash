@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { RouterOutputs } from '@/server/api/root'
 import { Polarity } from '@prisma/client'
-import { MathJax } from 'better-react-mathjax'
 import { TrendingDown, TrendingUp } from 'lucide-react'
 
 import { capitalizeWords } from '@/utils/misc'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import Markdown from '@/app/_providers/markdown-provider'
 
 import DetailsMetaItem from './metadata'
 
@@ -24,8 +24,6 @@ function getStractification(stracts: Record<string, boolean> | undefined) {
 }
 
 export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
-  const [mathJaxLoaded, setMathJaxLoaded] = useState(false)
-
   const stractification = getStractification({
     stratifiedByRegion: indicator?.stratifiedByRegion || false,
     stratifiedByOAC: indicator?.stratifiedByOAC || false,
@@ -36,30 +34,32 @@ export default function DetailsInfo({ indicator }: { indicator: Indicator }) {
   return (
     <>
       <h1 className="text-2xl font-medium leading-none text-background">
-        <span className="hidden data-[loaded=true]:inline" data-loaded={mathJaxLoaded}>
-          <MathJax
-            className="mr-1 text-xl"
-            onInitTypeset={() => setMathJaxLoaded(true)}
-            inline
-            dynamic
-            suppressHydrationWarning
-          >
-            {`\\(${indicator?.codeMathJax}\\)`}
-          </MathJax>
-        </span>
+        <Markdown className="inline-block text-xl text-white">{`$${indicator?.codeMarkdown}$`}</Markdown>
         {' - '}
         {indicator?.name}
       </h1>
       <span className="text-sm font-extralight text-background">{indicator?.purpose}</span>
       <div className="flex flex-col flex-wrap gap-x-3 gap-y-1 sm:flex-row">
-        <div className="flex h-12 items-center gap-5 rounded-md bg-primary px-3 text-sm text-background hover:bg-primary/95">
-          <span className="hidden data-[loaded=true]:block" data-loaded={mathJaxLoaded}>
-            <MathJax className="text-base" inline dynamic suppressHydrationWarning>
-              {`\\(${indicator?.equationMathJax}\\)`}
-            </MathJax>
-          </span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex h-12 items-center gap-5 rounded-md bg-primary px-3 text-sm text-background hover:bg-primary/95">
+                <Markdown className="text-base text-white">{`$${indicator?.equationMarkdown}$`}</Markdown>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-lg" side="bottom" align="start">
+              <Markdown className="text-sm">{`${indicator?.equationVarsMarkdown}`}</Markdown>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <div className="flex h-12 items-center gap-2 rounded-md bg-primary px-3 text-sm text-background hover:bg-primary/95">
+          <span className="font-light">Unidade:</span>
+          {indicator?.unit === '%' ? (
+            '%'
+          ) : (
+            <Markdown className="text-base text-white">{`$${indicator?.unit}$`}</Markdown>
+          )}
         </div>
-        <DetailsMetaItem label="Unidade" value={indicator?.unit} />
         <DetailsMetaItem
           label="Polaridade"
           value={

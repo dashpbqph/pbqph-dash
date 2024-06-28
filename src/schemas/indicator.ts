@@ -8,10 +8,10 @@ export const indicatorCreateUpdateFormSchema = z.object({
     .string()
     .min(2, { message: 'O código deve ter no mínimo 2 caracteres.' })
     .max(30, { message: 'O código deve ter no máximo 30 caracteres.' }),
-  codeMathJax: z
+  codeMarkdown: z
     .string()
-    .min(2, { message: 'O código mathjax deve ter no mínimo 2 caracteres.' })
-    .max(30, { message: 'O código mathjax deve ter no máximo 30 caracteres.' }),
+    .min(2, { message: 'O código markdown deve ter no mínimo 2 caracteres.' })
+    .max(30, { message: 'O código markdown deve ter no máximo 30 caracteres.' }),
   system: z.string().min(1, { message: 'Selecione um sistema.' }),
   category: z.string().min(1, { message: 'Selecione uma categoria.' }),
   name: z
@@ -32,7 +32,8 @@ export const indicatorCreateUpdateFormSchema = z.object({
   impactNatures: z.array(z.record(z.string())),
   impactedAgents: z.array(z.record(z.string())),
   // formula
-  equationMathJax: z.string().min(1, { message: 'Escreva a fórmula de cálculo do indicador.' }),
+  equationMarkdown: z.string().min(1, { message: 'Escreva a fórmula de cálculo do indicador.' }),
+  equationVarsMarkdown: z.string().min(1, { message: 'Escreva as variáveis da fórmula.' }),
   unit: z
     .string()
     .min(1, { message: 'Escreva a unidade de medida do indicador.' })

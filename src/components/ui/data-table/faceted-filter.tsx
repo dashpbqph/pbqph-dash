@@ -65,7 +65,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className="w-fit min-w-[200px] p-0" align="start">
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
@@ -73,10 +73,12 @@ export function DataTableFacetedFilter<TData, TValue>({
             <CommandGroup>
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value)
+                const isDisabled = !facets?.get(option.value)
                 return (
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
+                      if (isDisabled) return
                       if (isSelected) {
                         selectedValues.delete(option.value)
                       } else {
@@ -85,6 +87,8 @@ export function DataTableFacetedFilter<TData, TValue>({
                       const filterValues = Array.from(selectedValues)
                       column?.setFilterValue(filterValues.length ? filterValues : undefined)
                     }}
+                    disabled={isDisabled}
+                    className="group"
                   >
                     <div
                       className={cn(

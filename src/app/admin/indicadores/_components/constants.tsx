@@ -1,5 +1,4 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { MathJax } from 'better-react-mathjax'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
 import type { IndicatorWithRelations } from '@/types/indicator'
@@ -12,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import Markdown from '@/app/_providers/markdown-provider'
 
 import IndicatorCreateUpdateDialog from './dialog/create-update'
 import IndicatorCRUDDataDialog from './dialog/crud-data'
@@ -43,9 +43,7 @@ export const getColumns = ({
       },
       cell: ({ row }) => (
         <div className="min-w-[240px] px-4 font-medium">
-          <MathJax hideUntilTypeset="first" inline dynamic suppressHydrationWarning>
-            {`\\(${row.original.codeMathJax}\\)`}
-          </MathJax>
+          <Markdown>{`${row.original.codeMarkdown}`}</Markdown>
         </div>
       ),
       filterFn: (row, _id, value) => {

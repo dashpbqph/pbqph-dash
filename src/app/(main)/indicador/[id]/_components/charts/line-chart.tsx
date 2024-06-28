@@ -79,6 +79,9 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
           padding={{ top: 20, bottom: 20 }}
           width={36}
           tick={{ stroke: '#687182', strokeWidth: 0.4, fontSize: 14 }}
+          tickFormatter={(value) => {
+            return indicator?.unit === '%' ? `${(value * 100).toFixed(0)}%` : value
+          }}
           axisLine={false}
         />
         <Tooltip

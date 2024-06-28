@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { forwardRef, Suspense, useState } from 'react'
-import { MathJax } from 'better-react-mathjax'
+import { forwardRef, useState } from 'react'
 
 import { IndicatorValuesWithRelation, IndicatorWithRelations } from '@/types/indicator'
 import { cn } from '@/lib/utils'
@@ -17,6 +16,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import Spinner from '@/components/ui/spinner'
+import Markdown from '@/app/_providers/markdown-provider'
 
 import { useIndicatorCRUDFormSubmit } from './data-table-grid/hooks'
 import IndicatorDataTableGrid from './data-table-grid/table'
@@ -63,10 +63,7 @@ const IndicatorCRUDDataDialog = forwardRef<HTMLElement, IndicatorCRUDDataDialogP
             <DialogTitle>Editar dados do indicador</DialogTitle>
             <DialogDescription>
               Preencha as informações abaixo para editar os dados do indicador{' '}
-              <MathJax hideUntilTypeset="first" inline dynamic suppressHydrationWarning>
-                {`\\(${indicator?.codeMathJax}\\)`}
-              </MathJax>{' '}
-              .
+              <Markdown>{`${indicator?.codeMarkdown}`}</Markdown> .
             </DialogDescription>
           </DialogHeader>
           <IndicatorDataTableGrid

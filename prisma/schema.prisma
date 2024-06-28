@@ -56,6 +56,7 @@ enum Periodicity {
   ANUAL
   SEMESTRAL
   TRIMESTRAL
+  MENSAL
 }
 
 enum Category {
@@ -72,21 +73,31 @@ enum Region {
   CENTRO_OESTE
 }
 
+enum Group {
+  OBRA
+  EMPRESA
+  CONJUNTO_EMPRESAS
+}
+
 model Indicator {
-  id              String          @id @default(cuid())
-  category        Category
-  code            String          @unique
-  codeMathJax     String
-  name            String
-  unit            String
-  polarity        Polarity
-  cumulative      Boolean
-  source          String
-  periodicity     Periodicity
-  impactNatures   ImpactNature[]
-  impactedAgents  ImpactedAgent[]
-  purpose         String
-  equationMathJax String
+  id                   String          @id @default(cuid())
+  category             Category
+  group                Group?
+  index                Int             @default(autoincrement())
+  code                 String          @unique
+  codeMarkdown         String
+  name                 String
+  unit                 String
+  decimalPlaces        Int             @default(1)
+  polarity             Polarity
+  cumulative           Boolean
+  source               String
+  periodicity          Periodicity
+  impactNatures        ImpactNature[]
+  impactedAgents       ImpactedAgent[]
+  purpose              String
+  equationMarkdown     String
+  equationVarsMarkdown String
 
   stratifiedByRegion    Boolean @default(false)
   stratifiedByCompany   Boolean @default(false)
@@ -127,6 +138,15 @@ model IndicatorValue {
   @@map("indicator_values")
 }
 
+model Oac {
+  id   String @id @default(cuid())
+  name String @unique
+
+  indicatorValues IndicatorValue[]
+
+  @@map("oacs")
+}
+
 model Company {
   id   String @id @default(cuid())
   name String @unique
@@ -150,13 +170,18 @@ model Project {
   @@map("projects")
 }
 
-model Guideline {
+model Egt {
   id   String @id @default(cuid())
-  name String @unique // int string: 001, 002, 003, ...
+  name String @unique
 
-  indicatorValues IndicatorValue[]
+  @@map("egts")
+}
 
-  @@map("guidelines")
+model Em {
+  id   String @id @default(cuid())
+  name String @unique
+
+  @@map("ems")
 }
 
 model Psq {
@@ -168,13 +193,34 @@ model Psq {
   @@map("psqs")
 }
 
-model Oac {
+model Ita {
   id   String @id @default(cuid())
   name String @unique
 
+  @@map("itas")
+}
+
+model Fad {
+  id   String @id @default(cuid())
+  name String @unique
+
+  @@map("fads")
+}
+
+model Guideline {
+  id   String @id @default(cuid())
+  name String @unique // int string: 001, 002, 003, ...
+
   indicatorValues IndicatorValue[]
 
-  @@map("oacs")
+  @@map("guidelines")
+}
+
+model Datec {
+  id   String @id @default(cuid())
+  name String @unique
+
+  @@map("datecs")
 }
 
 enum UserRole {
