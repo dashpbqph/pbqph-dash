@@ -37,24 +37,23 @@ export default function UserButton({ user }: UserButtonProps) {
         sideOffset={8}
         className="flex w-[230px] flex-col gap-0.5 rounded-md p-4 shadow-xl"
       >
-        <DropdownMenuLabel className="flex gap-x-3 px-0">
-          <UserAvatar avatar={avatar} name={name} className="rounded-md" />
-          <div className="flex flex-col justify-center gap-0.5 text-left">
-            <span className="font-semibold text-secondary">
-              {name} {company && <span className="font-normal">({company})</span>}
-            </span>
-            <span className="text-xs font-extralight">{username}</span>
+        <DropdownMenuLabel className="flex flex-col gap-3">
+          <div className="flex gap-x-3 px-0">
+            <UserAvatar avatar={avatar} name={name} className="rounded-md" />
+            <div className="flex flex-col justify-center gap-0.5 text-left">
+              <span className="font-semibold text-secondary">{name}</span>
+              <span className="text-xs font-extralight">{username}</span>
+            </div>
           </div>
+          {company && <span className="text-xs font-normal text-secondary">{company}</span>}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {isAdmin(role) && (
-          <DropdownMenuItem className="flex space-x-4 py-3 transition-all hover:pl-3" asChild>
-            <Link href="/admin/usuarios">
-              <Settings className="h-5 w-5" />
-              <span>Administração</span>
-            </Link>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem className="flex space-x-4 py-3 transition-all hover:pl-3" asChild>
+          <Link href={`/admin/${isAdmin(role) ? 'usuarios' : 'indicadores'}`}>
+            <Settings className="h-5 w-5" />
+            <span>Administração</span>
+          </Link>
+        </DropdownMenuItem>
         <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>

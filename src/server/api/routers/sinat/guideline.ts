@@ -1,8 +1,12 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { z } from 'zod'
 
+import { isAdmin } from '@/utils/auth'
+
 export const guidelineRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
+    if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
     return ctx.db.guideline.findMany()
   }),
   create: protectedProcedure
@@ -12,6 +16,8 @@ export const guidelineRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       return ctx.db.guideline.create({
         data: {
           name: input.name,
@@ -26,6 +32,8 @@ export const guidelineRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       return ctx.db.guideline.update({
         where: {
           id: input.id,
@@ -36,6 +44,8 @@ export const guidelineRouter = createTRPCRouter({
       })
     }),
   delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+    if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
     return ctx.db.guideline.delete({
       where: {
         id: input.id,

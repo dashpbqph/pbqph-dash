@@ -1,9 +1,12 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
+import { UserRole } from '@prisma/client'
 import { type Row } from '@tanstack/react-table'
 import { useAtomValue } from 'jotai'
+import { useSession } from 'next-auth/react'
 
 import { IndicatorWithRelations } from '@/types/indicator'
 import { DataTable } from '@/components/ui/data-table'
@@ -16,9 +19,11 @@ import { columns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function IndicatorsTable() {
+  const { data: session } = useSession()
   const searchParams = useSearchParams()
   const pageIndex = searchParams.get('p')
-  const company = useAtomValue(selectedCompanyAtom)
+  const selectedCompany = useAtomValue(selectedCompanyAtom)
+  const company = session?.user.role === UserRole.MEMBER ? session.user?.company : selectedCompany
   const { data: indicators, error } = api.indicator.getAllByCompany.useQuery(
     {
       company: company ?? null,
@@ -30,6 +35,8 @@ export default function IndicatorsTable() {
   const pageSize = useDinamicPageSize({
     rowHeight: 108,
   })
+
+  const cachedColumns = useMemo(() => columns, [])
 
   if (!indicators) return <SkeletonTable />
   if (error) {
@@ -51,13 +58,19 @@ export default function IndicatorsTable() {
     const params = new URLSearchParams({
       fp: pageIndex.toString(),
     })
+    if (searchParams.get('s')) {
+      params.set('s', searchParams.get('s')!)
+    }
+    if (searchParams.get('c')) {
+      params.set('c', searchParams.get('c')!)
+    }
     router.push(`/indicador/${row.original.id}?${params.toString()}`)
   }
 
   return (
     <DataTable
       data={indicators || []}
-      columns={columns}
+      columns={cachedColumns}
       toolbar={DataTableToolbar}
       pageSize={pageSize}
       rowClickFn={handleRowClick}

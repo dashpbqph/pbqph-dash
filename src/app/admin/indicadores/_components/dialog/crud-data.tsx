@@ -61,10 +61,10 @@ const IndicatorCRUDDataDialog = forwardRef<HTMLElement, IndicatorCRUDDataDialogP
         <DialogContent className="flex w-fit max-w-fit flex-col p-7">
           <DialogHeader className="text-left">
             <DialogTitle>Editar dados do indicador</DialogTitle>
-            <DialogDescription>
+            <div className="text-sm text-muted-foreground">
               Preencha as informações abaixo para editar os dados do indicador{' '}
-              <Markdown>{`${indicator?.codeMarkdown}`}</Markdown> .
-            </DialogDescription>
+              <Markdown className="inline-block">{`${indicator?.codeMarkdown}`}</Markdown> .
+            </div>
           </DialogHeader>
           <IndicatorDataTableGrid
             indicator={indicator}

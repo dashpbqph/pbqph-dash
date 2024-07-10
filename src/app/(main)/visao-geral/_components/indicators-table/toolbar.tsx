@@ -1,6 +1,8 @@
 'use client'
 
-import { Category, SystemAbbrev } from '@prisma/client'
+import { useEffect } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Category, Group, SystemAbbrev } from '@prisma/client'
 import { Table } from '@tanstack/react-table'
 import { XIcon } from 'lucide-react'
 
@@ -14,10 +16,22 @@ interface DataTableToolbarProps<TData> {
 }
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
-  const system = table.getColumn('system')?.getFilterValue()?.toString() as SystemAbbrev
-  const category = table.getColumn('category')?.getFilterValue()?.toString() as Category
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const system = searchParams.get('s') as SystemAbbrev | null
+  const category = searchParams.get('c') as Category | null
+  const group = searchParams.get('g') as Group | null
+
+  useEffect(() => {
+    if (system) table.getColumn('system')?.setFilterValue(system)
+    if (category) table.getColumn('category')?.setFilterValue(category)
+    if (group) table.getColumn('group')?.setFilterValue(group)
+  }, [table, system, category, group])
+
   const hasGroup = system === SystemAbbrev.SiAC && category === Category.RESULTADO
+  const isFiltered = Boolean(system || category || group)
 
   return (
     <div className="flex flex-col gap-3 md:flex-row md:gap-2">
@@ -33,6 +47,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             column={table.getColumn('system')}
             title="Sistema"
             options={SYSTEM_OPTIONS}
+            queryParam="s"
           />
         )}
         {table.getColumn('category') && (
@@ -40,6 +55,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             column={table.getColumn('category')}
             title="Categoria"
             options={CATEGORY_OPTIONS}
+            queryParam="c"
           />
         )}
         {hasGroup && (
@@ -47,12 +63,16 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             column={table.getColumn('group')}
             title="Agrupamento"
             options={GROUP_OPTIONS}
+            queryParam="g"
           />
         )}
         {isFiltered && (
           <Button
             variant="destructive"
-            onClick={() => table.resetColumnFilters()}
+            onClick={() => {
+              table.resetColumnFilters()
+              router.replace(pathname)
+            }}
             className="group h-8 px-2 lg:px-3"
             data-group={hasGroup}
           >

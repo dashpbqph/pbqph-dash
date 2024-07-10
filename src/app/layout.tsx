@@ -5,6 +5,7 @@ import { TRPCReactProvider } from '@/trpc/react'
 
 import { Toaster } from '@/components/ui/toaster'
 import TailwindIndicator from '@/components/tailwind-indicator'
+import AuthProvider from '@/app/_providers/auth'
 import JotaiProvider from '@/app/_providers/jotai'
 
 const fibra = localFont({
@@ -94,9 +95,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" className={`antialiased ${fibra.variable}`}>
       <body>
         <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-2 text-white dark:bg-black dark:from-black dark:to-black sm:p-3">
-          <JotaiProvider>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </JotaiProvider>
+          <AuthProvider>
+            <JotaiProvider>
+              <TRPCReactProvider>{children}</TRPCReactProvider>
+            </JotaiProvider>
+          </AuthProvider>
         </main>
         <Toaster />
         <TailwindIndicator />

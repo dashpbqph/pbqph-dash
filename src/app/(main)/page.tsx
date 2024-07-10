@@ -21,18 +21,21 @@ export default function Home() {
               title="SiAC"
               description="É o sistema do PBQP-H baseado na implantação de sistema de gestão da qualidade pelas empresas de serviços e obras, que são certificados. Cobre no momento apenas as construtoras."
               image="/siac.jpg"
+              url="/visao-geral?s=SiAC"
               moreInfoUrl="https://pbqp-h.mdr.gov.br/sistemas/siac/introducao/"
             />
             <Item
               title="SiMaC"
               description="É o sistema do PBQP-H para combater a não conformidade na fabricação, importação e distribuição de materiais, componentes e sistemas construtivos, organizado por meio dos Programas Setoriais da Qualidade (PSQs). O SiMaC tem como referência o cumprimento das normas técnicas brasileiras da ABNT."
               image="/simac.jpg"
+              url="/visao-geral?s=SiMaC"
               moreInfoUrl="https://pbqp-h.mdr.gov.br/sistemas/simac/introducao/"
             />
             <Item
               title="SiNAT"
               description="É o sistema do PBQP-H de avaliação de desempenho dos produtos convencionais em conformidade com as normas técnicas brasileiras. Também atesta se produtos e sistemas inovadores podem ser utilizados em empreendimentos habitacionais."
               image="/sinat.jpg"
+              url="/visao-geral?s=SiNAT"
               moreInfoUrl="https://pbqp-h.mdr.gov.br/sistemas/sinat/introducao/"
             />
           </ItemList>
@@ -48,14 +51,17 @@ export default function Home() {
             <Item
               title="Estratégico"
               description="Permitem à coordenação do PBQP-H monitorar e estabelecer ações futuras associadas aos seus objetivos estratégicos. Também são úteis para aferir os resultados e acompanhar a evolução do PBQP-H no PPA."
+              url="/visao-geral?c=ESTRATEGICO"
             />
             <Item
               title="Desempenho"
               description="Possibilitam o acompanhamento e avaliação dos sistemas em seus aspectos operacionais, considerando dimensões como abrangência dos sistemas, impactos agregados alcançados nos agentes e a gestão de sua implementação."
+              url="/visao-geral?c=DESEMPENHO"
             />
             <Item
               title="Resultado"
               description="Associados aos impactos econômicos, sociais, tecnológicos, gerenciais, ambientais e jurídicos, decorrentes da implementação do Programa e de seus sistemas junto aos agentes do setor da construção civil da habitação."
+              url="/visao-geral?c=RESULTADO"
             />
           </ItemList>
         </div>
@@ -72,11 +78,13 @@ function Item({
   title,
   description,
   image,
+  url,
   moreInfoUrl,
 }: {
   title: string
   description: string
   image?: string
+  url: string
   moreInfoUrl?: string
 }) {
   return (
@@ -96,7 +104,7 @@ function Item({
         <span className="text-center text-xl text-white">{title}</span>
         <span className="text-xs font-extralight text-white">{description}</span>
         <div className="flex gap-2">
-          <Link href="/visao-geral" className={cn(buttonVariants(), 'h-7 text-xs')}>
+          <Link href={url} className={cn(buttonVariants(), 'h-7 text-xs')}>
             Ver Indicadores
           </Link>
           {moreInfoUrl && (

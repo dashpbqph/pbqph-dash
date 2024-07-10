@@ -224,9 +224,7 @@ model Datec {
 }
 
 enum UserRole {
-  SUPER_ADMIN
   ADMIN
-  STAFF
   MEMBER
 }
 

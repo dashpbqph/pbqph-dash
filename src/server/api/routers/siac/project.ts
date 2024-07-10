@@ -1,14 +1,31 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { z } from 'zod'
 
+import { isAdmin } from '@/utils/auth'
+
 export const projectRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.project.findMany({
-      include: {
-        company: true,
-      },
-    })
-  }),
+  getAll: protectedProcedure
+    .input(z.object({ company: z.string().optional() }))
+    .query(({ ctx, input }) => {
+      if (!input.company && !isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
+      if (input.company) {
+        return ctx.db.project.findMany({
+          where: {
+            companyId: input.company,
+          },
+          include: {
+            company: true,
+          },
+        })
+      }
+
+      return ctx.db.project.findMany({
+        include: {
+          company: true,
+        },
+      })
+    }),
   create: protectedProcedure
     .input(
       z.object({

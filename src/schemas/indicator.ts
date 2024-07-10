@@ -21,7 +21,7 @@ export const indicatorCreateUpdateFormSchema = z.object({
   purpose: z
     .string()
     .min(2, { message: 'A finalidade do indicador deve ter no mínimo 2 caracteres.' })
-    .max(500, { message: 'A finalidade do indicador deve ter no máximo 500 caracteres.' }),
+    .max(1000, { message: 'A finalidade do indicador deve ter no máximo 1000 caracteres.' }),
   polarity: z.string().min(1, { message: 'Selecione uma polaridade.' }),
   cumulative: z.boolean(),
   source: z

@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { startTransition } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Column } from '@tanstack/react-table'
 import { CheckIcon, CirclePlusIcon } from 'lucide-react'
 
@@ -25,6 +27,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
     value: string
     icon?: React.ComponentType<{ className?: string }>
   }[]
+  queryParam?: string
   className?: string
 }
 
@@ -32,10 +35,16 @@ export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  queryParam,
   className,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues()
-  const selectedValues = new Set(column?.getFilterValue() as string[])
+
+  const searchParams = useSearchParams()
+  const selectedOptions = searchParams.get(queryParam ?? '')?.split(',')
+  const selectedValues = new Set(selectedOptions ?? [])
+  const router = useRouter()
+  const pathname = usePathname()
 
   return (
     <Popover>
@@ -79,11 +88,30 @@ export function DataTableFacetedFilter<TData, TValue>({
                     key={option.value}
                     onSelect={() => {
                       if (isDisabled) return
+                      const params = new URLSearchParams(window.location.search)
                       if (isSelected) {
-                        selectedValues.delete(option.value)
+                        if (queryParam) {
+                          if (selectedValues.size === 1) {
+                            params.delete(queryParam)
+                          } else {
+                            params.set(
+                              queryParam,
+                              [...selectedValues]
+                                .filter((value) => value !== option.value)
+                                .join(','),
+                            )
+                          }
+                        }
                       } else {
-                        selectedValues.add(option.value)
+                        if (queryParam) {
+                          params.set(queryParam, [...selectedValues, option.value].join(','))
+                        }
                       }
+
+                      startTransition(() => {
+                        router.replace(`${pathname}?${params.toString()}`)
+                      })
+
                       const filterValues = Array.from(selectedValues)
                       column?.setFilterValue(filterValues.length ? filterValues : undefined)
                     }}
@@ -116,7 +144,18 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => {
+                      const params = new URLSearchParams(window.location.search)
+                      if (queryParam) {
+                        params.delete(queryParam)
+                      }
+
+                      startTransition(() => {
+                        router.replace(`${pathname}?${params.toString()}`)
+                      })
+
+                      column?.setFilterValue(undefined)
+                    }}
                     className="justify-center text-center"
                   >
                     Limpar filtros

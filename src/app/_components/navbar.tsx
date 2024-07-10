@@ -7,11 +7,7 @@ import AuthButton from './auth/auth-button'
 import { CompanySelect } from './company-select'
 import NavigationLinks from './navigation-links'
 
-const COMPANY_SELECT_ALLOWED_ROLES: Array<Omit<'MEMBER', UserRole>> = [
-  UserRole.SUPER_ADMIN,
-  UserRole.ADMIN,
-  UserRole.STAFF,
-]
+const COMPANY_SELECT_ALLOWED_ROLES: Array<UserRole> = [UserRole.ADMIN]
 
 export default async function Navbar() {
   const { user } = await getAuthData()

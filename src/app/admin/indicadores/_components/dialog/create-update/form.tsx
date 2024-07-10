@@ -100,7 +100,7 @@ export default function IndicatorCreateUpdateForm({
     defaultValues: {
       code: indicator?.code || '',
       codeMarkdown: indicator?.codeMarkdown || '',
-      system: systemWithType,
+      system: indicator?.systemAbbrev ? systemWithType : '',
       category: indicator?.category || '',
       name: indicator?.name || '',
       purpose: indicator?.purpose || '',
@@ -117,6 +117,7 @@ export default function IndicatorCreateUpdateForm({
         label: IMPACTED_AGENTS_MAP[agent],
       })),
       equationMarkdown: indicator?.equationMarkdown || '',
+      equationVarsMarkdown: indicator?.equationVarsMarkdown || '',
       unit: indicator?.unit || '',
       stratifiedByOAC: indicator?.stratifiedByOAC || false,
       stratifiedByPSQ: indicator?.stratifiedByPSQ || false,
@@ -447,6 +448,27 @@ export default function IndicatorCreateUpdateForm({
               indicatorCreateUpdateForm.watch('equationMarkdown') && (
                 <div className="flex justify-center gap-2 rounded-md bg-primary/10 py-3">
                   <Markdown>{`${indicatorCreateUpdateForm.watch('equationMarkdown')}`}</Markdown>
+                </div>
+              )}
+            <FormField
+              control={indicatorCreateUpdateForm.control}
+              name="equationVarsMarkdown"
+              render={({ field }) => (
+                <div className="relative w-full">
+                  <FormInputLabel label="Variáveis da fórmula em Markdown" />
+                  <FormItem className="w-full space-y-0.5">
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage className="font-light text-red-500" />
+                  </FormItem>
+                </div>
+              )}
+            />
+            {currentTab === ('properties' as Tab) &&
+              indicatorCreateUpdateForm.watch('equationVarsMarkdown') && (
+                <div className="flex justify-center gap-2 rounded-md bg-primary/10 py-3">
+                  <Markdown>{`${indicatorCreateUpdateForm.watch('equationVarsMarkdown')}`}</Markdown>
                 </div>
               )}
             <FormField

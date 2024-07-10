@@ -10,7 +10,7 @@ import { getColumns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function AdminTable() {
-  const { data, isPending, refetch } = api.company.getAll.useQuery()
+  const { data, isPending, refetch } = api.company.getAll.useQuery({})
   const columns = getColumns({ refetch })
 
   const pageSize = useDinamicPageSize({

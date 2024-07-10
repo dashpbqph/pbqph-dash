@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { api } from '@/trpc/react'
+import { useSession } from 'next-auth/react'
 
 import { IndicatorValuesWithRelation, IndicatorWithRelations } from '@/types/indicator'
 import { DataTable } from '@/components/ui/data-table'
@@ -20,17 +21,31 @@ export default function IndicatorDataTableGrid({
   indicatorValues,
   setIndicatorValues,
 }: IndicatorDataTableGridProps) {
+  const { data: session } = useSession()
   const {
     data: defaultIndicatorValues,
     isPending,
     refetch,
-  } = api.indicator.getValuesByIndicatorId.useQuery({ id: indicator.id })
-  const { data: companies } = api.company.getAll.useQuery(undefined, {
-    enabled: !!indicator.stratifiedByCompany,
+  } = api.indicator.getValuesByIndicatorId.useQuery({
+    id: indicator.id,
+    company: session?.user.company,
   })
-  const { data: projects } = api.project.getAll.useQuery(undefined, {
-    enabled: !!indicator.stratifiedByProject,
-  })
+  const { data: companies } = api.company.getAll.useQuery(
+    {
+      company: session?.user.company,
+    },
+    {
+      enabled: !!indicator.stratifiedByCompany,
+    },
+  )
+  const { data: projects } = api.project.getAll.useQuery(
+    {
+      company: session?.user.company,
+    },
+    {
+      enabled: !!indicator.stratifiedByProject,
+    },
+  )
   const { data: oacs } = api.oac.getAll.useQuery(undefined, {
     enabled: !!indicator.stratifiedByOAC,
   })

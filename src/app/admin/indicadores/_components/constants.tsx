@@ -19,13 +19,16 @@ import IndicatorDeleteDialog from './dialog/delete-indicator'
 
 type GetColumnsProps = {
   refetchIndicators: () => void
+  canEditIndicators: boolean
 }
 
 export const getColumns = ({
   refetchIndicators,
+  canEditIndicators,
 }: GetColumnsProps): ColumnDef<IndicatorWithRelations>[] => {
   return [
     {
+      id: 'code',
       accessorKey: 'code',
       header: ({ column }) => {
         return (
@@ -48,7 +51,7 @@ export const getColumns = ({
       ),
       filterFn: (row, _id, value) => {
         const codeAndName = `${row.original.code} ${row.original.name}`
-        return codeAndName.includes(value)
+        return codeAndName.toLowerCase().includes(value.toLowerCase())
       },
     },
     {
@@ -73,22 +76,10 @@ export const getColumns = ({
       accessorKey: 'name',
       header: () => <div>Nome</div>,
       cell: ({ row }) => (
-        <div className="line-clamp-2 h-10 min-w-[240px] text-left">{row.getValue('name')}</div>
+        <div className="flex h-10 items-center">
+          <span className="line-clamp-2 min-w-[240px] text-left">{row.getValue('name')}</span>
+        </div>
       ),
-    },
-    {
-      id: 'lastValue',
-      header: () => <div className="hidden text-center lg:block">Último valor</div>,
-      cell: ({ row }) => {
-        const values = row.original.values
-        const lastValue =
-          values.length > 0 ? values.reduce((a, b) => (a.createdAt > b.createdAt ? a : b)) : null
-        return (
-          <div className="hidden min-w-[140px] text-center lg:block">
-            {lastValue?.value.toLocaleString('pt-BR')}
-          </div>
-        )
-      },
     },
     {
       id: 'actions',
@@ -108,22 +99,28 @@ export const getColumns = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="flex flex-col gap-0.5">
                 <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                  <IndicatorCreateUpdateDialog
-                    indicator={indicator}
-                    refetchIndicators={refetchIndicators}
-                  />
-                </DropdownMenuItem>
+                {canEditIndicators && (
+                  <DropdownMenuItem asChild>
+                    <IndicatorCreateUpdateDialog
+                      indicator={indicator}
+                      refetchIndicators={refetchIndicators}
+                    />
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <IndicatorCRUDDataDialog indicator={indicator} />
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <IndicatorDeleteDialog
-                    indicator={indicator}
-                    refetchIndicators={refetchIndicators}
-                  />
-                </DropdownMenuItem>
+                {canEditIndicators && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <IndicatorDeleteDialog
+                        indicator={indicator}
+                        refetchIndicators={refetchIndicators}
+                      />
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

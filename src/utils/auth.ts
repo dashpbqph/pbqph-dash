@@ -34,17 +34,13 @@ const mapUserRoleToLabel = (role: UserRole) => {
   switch (role) {
     case UserRole.MEMBER:
       return 'Membro'
-    case UserRole.STAFF:
-      return 'Equipe'
     case UserRole.ADMIN:
       return 'Administrador'
-    case UserRole.SUPER_ADMIN:
-      return 'Super Administrador'
   }
 }
 
 function isAdmin(role: UserRole) {
-  return role === UserRole.SUPER_ADMIN || role === UserRole.ADMIN
+  return role === UserRole.ADMIN
 }
 
 export { isAdmin, generatePassword, mapUserRoleToLabel }

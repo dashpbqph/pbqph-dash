@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { useSession } from 'next-auth/react'
 
 import { ProjectWithRelations } from '@/types/siac'
 import { DataTable } from '@/components/ui/data-table'
@@ -10,7 +11,10 @@ import { getColumns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function ProjectsTable() {
-  const { data, isPending, refetch } = api.project.getAll.useQuery()
+  const { data: session } = useSession()
+  const { data, isPending, refetch } = api.project.getAll.useQuery({
+    company: session?.user.company,
+  })
   const columns = getColumns({ refetch })
 
   const pageSize = useDinamicPageSize({

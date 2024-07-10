@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
+import { UserRole } from '@prisma/client'
 import { useAtomValue } from 'jotai'
 import {
   Activity,
@@ -19,11 +20,13 @@ import {
   SignalHighIcon,
   SignalLowIcon,
 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { ChartDataItem } from '@/types/chart'
 import { IndicatorWithValues } from '@/types/indicator'
 import { cn } from '@/lib/utils'
+import { isAdmin } from '@/utils/auth'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -97,12 +100,13 @@ type DetailsProps = {
 }
 
 export default function Details({ params }: DetailsProps) {
+  const { data: session } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const fromPage = searchParams.get('fp')
   const [lag, setLag] = useState('5')
   const [sortProjects, setSortProjects] = useState('desc')
-  const company = useAtomValue(selectedCompanyAtom)
+  const selectedCompany = useAtomValue(selectedCompanyAtom)
+  const company = session?.user.role === UserRole.MEMBER ? session.user?.company : selectedCompany
   const [stratifications, setStratifications] = useState<string[]>([])
   const { data: indicator, error } = api.indicator.getIndicatorById.useQuery(
     {
@@ -180,6 +184,7 @@ export default function Details({ params }: DetailsProps) {
   }, [error, router])
 
   const isTable = indicator?.code === 'ITC'
+  const isCompanyBased = indicator?.stratifiedByCompany
   const isProjectBased = indicator?.stratifiedByProject
 
   if (!indicator) return <DetailsSkeleton />
@@ -191,7 +196,7 @@ export default function Details({ params }: DetailsProps) {
       )}
     >
       <Link
-        href={`/visao-geral?p=${fromPage}`}
+        href={`/visao-geral?${searchParams.toString()}`}
         className={cn(buttonVariants(), 'flex h-8 w-fit items-center gap-0.5 px-3 py-2 pl-2')}
       >
         <ChevronLeft className="h-5 w-5" strokeWidth={2.6} />
@@ -273,41 +278,43 @@ export default function Details({ params }: DetailsProps) {
                       </SelectContent>
                     </Select>
                   )}
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button className="flex h-10 justify-between" variant="outline">
-                        <div className="flex gap-2">
-                          <SearchIcon className="h-4 w-4" />
-                          <span className="text-xs font-medium">Estratificação</span>
-                        </div>
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      side="left"
-                      align="start"
-                      sideOffset={14}
-                      className="flex w-36 flex-col gap-0.5 p-1"
-                    >
-                      {STRATIFICATION_OPTIONS.map((option) => (
-                        <div
-                          key={option.value}
-                          className="relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 pl-8 hover:bg-accent data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
-                          onClick={() =>
-                            rawStratifications.includes(option.value)
-                              ? handleStratificationChange(option.value)
-                              : undefined
-                          }
-                          data-disabled={!rawStratifications.includes(option.value)}
-                        >
-                          {stratifications.includes(option.value) && (
-                            <CheckIcon className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center" />
-                          )}
-                          <span className="text-sm">{option.label}</span>
-                        </div>
-                      ))}
-                    </PopoverContent>
-                  </Popover>
+                  {(!isCompanyBased || (session && isAdmin(session.user.role))) && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button className="flex h-10 justify-between" variant="outline">
+                          <div className="flex gap-2">
+                            <SearchIcon className="h-4 w-4" />
+                            <span className="text-xs font-medium">Estratificação</span>
+                          </div>
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        side="left"
+                        align="start"
+                        sideOffset={14}
+                        className="flex w-36 flex-col gap-0.5 p-1"
+                      >
+                        {STRATIFICATION_OPTIONS.map((option) => (
+                          <div
+                            key={option.value}
+                            className="relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 pl-8 hover:bg-accent data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
+                            onClick={() =>
+                              rawStratifications.includes(option.value)
+                                ? handleStratificationChange(option.value)
+                                : undefined
+                            }
+                            data-disabled={!rawStratifications.includes(option.value)}
+                          >
+                            {stratifications.includes(option.value) && (
+                              <CheckIcon className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center" />
+                            )}
+                            <span className="text-sm">{option.label}</span>
+                          </div>
+                        ))}
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 </PopoverContent>
               </Popover>
             )}
@@ -384,16 +391,6 @@ function BarChartProject({ data, mean }: BarChartProjectProps) {
                       </p>
                     </div>
                   ))}
-                  {/* <div className="flex items-center justify-between space-x-8">
-                    <div className="flex items-center space-x-2">
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: '#F4C000' }}
-                      />
-                      <p className="whitespace-nowrap text-right text-[#687182]">{name}</p>
-                    </div>
-                    <p className="whitespace-nowrap text-right font-medium tabular-nums">{value}</p>
-                  </div> */}
                 </div>
               </div>
             )

@@ -11,26 +11,53 @@ import {
 } from '@prisma/client'
 import { z } from 'zod'
 
+import { isAdmin } from '@/utils/auth'
+
 export const indicatorRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.indicator.findMany({
-      include: {
-        system: true,
-        values: {
+  getAll: protectedProcedure
+    .input(z.object({ company: z.string().optional() }))
+    .query(({ ctx, input }) => {
+      if (input.company) {
+        return ctx.db.indicator.findMany({
+          where: {
+            stratifiedByProject: true,
+          },
           include: {
-            company: true,
-            project: true,
-            oac: true,
-            psq: true,
-            guideline: true,
+            system: true,
+            values: {
+              include: {
+                company: true,
+                project: true,
+                oac: true,
+                psq: true,
+                guideline: true,
+              },
+            },
+          },
+          orderBy: {
+            index: 'asc',
+          },
+        })
+      }
+
+      return ctx.db.indicator.findMany({
+        include: {
+          system: true,
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
           },
         },
-      },
-      orderBy: {
-        index: 'asc',
-      },
-    })
-  }),
+        orderBy: {
+          index: 'asc',
+        },
+      })
+    }),
   getAllByCompany: publicProcedure
     .input(z.object({ company: z.string().nullable() }))
     .query(async ({ ctx, input }) => {
@@ -130,6 +157,8 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const system = input.system.split('-')
       const systemAbbrev = system[0] as SystemAbbrev
       const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
@@ -195,6 +224,8 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const system = input.system.split('-')
       const systemAbbrev = system[0] as SystemAbbrev
       const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
@@ -235,6 +266,8 @@ export const indicatorRouter = createTRPCRouter({
       })
     }),
   delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+    if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
     return ctx.db.indicator.delete({
       where: {
         id: input.id,
@@ -244,8 +277,30 @@ export const indicatorRouter = createTRPCRouter({
 
   // values
   getValuesByIndicatorId: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), company: z.string().optional() }))
     .query(({ input, ctx }) => {
+      if (!input.company && !isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
+      if (input.company) {
+        return ctx.db.indicatorValue.findMany({
+          where: {
+            indicatorId: input.id,
+            companyId: input.company,
+          },
+          include: {
+            indicator: true,
+            company: true,
+            project: true,
+            oac: true,
+            psq: true,
+            guideline: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        })
+      }
+
       return ctx.db.indicatorValue.findMany({
         where: {
           indicatorId: input.id,
@@ -278,6 +333,8 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (ctx.session.user.company === '') throw new Error('Unauthorized')
+
       // get all values from the indicator
       const allValues = await ctx.db.indicatorValue.findMany({
         where: {

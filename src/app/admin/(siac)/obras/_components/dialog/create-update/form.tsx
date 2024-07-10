@@ -3,6 +3,7 @@
 import { projectCreateFormSchema } from '@/schemas/siac'
 import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -29,7 +30,10 @@ type CreateUpdateFormProps = {
 
 export default function CreateUpdateForm({ project, onClose }: CreateUpdateFormProps) {
   const isEditing = !!project
-  const { data: companies } = api.company.getAll.useQuery()
+  const { data: session } = useSession()
+  const { data: companies } = api.company.getAll.useQuery({
+    company: session?.user.company,
+  })
 
   const createForm = useForm<z.infer<typeof projectCreateFormSchema>>({
     resolver: zodResolver(projectCreateFormSchema),

@@ -92,7 +92,21 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
             const selectedPayload = selectedLine
               ? payload?.filter((entry) => entry.dataKey === selectedLine)
               : payload
-            return <ChartTooltip active={active} payload={selectedPayload} label={label} />
+            const formattedPayload = selectedPayload?.map((entry) => ({
+              ...entry,
+              value: indicator
+                ? indicator.unit === '%'
+                  ? (Number(entry.value) * 100).toLocaleString('pt-BR', {
+                      minimumFractionDigits: indicator.decimalPlaces,
+                      maximumFractionDigits: indicator.decimalPlaces,
+                    })
+                  : Number(entry.value).toLocaleString('pt-BR', {
+                      minimumFractionDigits: indicator.decimalPlaces,
+                      maximumFractionDigits: indicator.decimalPlaces,
+                    })
+                : entry.value,
+            }))
+            return <ChartTooltip active={active} payload={formattedPayload} label={label} />
           }}
           position={{ y: 0 }}
         />

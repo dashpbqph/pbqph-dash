@@ -19,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { selectedCompanyAtom } from '@/app/_atoms/company'
 
 export function CompanySelect() {
-  const { data: companies, isPending } = api.company.getAll.useQuery()
+  const { data: companies, isPending } = api.company.getAll.useQuery({})
   const [open, setOpen] = useState(false)
   const [selectedCompany, setSelectedCompany] = useAtom(selectedCompanyAtom)
 

@@ -20,6 +20,7 @@ declare module 'next-auth' {
       id: string
       username: string
       role: UserRole
+      company?: string
     } & DefaultSession['user']
   }
 
@@ -27,6 +28,7 @@ declare module 'next-auth' {
     id: string
     username: string
     role: UserRole
+    company?: string
   }
 }
 
@@ -43,6 +45,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.username = user.username
         token.role = user.role
+        token.company = user.company
         token.name = user.name
         token.email = user.email
         token.image = user.image
@@ -53,6 +56,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id as string
       session.user.username = token.username as string
       session.user.role = token.role as UserRole
+      session.user.company = token.company as string | undefined
       session.user.name = token.name as string
       session.user.email = token.email as string
       return session
@@ -85,6 +89,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           username: user.username,
           role: user.role?.role,
+          company: user.companyId ?? undefined,
           name: user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName,
           email: user.email,
           image: user.image,

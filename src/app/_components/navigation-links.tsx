@@ -18,7 +18,10 @@ export default function NavigationLinks() {
         <NavigationLink
           key={href}
           href={href}
-          isActive={pathname === href || (href !== '/' && pathname.includes('/indicador'))}
+          isActive={
+            pathname === href ||
+            (href !== '/' && href !== '/visao-geral' && pathname.includes('/indicador'))
+          }
         >
           {label}
         </NavigationLink>
