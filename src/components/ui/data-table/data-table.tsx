@@ -75,7 +75,6 @@ export default function DataTable<TData, TValue>({
   const [pageIndexInternal, setPageIndexInternal] = useState(
     getValidPageIndex(maxPageIndex, pageIndex),
   )
-  console.log(pageIndexInternal)
 
   const table = useReactTable({
     data,

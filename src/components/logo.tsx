@@ -25,8 +25,6 @@ export default function Logo({ variant = 'horizontal', color = 'color' }: LogoPr
         >
           <Image
             src="/logo-color-horizontal.svg"
-            placeholder="blur"
-            blurDataURL="/logo.svg"
             alt="Logo"
             fill
             style={{ objectFit: 'contain' }}
@@ -39,8 +37,6 @@ export default function Logo({ variant = 'horizontal', color = 'color' }: LogoPr
         <Link href="/" className="relative block h-[100px] w-[150px] shrink-0">
           <Image
             src="/logo-white-vertical.svg"
-            placeholder="blur"
-            blurDataURL="/logo.svg"
             alt="Logo"
             fill
             style={{ objectFit: 'contain' }}
@@ -52,8 +48,6 @@ export default function Logo({ variant = 'horizontal', color = 'color' }: LogoPr
       {variant === 'icon' && color === 'color' && (
         <Image
           src="/logo-color-icon.svg"
-          placeholder="blur"
-          blurDataURL="/logo.svg"
           alt="Logo"
           fill
           style={{ objectFit: 'contain' }}
@@ -62,16 +56,4 @@ export default function Logo({ variant = 'horizontal', color = 'color' }: LogoPr
       )}
     </>
   )
-  // {variant === 'icon' && color === 'white' && (
-  //   <Image
-  //     src="/logo-white-icon-only.svg"
-  //     placeholder="blur"
-  //     blurDataURL="/logo.svg"
-  //     alt="Logo"
-  //     fill
-  //     style={{ objectFit: 'contain' }}
-  //     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
-  //     className="sm:hidden"
-  //   />
-  // )}
 }

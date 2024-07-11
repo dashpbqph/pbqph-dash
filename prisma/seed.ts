@@ -1,6 +1,7 @@
 import { fakerPT_BR as faker } from '@faker-js/faker'
 import {
   Category,
+  Group,
   ImpactedAgent,
   ImpactNature,
   Periodicity,
@@ -75,10 +76,13 @@ const createIndicators = seeds.indicators.map((indicator) => {
   return prisma.indicator.create({
     data: {
       category: indicator.category as Category,
+      group: indicator?.group as Group,
+      index: indicator.index,
       code: indicator.code,
-      codeMathJax: indicator.codeMathJax,
+      codeMarkdown: indicator.codeMarkdown,
       name: indicator.name,
       unit: indicator.unit,
+      decimalPlaces: typeof indicator?.decimalPlaces === 'number' ? indicator?.decimalPlaces : 1,
       polarity: indicator.polarity as Polarity,
       cumulative: indicator.cumulative,
       source: indicator.source,
@@ -86,7 +90,8 @@ const createIndicators = seeds.indicators.map((indicator) => {
       impactNatures: indicator.impactNatures as ImpactNature[],
       impactedAgents: indicator.impactedAgents as ImpactedAgent[],
       purpose: indicator.purpose,
-      equationMathJax: indicator.equationMathJax,
+      equationMarkdown: indicator.equationMarkdown,
+      equationVarsMarkdown: indicator.equationVarsMarkdown,
       stratifiedByRegion: indicator.stratifiedByRegion,
       stratifiedByCompany: indicator.stratifiedByCompany,
       stratifiedByProject: indicator.stratifiedByProject,
@@ -108,13 +113,14 @@ const createIndicators = seeds.indicators.map((indicator) => {
 
 // 6.1. create indicator values
 // with random values for each indicator
-const NUM_VALUES = 10
+const NUM_VALUES = 6
 const YEARS_RANGE = 10
 const ONE_DAY = 1000 * 60 * 60 * 24
 const START_DATE = new Date().getTime() - YEARS_RANGE * 365 * ONE_DAY
 
 const createIndicatorValues = seeds.indicators.map((indicator) => {
   const indicatorValues = Array.from({ length: NUM_VALUES }, () => {
+    const unit = indicator.unit
     let date
     switch (indicator.periodicity) {
       case Periodicity.TRIMESTRAL:
@@ -143,7 +149,15 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
       const regions = Object.values(Region)
       return regions.map((region) => ({
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         region,
@@ -153,7 +167,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByGuideline) {
       return seeds.guidelines.map((guideline) => ({
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(indicator?.decimalPlaces || 1),
         ),
         date: new Date(date),
         guideline,
@@ -164,7 +180,15 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
       return seeds.companies.flatMap((company) =>
         company.projects.map((project) => ({
           value: parseFloat(
-            faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+            faker.number
+              .float({ min: indicator.range[0], max: indicator.range[1] })
+              .toFixed(
+                unit === '%'
+                  ? 2
+                  : typeof indicator?.decimalPlaces === 'number'
+                    ? indicator.decimalPlaces
+                    : 1,
+              ),
           ),
           date: new Date(date),
           company,
@@ -176,7 +200,15 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByCompany) {
       return seeds.companies.map((company) => ({
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         company,
@@ -186,7 +218,15 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByOAC) {
       return seeds.oacs.map((oac) => ({
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         oac,
@@ -196,7 +236,9 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     if (indicator.stratifiedByPSQ) {
       return seeds.psqs.map((psq) => ({
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(indicator?.decimalPlaces || 1),
         ),
         date: new Date(date),
         psq,
@@ -206,7 +248,15 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
     return [
       {
         value: parseFloat(
-          faker.number.float({ min: indicator.range[0], max: indicator.range[1] }).toFixed(3),
+          faker.number
+            .float({ min: indicator.range[0], max: indicator.range[1] })
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
       },
@@ -271,24 +321,20 @@ const createSuperAdminUser = prisma.user.create({
     firstName: 'Super Admin',
     lastName: '',
     email: 'super.admin@gmail.com',
-    password: bcrypt.hashSync('SADMIN@dashboard2023', adminSalt),
+    password: bcrypt.hashSync('SADMIN@dashboard2024', adminSalt),
     salt: adminSalt,
     image: 'https://mighty.tools/mockmind-api/content/human/41.jpg',
     createdAt: faker.date.past(),
     role: {
       connect: {
-        role: UserRole.SUPER_ADMIN, // super admin role
+        role: UserRole.ADMIN,
       },
     },
   },
 })
 
 async function seedUsersTables() {
-  await prisma.$transaction([
-    ...createRoles,
-    // ...createFakeUsers,
-    createSuperAdminUser,
-  ])
+  await prisma.$transaction([...createRoles, createSuperAdminUser])
 }
 
 async function seedMainTables() {

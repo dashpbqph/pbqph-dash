@@ -1,11 +1,14 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/trpc/react'
+import { UserRole } from '@prisma/client'
+import { useAtomValue } from 'jotai'
 import {
   Activity,
+  ArrowUpDown,
   CalendarClockIcon,
   CheckIcon,
   ChevronDown,
@@ -17,10 +20,13 @@ import {
   SignalHighIcon,
   SignalLowIcon,
 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { ChartDataItem } from '@/types/chart'
 import { IndicatorWithValues } from '@/types/indicator'
 import { cn } from '@/lib/utils'
+import { isAdmin } from '@/utils/auth'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -30,6 +36,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { toast } from '@/components/ui/use-toast'
+import { selectedCompanyAtom } from '@/app/_atoms/company'
 import { getChartData } from '@/app/(main)/_utils'
 
 import { LineChart as DetailsLineChart } from './_components/charts/line-chart'
@@ -56,6 +65,12 @@ function getStratificationList(indicator: IndicatorWithValues) {
 
   return Array.from(stratifications)
 }
+
+const SORT_OPTIONS = [
+  { value: 'asc', label: 'Crescente' },
+  { value: 'desc', label: 'Decrescente' },
+  { value: 'temp', label: 'Temporal' },
+]
 
 const LAG_OPTIONS = [
   { value: '2', label: 'Últimos 2' },
@@ -85,18 +100,41 @@ type DetailsProps = {
 }
 
 export default function Details({ params }: DetailsProps) {
+  const { data: session } = useSession()
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const fromPage = searchParams.get('fp')
   const [lag, setLag] = useState('5')
+  const [sortProjects, setSortProjects] = useState('desc')
+  const selectedCompany = useAtomValue(selectedCompanyAtom)
+  const company = session?.user.role === UserRole.MEMBER ? session.user?.company : selectedCompany
   const [stratifications, setStratifications] = useState<string[]>([])
-  const { data: indicator } = api.indicator.getIndicatorById.useQuery({
-    id: params.id,
-  })
+  const { data: indicator, error } = api.indicator.getIndicatorById.useQuery(
+    {
+      id: params.id,
+      company: company ?? null,
+    },
+    { enabled: company !== undefined },
+  )
 
   const chartData = useMemo(() => {
     if (!indicator) return [] as ChartDataItem[]
     return getChartData({ indicator, stratifications })
   }, [indicator, stratifications])
+
+  const chartBarData = indicator?.values
+    .filter((value) => value.companyId === company)
+    .map((value) => {
+      return {
+        period: value.createdAt,
+        project: value.project?.name,
+        value: value.value,
+      }
+    })
+    .sort((a, b) => {
+      if (sortProjects === 'asc') return a.value - b.value
+      if (sortProjects === 'desc') return b.value - a.value
+      return a.period.getTime() - b.period.getTime()
+    })
 
   const statsGlobal = useMemo(() => {
     if (!indicator) return {} as Record<string, { value: number; icon: LucideIcon }>
@@ -134,18 +172,31 @@ export default function Details({ params }: DetailsProps) {
     }
   }
 
+  useEffect(() => {
+    if (error?.message === 'FORBIDDEN') {
+      toast({
+        title: 'Acesso negado',
+        description: 'Você não tem permissão para acessar este indicador',
+        status: 'error',
+      })
+      router.push('/visao-geral')
+    }
+  }, [error, router])
+
   const isTable = indicator?.code === 'ITC'
+  const isCompanyBased = indicator?.stratifiedByCompany
+  const isProjectBased = indicator?.stratifiedByProject
 
   if (!indicator) return <DetailsSkeleton />
   return (
     <div
       className={cn(
         'flex flex-1 flex-col gap-3 rounded-md bg-secondary p-4 text-black',
-        isTable && 'max-h-[calc(100vh-108px)]',
+        isTable || (isProjectBased && 'max-h-[calc(100vh-108px)]'),
       )}
     >
       <Link
-        href={`/?p=${fromPage}`}
+        href={`/visao-geral?${searchParams.toString()}`}
         className={cn(buttonVariants(), 'flex h-8 w-fit items-center gap-0.5 px-3 py-2 pl-2')}
       >
         <ChevronLeft className="h-5 w-5" strokeWidth={2.6} />
@@ -153,7 +204,13 @@ export default function Details({ params }: DetailsProps) {
       </Link>
       <DetailsInfo indicator={indicator} />
       <div className="flex flex-1 gap-3 overflow-auto xxs:flex-col sm:flex-row">
-        {isTable ? (
+        {isProjectBased ? (
+          <div className="scrollbar flex flex-1 overflow-y-auto rounded-md bg-white p-4">
+            {chartBarData && chartBarData.length > 0 && (
+              <BarChartProject data={chartBarData} mean={statsGlobal['Média'].value} />
+            )}
+          </div>
+        ) : isTable ? (
           <div className="scrollbar flex flex-1 overflow-auto rounded-md">
             <DetailsTable indicator={indicator} />
           </div>
@@ -181,62 +238,83 @@ export default function Details({ params }: DetailsProps) {
                   align="start"
                   sideOffset={6}
                 >
-                  <Select onValueChange={setLag} value={lag}>
-                    <SelectTrigger className="flex h-10 justify-between px-4 text-xs font-medium text-secondary hover:bg-white">
-                      <div className="flex items-center gap-2">
-                        <CalendarClockIcon className="h-4 w-4" />
-                        <SelectValue placeholder={lag === 'all' ? 'Todos' : `Últimos ${lag}`} />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent side="left" align="start" sideOffset={10}>
-                      {LAG_OPTIONS.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          disabled={
-                            option.value !== 'all' && chartData.length < Number(option.value)
-                          }
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button className="flex h-10 justify-between" variant="outline">
-                        <div className="flex gap-2">
-                          <SearchIcon className="h-4 w-4" />
-                          <span className="text-xs font-medium">Estratificação</span>
+                  {isProjectBased && (
+                    <Select onValueChange={setSortProjects} value={sortProjects}>
+                      <SelectTrigger className="flex h-10 justify-between px-4 text-xs font-medium text-secondary hover:bg-white">
+                        <div className="flex items-center gap-2">
+                          <ArrowUpDown className="h-4 w-4" />
+                          <SelectValue placeholder={`Ordenar por ${sortProjects}`} />
                         </div>
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      side="left"
-                      align="start"
-                      sideOffset={14}
-                      className="flex w-36 flex-col gap-0.5 p-1"
-                    >
-                      {STRATIFICATION_OPTIONS.map((option) => (
-                        <div
-                          key={option.value}
-                          className="relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 pl-8 hover:bg-accent data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
-                          onClick={() =>
-                            rawStratifications.includes(option.value)
-                              ? handleStratificationChange(option.value)
-                              : undefined
-                          }
-                          data-disabled={!rawStratifications.includes(option.value)}
-                        >
-                          {stratifications.includes(option.value) && (
-                            <CheckIcon className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center" />
-                          )}
-                          <span className="text-sm">{option.label}</span>
+                      </SelectTrigger>
+                      <SelectContent side="left" align="start" sideOffset={10}>
+                        {SORT_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {!isProjectBased && (
+                    <Select onValueChange={setLag} value={lag}>
+                      <SelectTrigger className="flex h-10 justify-between px-4 text-xs font-medium text-secondary hover:bg-white">
+                        <div className="flex items-center gap-2">
+                          <CalendarClockIcon className="h-4 w-4" />
+                          <SelectValue placeholder={lag === 'all' ? 'Todos' : `Últimos ${lag}`} />
                         </div>
-                      ))}
-                    </PopoverContent>
-                  </Popover>
+                      </SelectTrigger>
+                      <SelectContent side="left" align="start" sideOffset={10}>
+                        {LAG_OPTIONS.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            disabled={
+                              option.value !== 'all' && chartData.length < Number(option.value)
+                            }
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {(!isCompanyBased || (session && isAdmin(session.user.role))) && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button className="flex h-10 justify-between" variant="outline">
+                          <div className="flex gap-2">
+                            <SearchIcon className="h-4 w-4" />
+                            <span className="text-xs font-medium">Estratificação</span>
+                          </div>
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        side="left"
+                        align="start"
+                        sideOffset={14}
+                        className="flex w-36 flex-col gap-0.5 p-1"
+                      >
+                        {STRATIFICATION_OPTIONS.map((option) => (
+                          <div
+                            key={option.value}
+                            className="relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 pl-8 hover:bg-accent data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
+                            onClick={() =>
+                              rawStratifications.includes(option.value)
+                                ? handleStratificationChange(option.value)
+                                : undefined
+                            }
+                            data-disabled={!rawStratifications.includes(option.value)}
+                          >
+                            {stratifications.includes(option.value) && (
+                              <CheckIcon className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center" />
+                            )}
+                            <span className="text-sm">{option.label}</span>
+                          </div>
+                        ))}
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 </PopoverContent>
               </Popover>
             )}
@@ -250,11 +328,84 @@ export default function Details({ params }: DetailsProps) {
           </div>
           <div className="flex w-[200px] flex-1 flex-col gap-3">
             {Object.entries(statsGlobal).map(([key, value]) => (
-              <DetailsStatCard key={key} title={key} value={value.value} icon={value.icon} />
+              <DetailsStatCard
+                key={key}
+                title={key}
+                value={value.value}
+                unit={indicator.unit}
+                decimalPlaces={indicator.decimalPlaces}
+                icon={value.icon}
+              />
             ))}
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+const MAX_LABEL_LENGTH = 20
+
+type BarChartProjectProps = {
+  data: { period: Date; project: string | undefined; value: number }[]
+  mean: number
+}
+
+function BarChartProject({ data, mean }: BarChartProjectProps) {
+  const maxWidthTextProject = Math.max(
+    ...data.map((item) => (item.project ? item.project?.length : 0)),
+  )
+  return (
+    <ResponsiveContainer width={'100%'} height={50 * data.length} debounce={50}>
+      <BarChart layout="vertical" margin={{ left: 12 }} width={730} height={250} data={data}>
+        <XAxis type="number" hide />
+        <YAxis
+          dataKey="project"
+          type="category"
+          width={maxWidthTextProject * 10}
+          tickFormatter={(value) =>
+            value.length > MAX_LABEL_LENGTH ? `${value.slice(0, MAX_LABEL_LENGTH)}...` : value
+          }
+          axisLine={false}
+          tickLine={false}
+          dx={-4}
+        />
+        <Tooltip
+          cursor={false}
+          content={({ payload, label }) => {
+            return (
+              <div className="max-w-lg rounded-md border bg-white shadow-lg">
+                <div className="px-4 py-2">
+                  <p className="font-medium">{label}</p>
+                </div>
+                <Separator />
+                <div className="space-y-1 px-4 py-2">
+                  {payload?.map((item) => (
+                    <div key={item.dataKey} className="flex items-center justify-between gap-3">
+                      <p className="whitespace-nowrap text-[#687182]">Valor do Indicador</p>
+                      <p className="whitespace-nowrap text-right font-medium tabular-nums">
+                        {item.value?.toLocaleString('pt-BR', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }}
+        />
+        <ReferenceLine x={mean} stroke="#A1A1AA" strokeDasharray="8 5" strokeWidth={2.2} />
+        <Bar
+          dataKey="value"
+          radius={[6, 6, 6, 6]}
+          fill="#0067B1"
+          activeBar={{
+            fill: '#F4C000',
+          }}
+        />
+      </BarChart>
+    </ResponsiveContainer>
   )
 }

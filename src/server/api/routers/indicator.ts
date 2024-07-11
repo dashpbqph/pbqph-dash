@@ -11,59 +11,130 @@ import {
 } from '@prisma/client'
 import { z } from 'zod'
 
-// function updateStratifications(system: string) {
-//   if (system === 'SiAC') {
-//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
-//   } else if (system === 'SiMaC') {
-//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByGuideline', false)
-//   } else if (system.includes('SiNAT')) {
-//     indicatorCreateUpdateForm.setValue('stratifiedByOAC', false)
-//     indicatorCreateUpdateForm.setValue('stratifiedByPSQ', false)
-//   }
-// }
+import { isAdmin } from '@/utils/auth'
 
 export const indicatorRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.indicator.findMany({
-      include: {
-        system: true,
-        values: {
+  getAll: protectedProcedure
+    .input(z.object({ company: z.string().optional() }))
+    .query(({ ctx, input }) => {
+      if (input.company) {
+        return ctx.db.indicator.findMany({
+          where: {
+            stratifiedByProject: true,
+          },
           include: {
-            company: true,
-            project: true,
-            oac: true,
-            psq: true,
-            guideline: true,
+            system: true,
+            values: {
+              include: {
+                company: true,
+                project: true,
+                oac: true,
+                psq: true,
+                guideline: true,
+              },
+            },
+          },
+          orderBy: {
+            index: 'asc',
+          },
+        })
+      }
+
+      return ctx.db.indicator.findMany({
+        include: {
+          system: true,
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
           },
         },
-      },
-    })
-  }),
-  getIndicatorById: publicProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
-    return ctx.db.indicator.findUnique({
-      where: {
-        id: input.id,
-      },
-      include: {
-        values: {
-          include: {
-            company: true,
-            project: true,
-            oac: true,
-            psq: true,
-            guideline: true,
+        orderBy: {
+          index: 'asc',
+        },
+      })
+    }),
+  getAllByCompany: publicProcedure
+    .input(z.object({ company: z.string().nullable() }))
+    .query(async ({ ctx, input }) => {
+      const indicators = await ctx.db.indicator.findMany({
+        where: {
+          stratifiedByCompany: input.company ? undefined : false,
+        },
+        include: {
+          system: true,
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
           },
         },
-      },
-    })
-  }),
+        orderBy: {
+          index: 'asc',
+        },
+      })
+
+      if (!input.company) {
+        return indicators
+      }
+
+      return indicators.map((indicator) => {
+        if (indicator.stratifiedByCompany) {
+          return {
+            ...indicator,
+            values: indicator.values.filter((value) => value.companyId === input.company),
+          }
+        }
+
+        return indicator
+      })
+    }),
+  getIndicatorById: publicProcedure
+    .input(z.object({ id: z.string(), company: z.string().nullable() }))
+    .query(async ({ ctx, input }) => {
+      const indicator = await ctx.db.indicator.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          values: {
+            include: {
+              company: true,
+              project: true,
+              oac: true,
+              psq: true,
+              guideline: true,
+            },
+          },
+        },
+      })
+
+      if (indicator?.stratifiedByCompany) {
+        if (!input.company) {
+          throw new Error('FORBIDDEN')
+        }
+
+        return {
+          ...indicator,
+          values: indicator.values.filter((value) => value.companyId === input.company),
+        }
+      }
+
+      return indicator
+    }),
   create: protectedProcedure
     .input(
       z.object({
         code: z.string(),
-        codeMathJax: z.string(),
+        codeMarkdown: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
@@ -75,7 +146,8 @@ export const indicatorRouter = createTRPCRouter({
         periodicity: z.string(),
         impactNatures: z.array(z.custom<ImpactNature>()),
         impactedAgents: z.array(z.custom<ImpactedAgent>()),
-        equationMathJax: z.string(),
+        equationMarkdown: z.string(),
+        equationVarsMarkdown: z.string(),
         stratifiedByOAC: z.boolean(),
         stratifiedByPSQ: z.boolean(),
         stratifiedByGuideline: z.boolean(),
@@ -85,13 +157,15 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const system = input.system.split('-')
       const systemAbbrev = system[0] as SystemAbbrev
       const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
       return ctx.db.indicator.create({
         data: {
           code: input.code,
-          codeMathJax: input.codeMathJax,
+          codeMarkdown: input.codeMarkdown,
           system: {
             connect: {
               // eslint-disable-next-line camelcase
@@ -105,7 +179,8 @@ export const indicatorRouter = createTRPCRouter({
           name: input.name,
           purpose: input.purpose,
           unit: input.unit,
-          equationMathJax: input.equationMathJax,
+          equationMarkdown: input.equationMarkdown,
+          equationVarsMarkdown: input.equationVarsMarkdown,
           polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,
@@ -126,7 +201,7 @@ export const indicatorRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         code: z.string(),
-        codeMathJax: z.string(),
+        codeMarkdown: z.string(),
         system: z.string(),
         category: z.string(),
         name: z.string(),
@@ -138,7 +213,8 @@ export const indicatorRouter = createTRPCRouter({
         periodicity: z.string(),
         impactNatures: z.array(z.custom<ImpactNature>()),
         impactedAgents: z.array(z.custom<ImpactedAgent>()),
-        equationMathJax: z.string(),
+        equationMarkdown: z.string(),
+        equationVarsMarkdown: z.string(),
         stratifiedByOAC: z.boolean(),
         stratifiedByPSQ: z.boolean(),
         stratifiedByGuideline: z.boolean(),
@@ -148,7 +224,8 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      console.log(input)
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const system = input.system.split('-')
       const systemAbbrev = system[0] as SystemAbbrev
       const systemType = system[1] ? (system[1] as SystemType) : SystemType.NAO_SE_APLICA
@@ -171,7 +248,8 @@ export const indicatorRouter = createTRPCRouter({
           name: input.name,
           purpose: input.purpose,
           unit: input.unit,
-          equationMathJax: input.equationMathJax,
+          equationMarkdown: input.equationMarkdown,
+          equationVarsMarkdown: input.equationVarsMarkdown,
           polarity: input.polarity as Polarity,
           cumulative: input.cumulative,
           source: input.source,
@@ -188,6 +266,8 @@ export const indicatorRouter = createTRPCRouter({
       })
     }),
   delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+    if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
     return ctx.db.indicator.delete({
       where: {
         id: input.id,
@@ -197,8 +277,30 @@ export const indicatorRouter = createTRPCRouter({
 
   // values
   getValuesByIndicatorId: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), company: z.string().optional() }))
     .query(({ input, ctx }) => {
+      if (!input.company && !isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
+      if (input.company) {
+        return ctx.db.indicatorValue.findMany({
+          where: {
+            indicatorId: input.id,
+            companyId: input.company,
+          },
+          include: {
+            indicator: true,
+            company: true,
+            project: true,
+            oac: true,
+            psq: true,
+            guideline: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        })
+      }
+
       return ctx.db.indicatorValue.findMany({
         where: {
           indicatorId: input.id,
@@ -231,6 +333,8 @@ export const indicatorRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (ctx.session.user.company === '') throw new Error('Unauthorized')
+
       // get all values from the indicator
       const allValues = await ctx.db.indicatorValue.findMany({
         where: {

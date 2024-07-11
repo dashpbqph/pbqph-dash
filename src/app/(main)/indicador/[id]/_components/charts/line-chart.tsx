@@ -79,6 +79,9 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
           padding={{ top: 20, bottom: 20 }}
           width={36}
           tick={{ stroke: '#687182', strokeWidth: 0.4, fontSize: 14 }}
+          tickFormatter={(value) => {
+            return indicator?.unit === '%' ? `${(value * 100).toFixed(0)}%` : value
+          }}
           axisLine={false}
         />
         <Tooltip
@@ -89,7 +92,21 @@ export function LineChart({ indicator, chartData, className, lagLimit = 5 }: Lin
             const selectedPayload = selectedLine
               ? payload?.filter((entry) => entry.dataKey === selectedLine)
               : payload
-            return <ChartTooltip active={active} payload={selectedPayload} label={label} />
+            const formattedPayload = selectedPayload?.map((entry) => ({
+              ...entry,
+              value: indicator
+                ? indicator.unit === '%'
+                  ? (Number(entry.value) * 100).toLocaleString('pt-BR', {
+                      minimumFractionDigits: indicator.decimalPlaces,
+                      maximumFractionDigits: indicator.decimalPlaces,
+                    })
+                  : Number(entry.value).toLocaleString('pt-BR', {
+                      minimumFractionDigits: indicator.decimalPlaces,
+                      maximumFractionDigits: indicator.decimalPlaces,
+                    })
+                : entry.value,
+            }))
+            return <ChartTooltip active={active} payload={formattedPayload} label={label} />
           }}
           position={{ y: 0 }}
         />

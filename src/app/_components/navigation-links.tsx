@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_LINKS = [
-  { href: '/', label: 'Visão Geral' },
+  { href: '/', label: 'Introdução' },
+  { href: '/visao-geral', label: 'Visão Geral' },
   { href: '/indicador', label: 'Detalhes do Indicador' },
 ]
 
@@ -17,7 +18,10 @@ export default function NavigationLinks() {
         <NavigationLink
           key={href}
           href={href}
-          isActive={pathname === href || (href !== '/' && pathname.includes('/indicador'))}
+          isActive={
+            pathname === href ||
+            (href !== '/' && href !== '/visao-geral' && pathname.includes('/indicador'))
+          }
         >
           {label}
         </NavigationLink>

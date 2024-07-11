@@ -5,9 +5,12 @@ import bcrypt from 'bcrypt'
 import { z } from 'zod'
 
 import { UserEnriched } from '@/types/user'
+import { isAdmin } from '@/utils/auth'
 
 export const userRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
+    if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
     const users = await ctx.db.user.findMany({
       orderBy: {
         createdAt: 'desc',
@@ -96,6 +99,8 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const salt = bcrypt.genSaltSync(10)
       const hashedPassword = bcrypt.hashSync(input.password, salt)
 
@@ -145,6 +150,8 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const updateData: Record<string, unknown> = {
         firstName: input.firstName,
         email: input.email,
@@ -185,6 +192,8 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const deletedUser = await ctx.db.user.delete({
         where: {
           username: input.username,
@@ -201,6 +210,8 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
+      if (!isAdmin(ctx.session.user.role)) throw new Error('Unauthorized')
+
       const salt = bcrypt.genSaltSync(10)
       const hashedPassword = bcrypt.hashSync(input.password, salt)
 

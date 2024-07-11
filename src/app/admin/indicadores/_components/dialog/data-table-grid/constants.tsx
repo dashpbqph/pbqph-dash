@@ -1,6 +1,5 @@
 import { Periodicity, type Region } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
-import { MathJax } from 'better-react-mathjax'
 import { format, getMonth, getQuarter } from 'date-fns'
 import { Check, Pencil, Trash } from 'lucide-react'
 
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import Markdown from '@/app/_providers/markdown-provider'
 
 const mapRegion = {
   NORTE: 'Norte',
@@ -155,9 +155,7 @@ export const getColumns = ({
               (row.getValue('value') as number).toLocaleString('pt-BR')
             )}{' '}
             {!['absoluta', 'adimensional'].includes(unit) && !isEditing && (
-              <MathJax hideUntilTypeset="first" inline dynamic suppressHydrationWarning>
-                {`\\(${unit}\\)`}
-              </MathJax>
+              <Markdown className="text-xs">{`$${unit}$`}</Markdown>
             )}
           </div>
         )
@@ -206,7 +204,9 @@ export const getColumns = ({
                 </SelectContent>
               </Select>
             ) : (
-              row.original.psq?.name
+              <span className="line-clamp-1">
+                {psqs.find((psq) => psq.id === indicatorValue.psqId)?.name}
+              </span>
             )}
           </div>
         )
@@ -258,7 +258,9 @@ export const getColumns = ({
                 </SelectContent>
               </Select>
             ) : (
-              row.original.guideline?.name
+              <span className="line-clamp-1">
+                {guidelines.find((guideline) => guideline.id === indicatorValue.guidelineId)?.name}
+              </span>
             )}
           </div>
         )
@@ -352,7 +354,9 @@ export const getColumns = ({
                 </SelectContent>
               </Select>
             ) : (
-              row.original.company?.name
+              <span className="line-clamp-1">
+                {companies.find((company) => company.id === indicatorValue.companyId)?.name}
+              </span>
             )}
           </div>
         )
@@ -406,7 +410,9 @@ export const getColumns = ({
                 </SelectContent>
               </Select>
             ) : (
-              row.original.project?.name
+              <span className="line-clamp-1">
+                {projects.find((project) => project.id === indicatorValue.projectId)?.name}
+              </span>
             )}
           </div>
         )
@@ -418,6 +424,7 @@ export const getColumns = ({
       cell: ({ row }) => {
         const indicatorValue = row.original
         const isEditing = idEditValues.includes(indicatorValue.id)
+        console.log(isEditing)
         return (
           <div className="min-w-[140px] text-left">
             {isEditing ? (
@@ -446,7 +453,7 @@ export const getColumns = ({
                 <SelectTrigger className="w-36 border-none text-center shadow-none">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[320px]">
                   {oacs.map((oac) => (
                     <SelectItem key={oac.id} value={oac.id}>
                       {oac.name}
@@ -455,7 +462,9 @@ export const getColumns = ({
                 </SelectContent>
               </Select>
             ) : (
-              row.original.oac?.name
+              <span className="line-clamp-1">
+                {oacs.find((oac) => oac.id === indicatorValue.oacId)?.name}
+              </span>
             )}
           </div>
         )

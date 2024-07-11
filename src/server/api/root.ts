@@ -1,8 +1,7 @@
-import { companyRouter } from '@/server/api/routers/company'
-import { entityRouter } from '@/server/api/routers/entity'
 import { indicatorRouter } from '@/server/api/routers/indicator'
-import { projectRouter } from '@/server/api/routers/project'
-import { systemRouter } from '@/server/api/routers/system'
+import { companyRouter, oacRouter, projectRouter } from '@/server/api/routers/siac'
+import { egtRouter, emRouter, psqRouter } from '@/server/api/routers/simac'
+import { datecRouter, fadRouter, guidelineRouter, itaRouter } from '@/server/api/routers/sinat'
 import { userRouter } from '@/server/api/routers/user'
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 import { inferRouterOutputs } from '@trpc/server'
@@ -13,12 +12,21 @@ import { inferRouterOutputs } from '@trpc/server'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  company: companyRouter,
-  indicator: indicatorRouter,
-  entity: entityRouter,
-  project: projectRouter,
-  system: systemRouter,
   user: userRouter,
+  indicator: indicatorRouter,
+  // siac
+  oac: oacRouter,
+  company: companyRouter,
+  project: projectRouter,
+  // simac
+  egt: egtRouter,
+  em: emRouter,
+  psq: psqRouter,
+  // sinat
+  ita: itaRouter,
+  fad: fadRouter,
+  guideline: guidelineRouter,
+  datec: datecRouter,
 })
 
 // export type definition of API

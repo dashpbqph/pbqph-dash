@@ -63,46 +63,9 @@ type GetChartDataProps = {
 export function getChartData({ indicator, stratifications }: GetChartDataProps): ChartDataItem[] {
   if (!indicator) return []
 
-  let periodicity = indicator.periodicity
+  const periodicity =
+    indicator.periodicity === Periodicity.EVENTUAL ? Periodicity.MENSAL : indicator.periodicity
   const chartData: Record<string, Record<string, number[]>> = {}
-
-  if (periodicity === Periodicity.EVENTUAL) {
-    if (indicator.stratifiedByProject) {
-      // if the indicator is stratified by project, it also is stratified by company
-      // in this case, we cannot group the values by event,
-      // so we use the annual periodicity to group the values by year
-      periodicity = Periodicity.ANUAL
-    } else {
-      // eventual period cannot be grouped, because it has no defined periodicity
-      // so we just sort the values by date and return them
-      return indicator.values
-        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-        .map((value) => {
-          const period = value.createdAt.toLocaleDateString('pt-BR')
-          const label = getStratificationString(stratifications, {
-            region: value.region as string,
-            company: value.company?.name,
-            project: value.project?.name,
-            oac: value.oac?.name,
-            psq: value.psq?.name,
-            guideline: value.guideline?.name,
-          })
-          const key = `${label}`
-
-          if (!chartData[period]) {
-            chartData[period] = {}
-          }
-
-          if (!chartData[period]![key]) {
-            chartData[period]![key] = []
-          }
-
-          chartData[period]![key]?.push(value.value)
-
-          return { period, [key]: value.value }
-        })
-    }
-  }
 
   // Group values by label and period
   indicator.values.forEach((value) => {

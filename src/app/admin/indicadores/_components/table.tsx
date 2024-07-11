@@ -1,6 +1,8 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { UserRole } from '@prisma/client'
+import { useSession } from 'next-auth/react'
 
 import { IndicatorWithRelations } from '@/types/indicator'
 import { DataTable } from '@/components/ui/data-table'
@@ -10,8 +12,18 @@ import { getColumns } from './constants'
 import { DataTableToolbar } from './toolbar'
 
 export default function IndicatorsAdminTable() {
-  const { data: indicators, isPending, refetch } = api.indicator.getAll.useQuery()
-  const columns = getColumns({ refetchIndicators: refetch })
+  const { data: session } = useSession()
+  const {
+    data: indicators,
+    isPending,
+    refetch,
+  } = api.indicator.getAll.useQuery({
+    company: session?.user.company,
+  })
+  const columns = getColumns({
+    refetchIndicators: refetch,
+    canEditIndicators: session?.user.role === UserRole.ADMIN,
+  })
 
   const pageSize = useDinamicPageSize({
     rowHeight: 48,

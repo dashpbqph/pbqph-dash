@@ -52,7 +52,7 @@ export default function UserCreateUpdateForm({
 }: UserCreateUpdateFormProps) {
   const isEditing = !!user
   const avatarSeed = crypto.randomUUID()
-  const { data: companies } = api.company.getAll.useQuery()
+  const { data: companies } = api.company.getAll.useQuery({})
 
   const formSchema = isEditing
     ? userCreateUpdateFormSchemaOptionalPassword
