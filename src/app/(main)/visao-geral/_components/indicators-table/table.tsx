@@ -30,6 +30,7 @@ export default function IndicatorsTable() {
     },
     { enabled: company !== undefined },
   )
+  console.log(indicators)
   const router = useRouter()
 
   const pageSize = useDinamicPageSize({

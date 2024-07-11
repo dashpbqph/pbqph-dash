@@ -57,7 +57,7 @@
     "equationMarkdown": "$\\text{NTNC}_A=\\sum_{i=1}^n\\text{NNC}_{i,A}$",
     "equationVarsMarkdown": "$\\bf NNC_{i,A}$ : Número de novas empresas construtoras com certificados do SiAC – Execução de Obras  emitidos ao longo do ano A do cálculo do indicador pelo $\\text{OAC}_i$ (adimensional)",
     "system": "SiAC",
-    "range": [-400, 400]
+    "range": [-500, 500]
   },
   {
     "category": "DESEMPENHO",
@@ -78,7 +78,7 @@
     "equationVarsMarkdown": "$\\bf NTRNC_{R,A}$ :  Número total de novas empresas construtoras com sede na região 'R' e com certificados do SiAC – Execução de Obras  emitidos ao longo do ano 'A' do cálculo do indicador pelo $\\text{OAC}_i$.\n\n$\\bf NTRNC_{R,A-1}$ : Número total de empresas construtoras com certificados no SiAC – Execução de Obras  emitidos ao longo do ano anterior ao do cálculo do indicador e com sede na região 'R'.",
     "system": "SiAC",
     "stratifiedByRegion": true,
-    "range": [-200, 200]
+    "range": [-0.2, 0.2]
   },
   {
     "category": "DESEMPENHO",
@@ -162,7 +162,7 @@
     "system": "SiAC",
     "stratifiedByCompany": true,
     "stratifiedByProject": true,
-    "range": [0.05, 0.4]
+    "range": [0.02, 0.5]
   },
   {
     "category": "RESULTADO",
@@ -184,7 +184,7 @@
     "equationVarsMarkdown": "$\\bf VR_{m,n}$ : Volume total de resíduos retirados da obra do empreendimento 'm' da empresa construtora 'n', independentemente de sua destinação ($\\text{m}^3$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).",
     "system": "SiAC",
     "stratifiedByCompany": true,
-    "range": [0.05, 0.4]
+    "range": [0.02, 0.5]
   },
   {
     "category": "RESULTADO",
@@ -205,7 +205,7 @@
     "equationMarkdown": "$\\text{TSIVR}=\\frac{\\sum(\\text{SIVR}_n\\times\\sum\\text{AC}_{m,n})}{\\text{ACT}}$",
     "equationVarsMarkdown": "$\\bf SIVR_n$ : Volume médio acumulado de resíduos retirados dos canteiros de obras da empresa construtora 'n' ($\\text{m}^3/\\text{m}^2$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).\n\n$\\bf ACT$ : Total da área construída dos empreendimentos do conjunto com obras cadastradas pelas empresas construtoras certificadas pelo SiAC – Execução de Obras ($\\text{m}^2$).",
     "system": "SiAC",
-    "range": [0.05, 0.4]
+    "range": [0.02, 0.5]
   },
   {
     "category": "RESULTADO",
@@ -360,7 +360,7 @@
     "system": "SiAC",
     "stratifiedByCompany": true,
     "stratifiedByProject": true,
-    "range": [1.0, 3.0]
+    "range": [0.1, 3.0]
   },
   {
     "category": "RESULTADO",
@@ -382,7 +382,7 @@
     "equationVarsMarkdown": "$\\bf IATPO_{m,n}$ : Número de chamadas de assistência técnica pós-obra, em período de garantia, de obra do empreendimento 'm' da empresa construtora 'n' (adimensional).\n\n$\\bf NUH_{m,n}$ : Número de unidades habitacionais do empreendimento 'm' da empresa construtora 'n' (adimensional).",
     "system": "SiAC",
     "stratifiedByCompany": true,
-    "range": [1.0, 3.0]
+    "range": [0.1, 3.0]
   },
   {
     "category": "RESULTADO",
@@ -403,7 +403,7 @@
     "equationMarkdown": "$\\text{TSIATPO}=\\frac{\\sum(\\text{SIATPO}_n\\times\\sum\\text{NUH}_{m,n})}{\\text{NUHT}}$",
     "equationVarsMarkdown": "$\\bf SIATPO_n$ : Número médio acumulado de chamadas de assistência técnica pós-obra, em período de garantia, dos empreendimentos da empresa construtora 'n' (adimensional).\n\n$\\bf NUH_{m,n}$ : Número de unidades habitacionais do empreendimento 'm' da empresa construtora 'n' (adimensional).\n\n$\\bf NUHT$ : Total de unidades habitacionais do conjunto de empreendimentos com obras cadastradas pelas empresas construtoras certificadas pelo SiAC – Execução de Obras (adimensional).",
     "system": "SiAC",
-    "range": [1.0, 3.0]
+    "range": [0.1, 3.0]
   },
   {
     "category": "RESULTADO",
@@ -558,7 +558,7 @@
     "system": "SiAC",
     "stratifiedByCompany": true,
     "stratifiedByProject": true,
-    "range": [4, 15]
+    "range": [3, 15]
   },
   {
     "category": "RESULTADO",
@@ -580,7 +580,7 @@
     "equationVarsMarkdown": "$\\bf CEE_{m,n}$ : Consumo total de energia elétrica durante a obra 'm' da empresa construtora 'n' ($\\text{kWh}$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).",
     "system": "SiAC",
     "stratifiedByCompany": true,
-    "range": [4, 15]
+    "range": [3, 15]
   }, 
   {
     "category": "RESULTADO",
@@ -601,7 +601,7 @@
     "equationMarkdown": "$\\text{TSICEE}=\\frac{\\sum(\\text{SICEE}_n\\times\\sum\\text{AC}_{m,n})}{\\text{ACT}}$",
     "equationVarsMarkdown": "$\\bf SICEE_n$ : Consumo médio acumulado de energia elétrica nos canteiros de obras da empresa construtora 'n' ($\\text{kWh/m}^2$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).\n\n$\\bf ACT$ : Total da área construída dos empreendimentos do conjunto com obras cadastradas pelas empresas construtoras certificadas pelo SiAC – Execução de Obras ($\\text{m}^2$).",
     "system": "SiAC",
-    "range": [4, 15]
+    "range": [3, 15]
   },
   {
     "category": "RESULTADO",
@@ -624,7 +624,7 @@
     "system": "SiAC",
     "stratifiedByCompany": true,
     "stratifiedByProject": true,
-    "range": [0.2, 0.55]
+    "range": [0.2, 3]
   },
   {
     "category": "RESULTADO",
@@ -646,7 +646,7 @@
     "equationVarsMarkdown": "$\\bf CAP_{m,n}$ :  Volume total de consumo de água potável durante a obra 'm' da empresa construtora 'n'  ($\\text{m}^3$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).",
     "system": "SiAC",
     "stratifiedByCompany": true,
-    "range": [0.2, 0.55]
+    "range": [0.2, 3]
   },
   {
     "category": "RESULTADO",
@@ -667,7 +667,7 @@
     "equationMarkdown": "$\\text{TSICAP}=\\frac{\\sum(\\text{SICAP}_n\\times\\sum\\text{AC}_{m,n})}{\\text{ACT}}$",
     "equationVarsMarkdown": "$\\bf SICAP_n$ : Consumo médio acumulado de água potável nos canteiros de obras da empresa construtora 'n' ($\\text{m}^3/m^2$).\n\n$\\bf AC_{m,n}$ : Área construída total do empreendimento 'm' da empresa construtora 'n' ($\\text{m}^2$).\n\n$\\bf ACT$ : Total da área construída dos empreendimentos do conjunto com obras cadastradas pelas empresas construtoras certificadas pelo SiAC – Execução de Obras ($\\text{m}^2$).",
     "system": "SiAC",
-    "range": [0.2, 0.55]
+    "range": [0.2, 3]
   },
   {
     "category": "ESTRATEGICO",

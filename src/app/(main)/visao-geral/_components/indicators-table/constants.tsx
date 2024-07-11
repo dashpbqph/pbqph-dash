@@ -138,17 +138,19 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
     cell: ({ row }) => {
       const pageData = getChartData({ indicator: row.original, stratifications: [] })
       const lastValue = pageData.length > 0 ? pageData[pageData.length - 1] : null
-      const lastValueFormatted = lastValue?.Indicador
-        ? row.original.unit === '%'
-          ? (Number(lastValue.Indicador) * 100).toLocaleString('pt-BR', {
-              minimumFractionDigits: row.original.decimalPlaces,
-              maximumFractionDigits: row.original.decimalPlaces,
-            })
-          : lastValue.Indicador.toLocaleString('pt-BR', {
-              minimumFractionDigits: row.original.decimalPlaces,
-              maximumFractionDigits: row.original.decimalPlaces,
-            })
-        : null
+      console.log(row.original)
+      const lastValueFormatted =
+        typeof lastValue?.Indicador === 'number'
+          ? row.original.unit === '%'
+            ? (Number(lastValue.Indicador) * 100).toLocaleString('pt-BR', {
+                minimumFractionDigits: row.original.decimalPlaces,
+                maximumFractionDigits: row.original.decimalPlaces,
+              })
+            : lastValue.Indicador.toLocaleString('pt-BR', {
+                minimumFractionDigits: row.original.decimalPlaces,
+                maximumFractionDigits: row.original.decimalPlaces,
+              })
+          : null
 
       return (
         <div className="hidden min-w-[160px] text-center lg:block">
@@ -177,14 +179,20 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
       const minValue =
         pageData.length > 0
           ? pageData.reduce((acc, cur) => {
-              if (cur.Indicador! < acc.Indicador!) return cur
+              if (Number(cur.Indicador) < Number(acc.Indicador)) return cur
               return acc
             })
           : null
-      const minValueFormatted = minValue?.Indicador?.toLocaleString('pt-BR', {
-        minimumFractionDigits: row.original.decimalPlaces,
-        maximumFractionDigits: row.original.decimalPlaces,
-      })
+      const minValueFormatted =
+        row.original.unit === '%'
+          ? (Number(minValue?.Indicador) * 100).toLocaleString('pt-BR', {
+              minimumFractionDigits: row.original.decimalPlaces,
+              maximumFractionDigits: row.original.decimalPlaces,
+            })
+          : minValue?.Indicador?.toLocaleString('pt-BR', {
+              minimumFractionDigits: row.original.decimalPlaces,
+              maximumFractionDigits: row.original.decimalPlaces,
+            })
 
       return (
         <div className="hidden min-w-[160px] text-center lg:block">
@@ -216,14 +224,20 @@ export const columns: ColumnDef<IndicatorWithRelations>[] = [
       const maxValue =
         pageData.length > 0
           ? pageData.reduce((acc, cur) => {
-              if (cur.Indicador! > acc.Indicador!) return cur
+              if (Number(cur.Indicador) > Number(acc.Indicador)) return cur
               return acc
             })
           : null
-      const maxValueFormatted = maxValue?.Indicador?.toLocaleString('pt-BR', {
-        minimumFractionDigits: row.original.decimalPlaces,
-        maximumFractionDigits: row.original.decimalPlaces,
-      })
+      const maxValueFormatted =
+        row.original.unit === '%'
+          ? (Number(maxValue?.Indicador) * 100).toLocaleString('pt-BR', {
+              minimumFractionDigits: row.original.decimalPlaces,
+              maximumFractionDigits: row.original.decimalPlaces,
+            })
+          : maxValue?.Indicador?.toLocaleString('pt-BR', {
+              minimumFractionDigits: row.original.decimalPlaces,
+              maximumFractionDigits: row.original.decimalPlaces,
+            })
 
       return (
         <div className="hidden min-w-[160px] text-center lg:block">

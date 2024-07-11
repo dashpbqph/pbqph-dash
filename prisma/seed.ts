@@ -82,7 +82,7 @@ const createIndicators = seeds.indicators.map((indicator) => {
       codeMarkdown: indicator.codeMarkdown,
       name: indicator.name,
       unit: indicator.unit,
-      decimalPlaces: indicator?.decimalPlaces || 1,
+      decimalPlaces: typeof indicator?.decimalPlaces === 'number' ? indicator?.decimalPlaces : 1,
       polarity: indicator.polarity as Polarity,
       cumulative: indicator.cumulative,
       source: indicator.source,
@@ -120,6 +120,7 @@ const START_DATE = new Date().getTime() - YEARS_RANGE * 365 * ONE_DAY
 
 const createIndicatorValues = seeds.indicators.map((indicator) => {
   const indicatorValues = Array.from({ length: NUM_VALUES }, () => {
+    const unit = indicator.unit
     let date
     switch (indicator.periodicity) {
       case Periodicity.TRIMESTRAL:
@@ -150,7 +151,13 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
         value: parseFloat(
           faker.number
             .float({ min: indicator.range[0], max: indicator.range[1] })
-            .toFixed(indicator?.decimalPlaces || 1),
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         region,
@@ -175,7 +182,13 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
           value: parseFloat(
             faker.number
               .float({ min: indicator.range[0], max: indicator.range[1] })
-              .toFixed(indicator?.decimalPlaces || 1),
+              .toFixed(
+                unit === '%'
+                  ? 2
+                  : typeof indicator?.decimalPlaces === 'number'
+                    ? indicator.decimalPlaces
+                    : 1,
+              ),
           ),
           date: new Date(date),
           company,
@@ -189,7 +202,13 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
         value: parseFloat(
           faker.number
             .float({ min: indicator.range[0], max: indicator.range[1] })
-            .toFixed(indicator?.decimalPlaces || 1),
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         company,
@@ -201,7 +220,13 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
         value: parseFloat(
           faker.number
             .float({ min: indicator.range[0], max: indicator.range[1] })
-            .toFixed(indicator?.decimalPlaces || 1),
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
         oac,
@@ -225,7 +250,13 @@ const createIndicatorValues = seeds.indicators.map((indicator) => {
         value: parseFloat(
           faker.number
             .float({ min: indicator.range[0], max: indicator.range[1] })
-            .toFixed(indicator?.decimalPlaces || 1),
+            .toFixed(
+              unit === '%'
+                ? 2
+                : typeof indicator?.decimalPlaces === 'number'
+                  ? indicator.decimalPlaces
+                  : 1,
+            ),
         ),
         date: new Date(date),
       },
